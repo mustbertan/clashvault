@@ -11,17 +11,17 @@
   "theme_color": "#F5A623",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -29,22 +29,22 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshot1.png",
+      "src": "/screenshots/screenshot1.png",
       "sizes": "1080x1920",
       "type": "image/png"
     },
     {
-      "src": "/screenshot2.png",
+      "src": "/screenshots/screenshot2.png",
       "sizes": "1080x1920",
       "type": "image/png"
     },
     {
-      "src": "/screenshot3.png",
+      "src": "/screenshots/screenshot3.png",
       "sizes": "1080x1920",
       "type": "image/png"
     },
     {
-      "src": "/screenshot4.png",
+      "src": "/screenshots/screenshot4.png",
       "sizes": "1080x1920",
       "type": "image/png"
     }
