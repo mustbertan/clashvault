@@ -1,9 +1,12 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ClashVault — CoC Base Layouts</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#F5A623">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1363,7 +1366,6 @@ function goBack() { goScreen(prevScreen); }
 function openDetail(id) {
   currentBase = BASES.find(b => b.id === id);
   if (!currentBase) return;
-  // increment uses (in real app: API call)
   currentBase.uses++;
 
   document.getElementById('detail-name').textContent = currentBase.name;
@@ -1384,7 +1386,6 @@ function openDetail(id) {
   const favBtn = document.getElementById('fav-btn');
   favBtn.textContent = isFav(id) ? '❤️' : '🤍';
 
-  // Similar
   const similar = BASES.filter(b => b.id !== id && (b.th === currentBase.th || b.type === currentBase.type)).slice(0,8);
   const sl = document.getElementById('similar-list');
   sl.innerHTML = similar.map(b => `
@@ -1463,9 +1464,7 @@ function filterSearch() {
 // COPY TO CLASH
 // ────────────────────────────────────────────
 function copyToClash() {
-  // In real app: POST /api/layout/[id]/use → returns coc_link
   showToast('🏰 Base copied! Opening Clash of Clans...');
-  // Simulate opening: window.open(currentBase.coc_link)
 }
 
 // ────────────────────────────────────────────
