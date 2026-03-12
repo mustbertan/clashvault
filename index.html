@@ -104,11 +104,11 @@ body::before {
   padding:.28rem .45rem .5rem; background:var(--brown-mid);
   border-top:1.5px solid var(--brown-border); flex-shrink:0;
 }
-.nav-item { display:flex; flex-direction:column; align-items:center; gap:.1rem; cursor:pointer; padding:.17rem .35rem; border-radius:.35rem; transition:all .2s; flex:1; }
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:.1rem; cursor:pointer; padding:.17rem .2rem; border-radius:.35rem; transition:all .2s; flex:1; min-width:0; }
 .nav-item:hover,.nav-item.active { background:rgba(245,166,35,.1); }
-.nav-icon { font-size:.8rem; transition:transform .2s; }
+.nav-icon { font-size:.66rem; transition:transform .2s; }
 .nav-item.active .nav-icon { transform:scale(1.15); filter:drop-shadow(0 0 6px rgba(245,166,35,.6)); }
-.nav-label { font-size:.38rem; font-weight:800; color:var(--text-muted); letter-spacing:.5px; }
+.nav-label { font-size:.28rem; font-weight:800; color:var(--text-muted); letter-spacing:.3px; }
 .nav-item.active .nav-label { color:var(--gold); }
 
 /* ─────────────────────────────────────────
@@ -390,6 +390,70 @@ body::before {
 .share-opt:hover { border-color:var(--gold-dark); }
 .share-opt-icon { font-size:.6rem; margin-bottom:.1rem; }
 .share-opt-label { font-size:.3rem; font-weight:700; color:var(--text-muted); }
+
+/* ─────────────────────────────────────────
+   UPLOAD SCREEN
+───────────────────────────────────────── */
+.upload-form { padding:0 .45rem .55rem; display:flex; flex-direction:column; gap:.38rem; }
+.form-group { display:flex; flex-direction:column; gap:.17rem; }
+.form-label { font-size:.38rem; font-weight:800; color:var(--text-muted); letter-spacing:.5px; text-transform:uppercase; }
+.form-input {
+  background:var(--brown-card); border:1.5px solid var(--brown-border);
+  border-radius:.38rem; padding:.44rem .5rem;
+  color:var(--cream); font-family:'Nunito',sans-serif; font-size:.47rem; font-weight:600;
+  outline:none; width:100%; transition:border-color .2s;
+}
+.form-input:focus { border-color:var(--gold-dark); }
+.form-input option { background:var(--brown-card2); }
+.form-select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23F5A623' d='M1 1l5 5 5-5'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .5rem center; padding-right:1.2rem; }
+
+/* Image upload area */
+.img-upload-area {
+  border:2px dashed var(--brown-border); border-radius:.44rem;
+  background:var(--brown-card); min-height:5.5rem;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.22rem; cursor:pointer; transition:all .25s; position:relative; overflow:hidden;
+}
+.img-upload-area:hover, .img-upload-area.dragover { border-color:var(--gold-dark); background:var(--brown-card2); }
+.img-upload-area input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.img-upload-icon { font-size:1.1rem; }
+.img-upload-text { font-size:.42rem; font-weight:700; color:var(--text-muted); }
+.img-upload-sub  { font-size:.33rem; color:var(--brown-border); }
+.img-preview-wrap { position:relative; }
+.img-preview-wrap img { width:100%; border-radius:.38rem; display:block; max-height:8rem; object-fit:cover; }
+.img-preview-remove { position:absolute; top:.22rem; right:.22rem; background:rgba(230,57,70,.85); border:none; border-radius:.22rem; color:#fff; font-size:.5rem; width:1rem; height:1rem; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+
+/* Submit button */
+.btn-upload-submit {
+  background:linear-gradient(135deg,var(--gold-dark),var(--gold));
+  color:var(--brown-dark); font-weight:900; font-size:.55rem;
+  padding:.55rem; border-radius:.44rem; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:.28rem;
+  box-shadow:0 4px 15px rgba(245,166,35,.4); transition:all .2s; width:100%;
+  font-family:'Nunito',sans-serif;
+}
+.btn-upload-submit:disabled { opacity:.5; cursor:not-allowed; }
+
+/* Success card */
+.upload-success {
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  padding:1.1rem .66rem; text-align:center; gap:.44rem;
+}
+.upload-success.show { display:flex; }
+.upload-success-icon { font-size:2.2rem; }
+.upload-success-title { font-family:'Cinzel Decorative',serif; font-size:.55rem; color:var(--green); }
+.upload-success-sub { font-size:.42rem; color:var(--text-muted); line-height:1.5; }
+
+/* ─────────────────────────────────────────
+   COMMUNITY SCREEN
+───────────────────────────────────────── */
+.community-tabs { display:flex; gap:.22rem; padding:.22rem .45rem .33rem; flex-shrink:0; }
+.comm-tab { flex:1; padding:.33rem; border-radius:.44rem; border:1.5px solid var(--brown-border); background:var(--brown-card); color:var(--text-muted); font-family:'Nunito',sans-serif; font-size:.42rem; font-weight:800; cursor:pointer; text-align:center; transition:all .2s; }
+.comm-tab.active { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); border-color:var(--gold); color:var(--brown-dark); }
+
+/* Upload progress bar */
+.progress-bar-wrap { background:var(--brown-card); border-radius:.33rem; overflow:hidden; height:.33rem; }
+.progress-bar { height:100%; background:linear-gradient(90deg,var(--gold-dark),var(--gold)); border-radius:.33rem; transition:width .3s ease; width:0%; }
 </style>
 </head>
 <body>
@@ -479,6 +543,8 @@ body::before {
   <nav class="navbar">
     <div class="nav-item active" onclick="goScreen('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
     <div class="nav-item" onclick="goScreen('screen-search')"><div class="nav-icon">🔍</div><div class="nav-label">Browse</div></div>
+    <div class="nav-item" onclick="goScreen('screen-community')"><div class="nav-icon">👥</div><div class="nav-label">Community</div></div>
+    <div class="nav-item" onclick="goScreen('screen-upload')"><div class="nav-icon">⬆️</div><div class="nav-label">Upload</div></div>
     <div class="nav-item" onclick="goScreen('screen-favs')"><div class="nav-icon">❤️</div><div class="nav-label">Favorites</div></div>
   </nav>
 </div>
@@ -559,6 +625,8 @@ body::before {
   <nav class="navbar">
     <div class="nav-item" onclick="goScreen('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
     <div class="nav-item" onclick="goScreen('screen-search')"><div class="nav-icon">🔍</div><div class="nav-label">Browse</div></div>
+    <div class="nav-item" onclick="goScreen('screen-community')"><div class="nav-icon">👥</div><div class="nav-label">Community</div></div>
+    <div class="nav-item" onclick="goScreen('screen-upload')"><div class="nav-icon">⬆️</div><div class="nav-label">Upload</div></div>
     <div class="nav-item" onclick="goScreen('screen-favs')"><div class="nav-icon">❤️</div><div class="nav-label">Favorites</div></div>
   </nav>
 </div>
@@ -646,6 +714,8 @@ body::before {
   <nav class="navbar">
     <div class="nav-item" onclick="goScreen('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
     <div class="nav-item active"><div class="nav-icon">🔍</div><div class="nav-label">Browse</div></div>
+    <div class="nav-item" onclick="goScreen('screen-community')"><div class="nav-icon">👥</div><div class="nav-label">Community</div></div>
+    <div class="nav-item" onclick="goScreen('screen-upload')"><div class="nav-icon">⬆️</div><div class="nav-label">Upload</div></div>
     <div class="nav-item" onclick="goScreen('screen-favs')"><div class="nav-icon">❤️</div><div class="nav-label">Favorites</div></div>
   </nav>
 </div>
@@ -712,10 +782,142 @@ body::before {
   <nav class="navbar">
     <div class="nav-item" onclick="goScreen('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
     <div class="nav-item" onclick="goScreen('screen-search')"><div class="nav-icon">🔍</div><div class="nav-label">Browse</div></div>
+    <div class="nav-item" onclick="goScreen('screen-community')"><div class="nav-icon">👥</div><div class="nav-label">Community</div></div>
+    <div class="nav-item" onclick="goScreen('screen-upload')"><div class="nav-icon">⬆️</div><div class="nav-label">Upload</div></div>
     <div class="nav-item active"><div class="nav-icon">❤️</div><div class="nav-label">Favorites</div></div>
   </nav>
 </div>
 
+
+<!-- ══════════════════════════════════════════
+     SCREEN — COMMUNITY
+═══════════════════════════════════════════ -->
+<div id="screen-community" class="screen" style="flex-direction:column;">
+  <div class="topbar">
+    <div class="topbar-logo">👥 <span>Community</span></div>
+  </div>
+  <div class="community-tabs">
+    <button class="comm-tab active" id="comm-tab-all" onclick="switchCommTab('all')">Tüm Baseler</button>
+    <button class="comm-tab" id="comm-tab-mine" onclick="switchCommTab('mine')">Benim Yüklediklerim</button>
+  </div>
+  <div class="scroll-content">
+    <div id="comm-empty" class="empty-state" style="display:none;">
+      <div class="empty-icon">👥</div>
+      <div class="empty-title">Henüz Base Yok</div>
+      <div class="empty-sub">İlk community base'i sen yükle!</div>
+    </div>
+    <div class="cards-grid" id="comm-grid"></div>
+    <div style="height:20px;"></div>
+  </div>
+  <nav class="navbar">
+    <div class="nav-item" onclick="goScreen('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+    <div class="nav-item" onclick="goScreen('screen-search')"><div class="nav-icon">🔍</div><div class="nav-label">Browse</div></div>
+    <div class="nav-item active"><div class="nav-icon">👥</div><div class="nav-label">Community</div></div>
+    <div class="nav-item" onclick="goScreen('screen-upload')"><div class="nav-icon">⬆️</div><div class="nav-label">Upload</div></div>
+    <div class="nav-item" onclick="goScreen('screen-favs')"><div class="nav-icon">❤️</div><div class="nav-label">Favorites</div></div>
+  </nav>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SCREEN — UPLOAD
+═══════════════════════════════════════════ -->
+<div id="screen-upload" class="screen" style="flex-direction:column;">
+  <div class="topbar">
+    <div class="topbar-logo">⬆️ <span>Upload Base</span></div>
+  </div>
+  <div class="scroll-content">
+
+    <!-- Success state (hidden by default) -->
+    <div class="upload-success" id="upload-success">
+      <div class="upload-success-icon">✅</div>
+      <div class="upload-success-title">Yüklendi!</div>
+      <div class="upload-success-sub">Base'in incelemeye alındı.<br>Onaylandıktan sonra Community'de görünecek.</div>
+      <button class="btn-upload-submit" style="margin-top:.33rem;" onclick="resetUploadForm()">⬆️ Yeni Base Yükle</button>
+    </div>
+
+    <!-- Form -->
+    <div class="upload-form" id="upload-form">
+
+      <!-- Fotoğraf -->
+      <div class="form-group">
+        <div class="form-label">📷 Base Fotoğrafı *</div>
+        <div class="img-upload-area" id="img-upload-area">
+          <input type="file" id="upload-file-input" accept="image/*" onchange="handleImageSelect(event)">
+          <div class="img-upload-icon">🖼️</div>
+          <div class="img-upload-text">Fotoğraf seç veya bırak</div>
+          <div class="img-upload-sub">JPG, PNG · Max 5MB</div>
+        </div>
+        <div class="img-preview-wrap" id="img-preview-wrap" style="display:none;">
+          <img id="img-preview" src="" alt="preview">
+          <button class="img-preview-remove" onclick="removeImage()">✕</button>
+        </div>
+        <div class="progress-bar-wrap" id="upload-progress-wrap" style="display:none;margin-top:.17rem;">
+          <div class="progress-bar" id="upload-progress-bar"></div>
+        </div>
+      </div>
+
+      <!-- Base Adı -->
+      <div class="form-group">
+        <div class="form-label">🏷 Base Adı *</div>
+        <input class="form-input" type="text" id="upload-title" placeholder="örn: TH9 Anti-3 Star War Base" maxlength="120">
+      </div>
+
+      <!-- Köy Tipi -->
+      <div class="form-group">
+        <div class="form-label">🏘 Köy Tipi *</div>
+        <select class="form-input form-select" id="upload-village" onchange="updateUploadLevels()">
+          <option value="home">🏰 Home Village</option>
+          <option value="builder">🔨 Builder Base</option>
+        </select>
+      </div>
+
+      <!-- TH Level -->
+      <div class="form-group">
+        <div class="form-label">⭐ Seviye *</div>
+        <select class="form-input form-select" id="upload-level"></select>
+      </div>
+
+      <!-- Tür -->
+      <div class="form-group">
+        <div class="form-label">⚔️ Base Türü *</div>
+        <select class="form-input form-select" id="upload-type">
+          <option value="war">⚔️ War</option>
+          <option value="farm">🌾 Farm</option>
+          <option value="trophy">🏆 Trophy</option>
+          <option value="hybrid">🔥 Hybrid</option>
+          <option value="progress">⬆️ Progress</option>
+        </select>
+      </div>
+
+      <!-- CoC Linki -->
+      <div class="form-group">
+        <div class="form-label">🔗 Clash of Clans Linki *</div>
+        <input class="form-input" type="url" id="upload-coc-link" placeholder="https://link.clashofclans.com/...">
+        <div style="font-size:.33rem;color:var(--text-muted);margin-top:.1rem;">CoC → Base → Paylaş → Bağlantıyı Kopyala</div>
+      </div>
+
+      <!-- Takma Ad -->
+      <div class="form-group">
+        <div class="form-label">👤 Takma Adın (opsiyonel)</div>
+        <input class="form-input" type="text" id="upload-nickname" placeholder="örn: ClashMaster99" maxlength="40">
+      </div>
+
+      <button class="btn-upload-submit" id="upload-submit-btn" onclick="submitUpload()">
+        ⬆️ Yükle & İncelemeye Gönder
+      </button>
+      <div style="font-size:.33rem;color:var(--text-muted);text-align:center;padding-bottom:.22rem;">
+        Yüklenen baseler moderasyon sonrası yayınlanır.
+      </div>
+    </div>
+  </div>
+  <nav class="navbar">
+    <div class="nav-item" onclick="goScreen('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+    <div class="nav-item" onclick="goScreen('screen-search')"><div class="nav-icon">🔍</div><div class="nav-label">Browse</div></div>
+    <div class="nav-item" onclick="goScreen('screen-community')"><div class="nav-icon">👥</div><div class="nav-label">Community</div></div>
+    <div class="nav-item active"><div class="nav-icon">⬆️</div><div class="nav-label">Upload</div></div>
+    <div class="nav-item" onclick="goScreen('screen-favs')"><div class="nav-icon">❤️</div><div class="nav-label">Favorites</div></div>
+  </nav>
+</div>
 </div><!-- /#app -->
 
 <!-- ══════════════════════════════════════════
@@ -894,16 +1096,21 @@ function thLabel(base) {
 async function loadAllBases() {
   showLoading('Baseler yükleniyor');
   try {
-    let data;
-    try {
-      data = await sbGet('layouts?select=*&is_active=eq.true&order=created_at.desc');
-    } catch(e) {
-      data = await sbGet('layouts?select=*&order=created_at.desc');
-    }
+    // Fetch all admin-approved bases (source=admin OR source is null, is_active=true)
+    const data = await sbGet('layouts?select=*&is_active=eq.true&order=created_at.desc');
     allBases = Array.isArray(data) ? data : [];
+    console.log('Loaded bases:', allBases.length);
   } catch(e) {
     console.error('Supabase load error:', e);
-    allBases = [];
+    // Fallback: try without filter
+    try {
+      const data2 = await sbGet('layouts?select=*&order=created_at.desc&limit=200');
+      allBases = Array.isArray(data2) ? data2 : [];
+      console.log('Fallback loaded:', allBases.length);
+    } catch(e2) {
+      console.error('Fallback also failed:', e2);
+      allBases = [];
+    }
   } finally {
     hideLoading();
   }
@@ -977,10 +1184,12 @@ function renderGrid(bases, gridEl, emptyEl) {
 function goScreen(id) {
   // 1) Önce loading ekranını göster
   const SCREEN_LABELS = {
-    'screen-home':   'Ana sayfa yükleniyor',
-    'screen-list':   'Baseler yükleniyor',
-    'screen-search': 'Arama yükleniyor',
-    'screen-favs':   'Favoriler yükleniyor',
+    'screen-home':      'Ana sayfa yükleniyor',
+    'screen-list':      'Baseler yükleniyor',
+    'screen-search':    'Arama yükleniyor',
+    'screen-favs':      'Favoriler yükleniyor',
+    'screen-community': 'Community yükleniyor',
+    'screen-upload':    'Yükleme sayfası açılıyor',
   };
   showLoading(SCREEN_LABELS[id] || 'Yükleniyor');
 
@@ -1001,9 +1210,11 @@ function goScreen(id) {
         tickTransition();
       }
 
-      if (id === 'screen-search') { applyFilters(); hideLoading(true); }
-      else if (id === 'screen-favs')   { renderFavs();   hideLoading(true); }
-      else if (id === 'screen-list')   { renderListScreen(); hideLoading(true); }
+      if (id === 'screen-search')    { applyFilters();           hideLoading(true); }
+      else if (id === 'screen-favs')      { renderFavs();            hideLoading(true); }
+      else if (id === 'screen-list')      { renderListScreen();       hideLoading(true); }
+      else if (id === 'screen-community') { renderCommunityScreen();  hideLoading(true); }
+      else if (id === 'screen-upload')    { updateUploadLevels();     hideLoading(true); }
       else { hideLoading(true); }
     });
   });
@@ -1017,9 +1228,10 @@ function goBack() {
     prevScreen = 'screen-home';
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if (id === 'screen-search') applyFilters();
-    if (id === 'screen-favs')   renderFavs();
-    if (id === 'screen-list')   renderListScreen();
+    if (id === 'screen-search')    applyFilters();
+    if (id === 'screen-favs')      renderFavs();
+    if (id === 'screen-list')      renderListScreen();
+    if (id === 'screen-community') renderCommunityScreen();
     hideLoading(true); // hızlı — 400ms
   }));
 }
@@ -1402,6 +1614,222 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+
+/* ═══════════════════════════════════════════
+   SUPABASE STORAGE UPLOAD
+═══════════════════════════════════════════ */
+const STORAGE_BUCKET = 'base-images';
+let uploadImageFile = null;
+let uploadImageUrl  = null;
+let commTab = 'all';
+
+async function uploadImageToStorage(file) {
+  const ext  = file.name.split('.').pop().toLowerCase();
+  const path = `community/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  const url  = `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`;
+
+  // Show progress bar
+  const wrap = document.getElementById('upload-progress-wrap');
+  const bar  = document.getElementById('upload-progress-bar');
+  wrap.style.display = 'block';
+  bar.style.width = '15%';
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': file.type,
+      'x-upsert': 'true'
+    },
+    body: file
+  });
+
+  bar.style.width = '90%';
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error('Storage upload failed: ' + txt);
+  }
+  bar.style.width = '100%';
+  setTimeout(() => { wrap.style.display = 'none'; bar.style.width = '0%'; }, 600);
+
+  return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
+}
+
+/* ── Image select / preview ── */
+function handleImageSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast('⚠️ Dosya 5MB den büyük!'); return; }
+  uploadImageFile = file;
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('img-preview').src = ev.target.result;
+    document.getElementById('img-preview-wrap').style.display = 'block';
+    document.getElementById('img-upload-area').style.display  = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage() {
+  uploadImageFile = null;
+  uploadImageUrl  = null;
+  document.getElementById('img-preview-wrap').style.display = 'none';
+  document.getElementById('img-upload-area').style.display  = 'flex';
+  document.getElementById('upload-file-input').value = '';
+}
+
+/* ── Level dropdown for upload form ── */
+function updateUploadLevels() {
+  const village = document.getElementById('upload-village').value;
+  const levels  = village === 'builder'
+    ? ['4','5','6','7','8','9','10']
+    : ['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
+  const prefix  = village === 'builder' ? 'BH' : 'TH';
+  const sel     = document.getElementById('upload-level');
+  sel.innerHTML = levels.map(v => `<option value="${v}">${prefix} ${v}</option>`).join('');
+  // Default to middle level
+  sel.value = village === 'builder' ? '7' : '9';
+}
+
+/* ── Submit ── */
+async function submitUpload() {
+  const title    = document.getElementById('upload-title').value.trim();
+  const village  = document.getElementById('upload-village').value;
+  const level    = document.getElementById('upload-level').value;
+  const type     = document.getElementById('upload-type').value;
+  const cocLink  = document.getElementById('upload-coc-link').value.trim();
+  const nickname = document.getElementById('upload-nickname').value.trim();
+
+  // Validation
+  if (!uploadImageFile) { showToast('⚠️ Fotoğraf seç!'); return; }
+  if (!title)           { showToast('⚠️ Base adı gir!'); return; }
+  if (!cocLink)         { showToast('⚠️ CoC linki gir!'); return; }
+
+  const btn = document.getElementById('upload-submit-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Yükleniyor...';
+  showLoading('Yükleniyor');
+
+  try {
+    // 1) Upload image
+    uploadImageUrl = await uploadImageToStorage(uploadImageFile);
+
+    // 2) Insert row into layouts (status: pending, source: community)
+    const body = {
+      title,
+      village,
+      th_level: parseInt(level),
+      type,
+      image_url: uploadImageUrl,
+      coc_link: cocLink,
+      source: 'community',
+      uploader_name: nickname || 'Anonymous',
+      uploaded_by: getUserId(),
+      status: 'pending',
+      is_active: false,   // hidden until approved
+      uses: 0,
+      favs: 0
+    };
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/layouts`, {
+      method: 'POST',
+      headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) throw new Error('DB insert failed: ' + await res.text());
+
+    // Success
+    hideLoading(true);
+    document.getElementById('upload-form').style.display    = 'none';
+    document.getElementById('upload-success').classList.add('show');
+
+  } catch(e) {
+    console.error(e);
+    showToast('❌ Hata: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = '⬆️ Yükle & İncelemeye Gönder';
+    hideLoading(true);
+  }
+}
+
+function resetUploadForm() {
+  document.getElementById('upload-form').style.display = 'flex';
+  document.getElementById('upload-success').classList.remove('show');
+  document.getElementById('upload-title').value    = '';
+  document.getElementById('upload-coc-link').value = '';
+  document.getElementById('upload-nickname').value = '';
+  document.getElementById('upload-submit-btn').disabled = false;
+  document.getElementById('upload-submit-btn').textContent = '⬆️ Yükle & İncelemeye Gönder';
+  removeImage();
+  updateUploadLevels();
+}
+
+/* ── Anonymous user ID ── */
+function getUserId() {
+  let uid = localStorage.getItem('cv_uid');
+  if (!uid) {
+    uid = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    localStorage.setItem('cv_uid', uid);
+  }
+  return uid;
+}
+
+/* ═══════════════════════════════════════════
+   COMMUNITY SCREEN
+═══════════════════════════════════════════ */
+let communityBases = [];
+
+async function loadCommunityBases() {
+  try {
+    // Only show approved community bases (is_active=true, source=community)
+    const data = await sbGet('layouts?select=*&source=eq.community&is_active=eq.true&order=created_at.desc');
+    communityBases = Array.isArray(data) ? data : [];
+  } catch(e) {
+    communityBases = [];
+  }
+}
+
+function switchCommTab(tab) {
+  commTab = tab;
+  document.getElementById('comm-tab-all').classList.toggle('active',  tab === 'all');
+  document.getElementById('comm-tab-mine').classList.toggle('active', tab === 'mine');
+  renderCommunityScreen();
+}
+
+function renderCommunityScreen() {
+  const grid  = document.getElementById('comm-grid');
+  const empty = document.getElementById('comm-empty');
+  let bases = communityBases;
+  if (commTab === 'mine') {
+    const uid = getUserId();
+    bases = communityBases.filter(b => b.uploaded_by === uid);
+    // Also check pending ones from allBases
+    const pending = allBases.filter(b => b.source === 'community' && b.uploaded_by === uid);
+    // Merge without duplicates
+    const ids = new Set(bases.map(b => b.id));
+    pending.forEach(b => { if (!ids.has(b.id)) bases.push(b); });
+  }
+  if (!bases.length) {
+    empty.style.display = 'flex'; grid.innerHTML = '';
+  } else {
+    empty.style.display = 'none';
+    grid.innerHTML = bases.map(b => {
+      // Show pending badge for user's own pending bases
+      const isPending = b.is_active === false || b.status === 'pending';
+      const card = cardHtml(b);
+      if (isPending && commTab === 'mine') {
+        return card.replace('<div class="base-card"',
+          '<div class="base-card" style="opacity:.7;border-color:rgba(245,166,35,.4);"'
+        ).replace('<div class="card-type">',
+          '<div class="card-type" style="color:var(--gold);">⏳ İncelemede · </div><div class="card-type" style="display:none;">');
+      }
+      return card;
+    }).join('');
+  }
+}
+
 /* ═══════════════════════════════════════════
    LIGHTBOX
 ═══════════════════════════════════════════ */
@@ -1433,6 +1861,7 @@ async function init() {
   document.getElementById('count-builder').textContent = '…';
 
   await loadAllBases();
+  loadCommunityBases().catch(e => console.warn("Community load skipped:", e));
 
   // Update category counts
   const homeCount    = allBases.filter(b => b.village === 'home').length;
