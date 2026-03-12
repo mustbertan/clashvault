@@ -568,56 +568,6 @@ body::before {
 }
 .card-uploader-icon { font-size:.3rem; opacity:.8; }
 
-/* ── Community Top 3 Podium — compact 3-column ── */
-.comm-podium {
-  padding:.28rem .45rem .11rem;
-  flex-shrink:0;
-}
-.comm-podium-title {
-  font-family:'Cinzel Decorative',serif;
-  font-size:.34rem; color:var(--gold-light);
-  display:flex; align-items:center; gap:.18rem;
-  margin-bottom:.22rem;
-}
-.comm-podium-title::before {
-  content:''; display:block; width:3px; height:.38rem;
-  background:var(--gold); border-radius:2px;
-}
-.podium-cards { display:flex; gap:.17rem; }
-.podium-card {
-  flex:1; min-width:0; background:var(--brown-card);
-  border-radius:.33rem; overflow:hidden;
-  border:1.5px solid var(--brown-border);
-  cursor:pointer; position:relative;
-  transition:all .2s;
-}
-.podium-card.rank-1 { border-color:rgba(255,215,0,.55); box-shadow:0 2px 10px rgba(255,215,0,.15); }
-.podium-card.rank-2 { border-color:rgba(192,192,192,.4); }
-.podium-card.rank-3 { border-color:rgba(205,127,50,.4); }
-.podium-thumb {
-  width:100%; aspect-ratio:1/1; object-fit:cover;
-  display:block; background:#1a1040;
-}
-.podium-rank-badge {
-  position:absolute; top:.15rem; left:.15rem;
-  font-size:.38rem; line-height:1;
-  filter:drop-shadow(0 1px 3px rgba(0,0,0,.8));
-}
-.podium-info { padding:.17rem .18rem .2rem; }
-.podium-name {
-  font-size:.28rem; font-weight:800; color:var(--cream);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  margin-bottom:.08rem; line-height:1.2;
-}
-.podium-uploader {
-  font-size:.25rem; color:var(--gold); font-weight:700;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.podium-score {
-  display:flex; gap:.11rem; align-items:center;
-  font-size:.24rem; color:var(--text-muted); margin-top:.08rem;
-  font-weight:700;
-}
 
 /* ── Community filter bar ── */
 .comm-filter-bar {
@@ -669,6 +619,16 @@ body::before {
 }
 .comm-village-chip.active {
   background:rgba(245,166,35,.18); border-color:var(--gold-dark); color:var(--gold);
+}
+
+/* ── Sıralama skoru rozeti (Community kartları) ── */
+.card-rank-badge {
+  position:absolute; bottom:.28rem; left:.33rem; z-index:3;
+  background:rgba(0,0,0,.72); border:1px solid rgba(245,166,35,.5);
+  border-radius:.22rem; padding:.08rem .28rem;
+  font-size:.32rem; font-weight:900; color:var(--gold);
+  letter-spacing:.3px; backdrop-filter:blur(2px);
+  display:flex; align-items:center; gap:.1rem;
 }
 </style>
 </head>
@@ -1068,12 +1028,6 @@ body::before {
   <div class="community-tabs">
     <button class="comm-tab active" id="comm-tab-all"  data-i18n="comm_tab_all"  onclick="switchCommTab('all')">Tüm Düzenler</button>
     <button class="comm-tab"        id="comm-tab-mine" data-i18n="comm_tab_mine" onclick="switchCommTab('mine')">Yüklemelerim</button>
-  </div>
-
-  <!-- TOP 3 PODIUM (sadece 'all' tabında görünür) -->
-  <div class="comm-podium" id="comm-podium">
-    <div class="comm-podium-title">🏆 En Başarılı 3 Düzen</div>
-    <div class="podium-cards" id="podium-cards"></div>
   </div>
 
   <!-- SORT PILLS -->
@@ -2136,6 +2090,7 @@ function cardHtml(base, opts={}) {
         : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.25;">🏰</div>`}
       <div class="card-badge">${tl}</div>
       <div class="card-fav ${fav?'active':''}" onclick="event.stopPropagation();toggleFav(${base.id},this)">${fav?'❤️':'🤍'}</div>
+      ${opts.rank != null ? `<div class="card-rank-badge">⭐ ${opts.rank}</div>` : ''}
     </div>
     <div class="card-info">
       <div class="card-type">${base.village==='builder'?'Builder Base':'Home Village'}</div>
@@ -3242,7 +3197,6 @@ function switchCommTab(tab) {
   document.getElementById('comm-tab-mine').classList.toggle('active', tab === 'mine');
   // Podium + filtreler sadece 'all' tabında
   const showAll = tab === 'all';
-  document.getElementById('comm-podium').style.display     = showAll ? '' : 'none';
   document.getElementById('comm-sort-bar').style.display   = showAll ? '' : 'none';
   document.getElementById('comm-village-row').style.display= showAll ? '' : 'none';
   document.getElementById('comm-type-row').style.display   = showAll ? '' : 'none';
@@ -3271,28 +3225,6 @@ function setCommType(val) {
   document.querySelectorAll('[data-ctype]').forEach(c =>
     c.classList.toggle('active', c.dataset.ctype === val));
   renderCommunityScreen();
-}
-
-function renderPodium(top3) {
-  const medals = ['🥇','🥈','🥉'];
-  const rankClass = ['rank-1','rank-2','rank-3'];
-  document.getElementById('podium-cards').innerHTML = top3.map((b, i) => `
-    <div class="podium-card ${rankClass[i]}" onclick="openDetail(${b.id})">
-      ${b.image_url
-        ? `<img class="podium-thumb" src="${b.image_url}" alt="${escHtml(b.title)}" loading="lazy">`
-        : `<div class="podium-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;opacity:.3;">🏰</div>`}
-      <div class="podium-rank-badge">${medals[i]}</div>
-      <div class="podium-info">
-        <div class="podium-name">${escHtml(b.title)}</div>
-        ${b.uploader_name && b.uploader_name !== 'Anonymous'
-          ? `<div class="podium-uploader">👤 ${escHtml(b.uploader_name)}</div>` : ''}
-        <div class="podium-score">
-          <span>❤️ ${fmtNum(b.favs)}</span>
-          <span>·</span>
-          <span>👁 ${fmtNum(b.uses)}</span>
-        </div>
-      </div>
-    </div>`).join('');
 }
 
 function renderCommunityScreen() {
@@ -3330,12 +3262,11 @@ function renderCommunityScreen() {
   if (commVillage !== 'all') bases = bases.filter(b => b.village === commVillage);
   if (commType    !== 'all') bases = bases.filter(b => b.type    === commType);
 
-  // Podium: filtresiz top 3 (skor bazlı)
-  const top3 = [...communityBases]
+  // Tüm community bazların skor sıralamasını hesapla (filtresiz, rank için)
+  const scoreRanks = new Map();
+  [...communityBases]
     .sort((a, b) => commScore(b) - commScore(a))
-    .slice(0, 3);
-  if (top3.length) renderPodium(top3);
-  document.getElementById('comm-podium').style.display = top3.length ? '' : 'none';
+    .forEach((b, i) => scoreRanks.set(b.id, i + 1));
 
   // Sırala
   switch (commSort) {
@@ -3350,7 +3281,10 @@ function renderCommunityScreen() {
     empty.style.display = 'flex'; grid.innerHTML = ''; return;
   }
   empty.style.display = 'none';
-  grid.innerHTML = bases.map(b => cardHtml(b, { showUploader: true })).join('');
+  grid.innerHTML = bases.map(b => cardHtml(b, {
+    showUploader: true,
+    rank: scoreRanks.get(b.id)
+  })).join('');
 }
 
 /* ═══════════════════════════════════════════
