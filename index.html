@@ -1967,6 +1967,28 @@ async function supabasePatch(path, body) {
   });
 }
 
+// Atomic increment/decrement via Supabase RPC
+// Requires SQL function installed — see below
+async function sbIncrement(id, column, delta) {
+  // Use PATCH with Supabase's built-in column expression
+  // Supabase REST supports atomic increments via rpc
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_col`, {
+    method: 'POST',
+    headers: SB_HEADERS,
+    body: JSON.stringify({ row_id: id, col_name: column, delta_val: delta })
+  });
+  if (!r.ok) {
+    // Fallback: fetch then patch (non-atomic but better than nothing)
+    const fresh = await sbGet(`layouts?id=eq.${id}&select=${column}`);
+    const cur = fresh?.[0]?.[column] ?? 0;
+    const newVal = Math.max(0, cur + delta);
+    await supabasePatch(`layouts?id=eq.${id}`, { [column]: newVal });
+    return newVal;
+  }
+  const data = await r.json();
+  return data?.new_value ?? null;
+}
+
 /* ═══════════════════════════════════════════
    STATE
 ═══════════════════════════════════════════ */
@@ -2520,10 +2542,17 @@ async function openDetail(id) { haptic.light();
   currentBase = allBases.find(b => b.id === id);
   if (!currentBase) { hideLoading(); return; }
 
-  // Increment uses counter in Supabase (use DB value + 1)
-  const newUses = (currentBase.uses || 0) + 1;
-  currentBase.uses = newUses;
-  supabasePatch(`layouts?id=eq.${id}`, { uses: newUses }).catch(() => {});
+  // Atomic increment uses in Supabase
+  sbIncrement(id, 'uses', 1).then(newVal => {
+    if (newVal != null) {
+      currentBase.uses = newVal;
+      document.getElementById('stat-uses').textContent = fmtNum(newVal);
+      const cached = allBases.find(b => b.id === id);
+      if (cached) cached.uses = newVal;
+    }
+  }).catch(() => {
+    currentBase.uses = (currentBase.uses || 0) + 1;
+  });
 
   const tl = thLabel(currentBase);
   document.getElementById('detail-name').textContent  = currentBase.title;
@@ -2593,43 +2622,34 @@ async function openDetail(id) { haptic.light();
 async function toggleFav(id, el) {
   const base = allBases.find(b => b.id === id);
   const wasLiked = favorites.includes(id);
+  const delta = wasLiked ? -1 : 1;
 
   if (wasLiked) {
     favorites = favorites.filter(f => f !== id);
     if (el) { el.textContent = '🤍'; el.classList.remove('active'); }
     haptic.light(); showToast(t('toast_fav_remove'));
-    // Fetch current favs from DB then decrement
-    try {
-      const fresh = await sbGet(`layouts?id=eq.${id}&select=favs`);
-      const dbFavs = fresh?.[0]?.favs ?? (base?.favs ?? 1);
-      const newFavs = Math.max(0, dbFavs - 1);
-      if (base) base.favs = newFavs;
-      supabasePatch(`layouts?id=eq.${id}`, { favs: newFavs }).catch(() => {});
-    } catch(e) {
-      if (base) { base.favs = Math.max(0, (base.favs||0) - 1); }
-      supabasePatch(`layouts?id=eq.${id}`, { favs: base?.favs ?? 0 }).catch(() => {});
-    }
   } else {
     favorites.push(id);
     if (el) { el.textContent = '❤️'; el.classList.add('active'); }
     haptic.heart(); showToast(t('toast_fav_add'));
-    // Fetch current favs from DB then increment
-    try {
-      const fresh = await sbGet(`layouts?id=eq.${id}&select=favs`);
-      const dbFavs = fresh?.[0]?.favs ?? (base?.favs ?? 0);
-      const newFavs = dbFavs + 1;
-      if (base) base.favs = newFavs;
-      supabasePatch(`layouts?id=eq.${id}`, { favs: newFavs }).catch(() => {});
-    } catch(e) {
-      if (base) { base.favs = (base.favs||0) + 1; }
-      supabasePatch(`layouts?id=eq.${id}`, { favs: base?.favs ?? 1 }).catch(() => {});
-    }
   }
-  localStorage.setItem('cv_favs', JSON.stringify(favorites));
-  // Update stat display if detail screen is showing this base
+
+  // Optimistic local update
+  if (base) base.favs = Math.max(0, (base.favs || 0) + delta);
   if (currentBase?.id === id) {
     document.getElementById('stat-favs').textContent = fmtNum(base?.favs ?? 0);
   }
+  localStorage.setItem('cv_favs', JSON.stringify(favorites));
+
+  // Atomic DB update — result syncs actual value back
+  sbIncrement(id, 'favs', delta).then(newVal => {
+    if (newVal != null) {
+      if (base) base.favs = newVal;
+      if (currentBase?.id === id) {
+        document.getElementById('stat-favs').textContent = fmtNum(newVal);
+      }
+    }
+  }).catch(() => {});
 }
 
 function toggleDetailFav() {
