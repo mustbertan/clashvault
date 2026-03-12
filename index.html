@@ -785,9 +785,10 @@ function showLoading(msg) {
   loadingShownAt = Date.now();
 }
 
-function hideLoading() {
+function hideLoading(fast) {
   const elapsed = Date.now() - loadingShownAt;
-  const remaining = Math.max(0, LOADING_MIN_MS - elapsed);
+  const minMs = fast ? 400 : LOADING_MIN_MS;
+  const remaining = Math.max(0, minMs - elapsed);
   clearTimeout(loadingTimer);
   loadingTimer = setTimeout(() => {
     document.getElementById('loading-overlay').classList.remove('show');
@@ -999,10 +1000,10 @@ function goScreen(id) {
         tickTransition();
       }
 
-      if (id === 'screen-search') { applyFilters(); hideLoading(); }
-      else if (id === 'screen-favs')   { renderFavs();   hideLoading(); }
-      else if (id === 'screen-list')   { renderListScreen(); hideLoading(); }
-      else { hideLoading(); }
+      if (id === 'screen-search') { applyFilters(); hideLoading(true); }
+      else if (id === 'screen-favs')   { renderFavs();   hideLoading(true); }
+      else if (id === 'screen-list')   { renderListScreen(); hideLoading(true); }
+      else { hideLoading(true); }
     });
   });
 }
@@ -1219,7 +1220,7 @@ async function openDetail(id) {
   document.getElementById('screen-detail').classList.add('active');
   history.pushState({ screen: 'screen-detail' }, '', '');
 
-  hideLoading();
+  hideLoading(true); // kart açma — hızlı
 }
 
 /* ═══════════════════════════════════════════
