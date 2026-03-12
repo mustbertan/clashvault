@@ -9,10 +9,3 @@
     }
   ]
 }
-```
-
-**4. Dosyaların çalışıp çalışmadığını kontrol et**
-
-Tarayıcıda şu adrese git:
-```
-https://clashvault.vercel.app/.well-known/assetlinks.json
