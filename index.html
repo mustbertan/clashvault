@@ -959,11 +959,6 @@ body::before {
   <div class="scroll-content">
     <div class="detail-preview" id="detail-preview"><div class="no-img">🏰</div></div>
 
-    <!-- Share button below preview image -->
-    <div style="padding:.33rem .45rem 0;">
-      <button class="btn-share" data-i18n="detail_share" onclick="openShare(currentBase)">↗ Share This Base</button>
-    </div>
-
     <div class="detail-tags" id="detail-tags"></div>
     <div class="detail-stats-row">
       <div class="stat-box"><span class="val" id="stat-uses">0</span><span class="lbl">Uses</span></div>
@@ -983,8 +978,11 @@ body::before {
     </div>
 
     <div class="action-btns">
-      <button class="btn-primary" data-i18n="detail_copy" onclick="copyToClash()">🏰 Copy to Clash of Clans</button>
+      <button class="btn-share" data-i18n="detail_share" onclick="openShare(currentBase)" style="flex:1;">↗ Share This Base</button>
       <button class="btn-secondary" id="fav-btn" onclick="toggleDetailFav()">🤍</button>
+    </div>
+    <div style="padding:.33rem .45rem 0;">
+      <button class="btn-primary" data-i18n="detail_copy" onclick="copyToClash()" style="width:100%;">🏰 Copy to Clash of Clans</button>
     </div>
     <div class="similar-section">
       <div class="similar-title" data-i18n="similar_title">Similar Bases</div>
@@ -1953,7 +1951,8 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const SB_HEADERS = {
   'apikey': SUPABASE_KEY,
   'Authorization': `Bearer ${SUPABASE_KEY}`,
-  'Content-Type': 'application/json'
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
 };
 
 async function sbGet(path) {
@@ -1967,26 +1966,13 @@ async function supabasePatch(path, body) {
   });
 }
 
-// Atomic increment/decrement via Supabase RPC
-// Requires SQL function installed — see below
+// Increment/decrement: fetch current DB value then write new value
 async function sbIncrement(id, column, delta) {
-  // Use PATCH with Supabase's built-in column expression
-  // Supabase REST supports atomic increments via rpc
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_col`, {
-    method: 'POST',
-    headers: SB_HEADERS,
-    body: JSON.stringify({ row_id: id, col_name: column, delta_val: delta })
-  });
-  if (!r.ok) {
-    // Fallback: fetch then patch (non-atomic but better than nothing)
-    const fresh = await sbGet(`layouts?id=eq.${id}&select=${column}`);
-    const cur = fresh?.[0]?.[column] ?? 0;
-    const newVal = Math.max(0, cur + delta);
-    await supabasePatch(`layouts?id=eq.${id}`, { [column]: newVal });
-    return newVal;
-  }
-  const data = await r.json();
-  return data?.new_value ?? null;
+  const fresh = await sbGet(`layouts?id=eq.${id}&select=${column}`);
+  const cur = fresh?.[0]?.[column] ?? 0;
+  const newVal = Math.max(0, cur + delta);
+  await supabasePatch(`layouts?id=eq.${id}`, { [column]: newVal });
+  return newVal;
 }
 
 /* ═══════════════════════════════════════════
