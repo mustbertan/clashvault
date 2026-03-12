@@ -1,0 +1,18 @@
+{
+  "headers": [
+    {
+      "source": "/.well-known/assetlinks.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    }
+  ]
+}
+```
+
+**4. Dosyaların çalışıp çalışmadığını kontrol et**
+
+Tarayıcıda şu adrese git:
+```
+https://clashvault.vercel.app/.well-known/assetlinks.json
