@@ -28,7 +28,7 @@
   --shadow-gold:0 0 20px rgba(245,166,35,0.3); --radius:16px;
 }
 /* ─── GLOBAL FONT SCALE ─── */
-html { font-size: clamp(18px, 4.8vw, 22px); }
+html { font-size: clamp(72px, 19.2vw, 88px); }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
 html, body {
   height: 100%;
@@ -463,6 +463,31 @@ body::before {
 }
 .lang-opt:hover { background:rgba(245,166,35,.18); color:var(--gold); }
 .lang-opt.active { color:var(--gold); background:rgba(245,166,35,.12); }
+
+/* ── Sort bar (Browse screen) ── */
+.sort-bar {
+  display:flex; gap:.22rem; padding:.11rem .45rem .33rem;
+  overflow-x:auto; flex-shrink:0;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.sort-bar::-webkit-scrollbar { display:none; }
+.sort-pill {
+  flex-shrink:0; display:flex; align-items:center; gap:.18rem;
+  padding:.2rem .44rem; border-radius:2rem;
+  border:1.5px solid var(--brown-border);
+  background:var(--brown-card); color:var(--text-muted);
+  font-family:'Nunito',sans-serif; font-size:.37rem; font-weight:700;
+  cursor:pointer; transition:all .18s; white-space:nowrap; user-select:none;
+}
+.sort-pill.active {
+  background:var(--gold-dark); border-color:var(--gold);
+  color:var(--brown-deep);
+}
+.sort-pill .sort-icon { font-size:.42rem; }
+.sort-result-count {
+  padding:.05rem .45rem .2rem;
+  font-size:.35rem; color:var(--text-muted); flex-shrink:0;
+}
 </style>
 </head>
 <body>
@@ -538,6 +563,19 @@ body::before {
         <div class="cat-arrow">›</div>
       </div>
 
+    </div>
+    <!-- HOME SORT + RECENT BASES -->
+    <div class="sort-bar" id="home-sort-bar" style="margin-top:.11rem;">
+      <div class="sort-pill active" data-hsort="newest"  onclick="setHomeSort('newest')">✨ En Yeni</div>
+      <div class="sort-pill"       data-hsort="popular" onclick="setHomeSort('popular')">🔥 En Popüler</div>
+      <div class="sort-pill"       data-hsort="favs"    onclick="setHomeSort('favs')">❤️ En Çok Beğenilen</div>
+    </div>
+    <div id="home-bases-section" style="padding:0 .45rem;">
+      <div class="cards-grid" id="home-bases-grid" style="margin-top:.33rem;"></div>
+      <div id="home-bases-empty" class="empty-state" style="display:none;">
+        <div class="empty-icon">🏰</div>
+        <div class="empty-title" data-i18n="empty_title">No Bases Found</div>
+      </div>
     </div>
     <div style="height:16px;"></div>
   </div>
@@ -646,58 +684,103 @@ body::before {
       <span class="search-icon">🔍</span>
       <input type="text" placeholder="Search bases..." data-i18n="search_placeholder" id="search-input" oninput="applyFilters()">
     </div>
-    <button class="filter-btn" onclick="toggleFilterPanel()">⚡</button>
+    <!-- filter toggle removed - filters always visible -->
   </div>
 
-  <div id="filter-panel" style="display:none;overflow-y:auto;max-height:280px;flex-shrink:0;">
-    <div class="filter-group">
-      <div class="filter-group-title">Village Type</div>
-      <div class="filter-chips">
-        <div class="filter-chip active" data-group="village" data-val="all"     onclick="toggleChip(this)">All</div>
-        <div class="filter-chip"        data-group="village" data-val="home"    onclick="toggleChip(this)">🏰 Home Village</div>
-        <div class="filter-chip"        data-group="village" data-val="builder" onclick="toggleChip(this)">🔨 Builder Base</div>
+  <!-- SORT BAR -->
+  <div class="sort-bar" id="sort-bar">
+    <div class="sort-pill active" data-sort="newest"   onclick="setSort('newest')">  <span class="sort-icon">✨</span> Newest</div>
+    <div class="sort-pill"       data-sort="popular"  onclick="setSort('popular')"> <span class="sort-icon">🔥</span> Most Used</div>
+    <div class="sort-pill"       data-sort="favs"     onclick="setSort('favs')">    <span class="sort-icon">❤️</span> Most Liked</div>
+    <div class="sort-pill"       data-sort="az"       onclick="setSort('az')">      <span class="sort-icon">🔤</span> A–Z</div>
+  </div>
+  <div class="sort-result-count" id="sort-result-count"></div>
+
+  <!-- BROWSE DROPDOWN FILTERS -->
+  <div id="filter-panel" style="padding:.22rem .45rem .33rem;flex-shrink:0;display:block;">
+    <div style="display:flex;gap:.33rem;flex-wrap:wrap;align-items:flex-start;">
+
+      <!-- Village dropdown -->
+      <div style="position:relative;flex:1;min-width:4rem;">
+        <button id="browse-village-btn" onclick="toggleDropdown('browse-village-dd','browse-village-btn')"
+          style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:.22rem;
+                 padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);
+                 background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;
+                 font-size:.42rem;font-weight:700;cursor:pointer;">
+          <span id="browse-village-label">🏰 Ana Köy</span>
+          <span style="color:var(--gold);font-size:.5rem;">▾</span>
+        </button>
+        <div id="browse-village-dd" style="display:none;position:absolute;top:110%;left:0;right:0;z-index:400;
+             background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;
+             overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);">
+          <div class="dd-item" onclick="setBrowseVillage('home','🏰 Ana Köy')">🏰 Ana Köy</div>
+          <div class="dd-item" onclick="setBrowseVillage('builder','🔨 İnşaatçı Köyü')">🔨 İnşaatçı Köyü</div>
+          <div class="dd-item" onclick="setBrowseVillage('all','🏘 Tümü')">🏘 Tümü</div>
+        </div>
       </div>
-    </div>
-    <div class="filter-group">
-      <div class="filter-group-title">Town Hall Level</div>
-      <div class="filter-chips">
-        <div class="filter-chip active" data-group="th" data-val="all"   onclick="toggleChip(this)">All</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 4"  onclick="toggleChip(this)">TH 4</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 5"  onclick="toggleChip(this)">TH 5</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 6"  onclick="toggleChip(this)">TH 6</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 7"  onclick="toggleChip(this)">TH 7</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 8"  onclick="toggleChip(this)">TH 8</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 9"  onclick="toggleChip(this)">TH 9</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 10" onclick="toggleChip(this)">TH 10</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 11" onclick="toggleChip(this)">TH 11</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 12" onclick="toggleChip(this)">TH 12</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 13" onclick="toggleChip(this)">TH 13</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 14" onclick="toggleChip(this)">TH 14</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 15" onclick="toggleChip(this)">TH 15</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 16" onclick="toggleChip(this)">TH 16</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 17" onclick="toggleChip(this)">TH 17</div>
-        <div class="filter-chip"        data-group="th" data-val="TH 18" onclick="toggleChip(this)">TH 18</div>
-        <div class="filter-chip"        data-group="th" data-val="BH 4"  onclick="toggleChip(this)">BH 4</div>
-        <div class="filter-chip"        data-group="th" data-val="BH 5"  onclick="toggleChip(this)">BH 5</div>
-        <div class="filter-chip"        data-group="th" data-val="BH 6"  onclick="toggleChip(this)">BH 6</div>
-        <div class="filter-chip"        data-group="th" data-val="BH 7"  onclick="toggleChip(this)">BH 7</div>
-        <div class="filter-chip"        data-group="th" data-val="BH 8"  onclick="toggleChip(this)">BH 8</div>
-        <div class="filter-chip"        data-group="th" data-val="BH 9"  onclick="toggleChip(this)">BH 9</div>
-        <div class="filter-chip"        data-group="th" data-val="BH 10" onclick="toggleChip(this)">BH 10</div>
+
+      <!-- Level dropdown -->
+      <div style="position:relative;flex:1;min-width:3.5rem;">
+        <button id="browse-level-btn" onclick="toggleDropdown('browse-level-dd','browse-level-btn')"
+          style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:.22rem;
+                 padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);
+                 background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;
+                 font-size:.42rem;font-weight:700;cursor:pointer;">
+          <span id="browse-level-label">🏰 TH 9</span>
+          <span style="color:var(--gold);font-size:.5rem;">▾</span>
+        </button>
+        <div id="browse-level-dd" style="display:none;position:absolute;top:110%;left:0;right:0;z-index:400;
+             background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;
+             overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);max-height:10rem;overflow-y:auto;" id="browse-level-dd">
+          <div class="dd-item" onclick="setBrowseLevel('TH 4','🏰 TH 4')">🏰 TH 4</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 5','🏰 TH 5')">🏰 TH 5</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 6','🏰 TH 6')">🏰 TH 6</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 7','🏰 TH 7')">🏰 TH 7</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 8','🏰 TH 8')">🏰 TH 8</div>
+          <div class="dd-item selected" onclick="setBrowseLevel('TH 9','🏰 TH 9')">🏰 TH 9</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 10','🏰 TH 10')">🏰 TH 10</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 11','🏰 TH 11')">🏰 TH 11</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 12','🏰 TH 12')">🏰 TH 12</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 13','🏰 TH 13')">🏰 TH 13</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 14','🏰 TH 14')">🏰 TH 14</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 15','🏰 TH 15')">🏰 TH 15</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 16','🏰 TH 16')">🏰 TH 16</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 17','🏰 TH 17')">🏰 TH 17</div>
+          <div class="dd-item" onclick="setBrowseLevel('TH 18','🏰 TH 18')">🏰 TH 18</div>
+          <div class="dd-item" onclick="setBrowseLevel('BH 4','🔨 BH 4')">🔨 BH 4</div>
+          <div class="dd-item" onclick="setBrowseLevel('BH 5','🔨 BH 5')">🔨 BH 5</div>
+          <div class="dd-item" onclick="setBrowseLevel('BH 6','🔨 BH 6')">🔨 BH 6</div>
+          <div class="dd-item" onclick="setBrowseLevel('BH 7','🔨 BH 7')">🔨 BH 7</div>
+          <div class="dd-item" onclick="setBrowseLevel('BH 8','🔨 BH 8')">🔨 BH 8</div>
+          <div class="dd-item" onclick="setBrowseLevel('BH 9','🔨 BH 9')">🔨 BH 9</div>
+          <div class="dd-item" onclick="setBrowseLevel('BH 10','🔨 BH 10')">🔨 BH 10</div>
+          <div class="dd-item" onclick="setBrowseLevel('all','🏘 Tümü')">🏘 Tümü</div>
+        </div>
       </div>
-    </div>
-    <div class="filter-group">
-      <div class="filter-group-title">Base Type</div>
-      <div class="filter-chips">
-        <div class="filter-chip active" data-group="type" data-val="all"      onclick="toggleChip(this)">All</div>
-        <div class="filter-chip"        data-group="type" data-val="war"      onclick="toggleChip(this)">⚔️ War</div>
-        <div class="filter-chip"        data-group="type" data-val="farm"     onclick="toggleChip(this)">🌾 Farming</div>
-        <div class="filter-chip"        data-group="type" data-val="trophy"   onclick="toggleChip(this)">🏆 Trophy</div>
-        <div class="filter-chip"        data-group="type" data-val="hybrid"   onclick="toggleChip(this)">🔥 Hybrid</div>
-        <div class="filter-chip"        data-group="type" data-val="progress" onclick="toggleChip(this)">⬆️ Progress</div>
+
+      <!-- Type dropdown -->
+      <div style="position:relative;flex:1;min-width:3.5rem;">
+        <button id="browse-type-btn" onclick="toggleDropdown('browse-type-dd','browse-type-btn')"
+          style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:.22rem;
+                 padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);
+                 background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;
+                 font-size:.42rem;font-weight:700;cursor:pointer;">
+          <span id="browse-type-label">⚔️ War</span>
+          <span style="color:var(--gold);font-size:.5rem;">▾</span>
+        </button>
+        <div id="browse-type-dd" style="display:none;position:absolute;top:110%;left:0;right:0;z-index:400;
+             background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;
+             overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);">
+          <div class="dd-item selected" onclick="setBrowseType('war','⚔️ War')">⚔️ War</div>
+          <div class="dd-item" onclick="setBrowseType('farm','🌾 Farm')">🌾 Farm</div>
+          <div class="dd-item" onclick="setBrowseType('trophy','🏆 Trophy')">🏆 Trophy</div>
+          <div class="dd-item" onclick="setBrowseType('hybrid','🔥 Hybrid')">🔥 Hybrid</div>
+          <div class="dd-item" onclick="setBrowseType('progress','⬆️ Progress')">⬆️ Progress</div>
+          <div class="dd-item" onclick="setBrowseType('all','🏷 Tümü')">🏷 Tümü</div>
+        </div>
       </div>
+
     </div>
-    <div class="divider"></div>
   </div>
 
   <div class="scroll-content">
@@ -998,9 +1081,9 @@ const TRANSLATIONS = {
     nav_home:'Ana Sayfa', nav_browse:'Keşfet', nav_community:'Topluluk',
     nav_upload:'Yükle', nav_favs:'Favoriler',
     // Home screen
-    home_cat_title:'Kategori Seç',
-    home_th_title:'Belediye Binası', home_th_sub:'TH 4 – TH 18 · Ana Köy',
-    home_bh_title:'İnşaatçı Köyü', home_bh_sub:'BH 4 – BH 10 · İnşaatçı Köyü',
+    home_cat_title:'Kategori Seçin',
+    home_th_title:'Belediye Binası Düzenleri', home_th_sub:'TH 4 – TH 18 · Ana Köy',
+    home_bh_title:'İnşaatçı Köyü Düzenleri', home_bh_sub:'BH 4 – BH 10 · İnşaatçı Köyü',
     home_layouts:'düzen',
     // List screen
     list_th_title:'🏰 Belediye <span>Binası</span>',
@@ -1012,8 +1095,8 @@ const TRANSLATIONS = {
     // Detail screen
     detail_share:'↗ Bu Düzeni Paylaş',
     detail_copy:'🏰 Clash of Clans\u02BCa Kopyala',
-    stat_uses:'Kullanım', stat_favs:'Favori', stat_th:'Seviye',
-    similar_title:'Benzer Düzenler',
+    stat_uses:'Kullanım', stat_favs:'Favori', stat_th:'Bina Seviyesi',
+    similar_title:'Benzer Kaleler',
     village_home:'🏰 Ana Köy', village_builder:'🔨 İnşaatçı Köyü',
     // Search screen
     search_placeholder:'Base ara...',
@@ -1036,7 +1119,7 @@ const TRANSLATIONS = {
     upload_photo_text:'Fotoğraf seç veya bırak',
     upload_photo_sub:'JPG, PNG · Max 5MB',
     upload_name_label:'🏷 Base Adı *',
-    upload_name_ph:'örn: TH9 Anti-3 Star Savaş Düzeni',
+    upload_name_ph:'örn: TH9 Anti-3 Star Savaş Kalesi',
     upload_village_label:'🏘 Köy Tipi *',
     upload_level_label:'⭐ Seviye *',
     upload_type_label:'⚔️ Base Türü *',
@@ -1069,7 +1152,11 @@ const TRANSLATIONS = {
     share_copy:'Kopyala', share_whatsapp:'WhatsApp',
     share_discord:'Discord', share_more:'Daha Fazla',
     // Section
-    section_choose_cat:'Kategori Seç',
+    
+    // Sort
+    sort_newest:'✨ En Yeni', sort_popular:'🔥 En Popüler',
+    sort_favs:'❤️ En Çok Beğenilen', sort_az:'🔤 A–Z',
+    section_choose_cat:'Kategori Seçin',
   },
   en: {
     nav_home:'Home', nav_browse:'Browse', nav_community:'Community',
@@ -1135,6 +1222,9 @@ const TRANSLATIONS = {
     share_title:'🔗 Share This Base',
     share_copy:'Copy Link', share_whatsapp:'WhatsApp',
     share_discord:'Discord', share_more:'More',
+    
+    sort_newest:'✨ Newest', sort_popular:'🔥 Most Used',
+    sort_favs:'❤️ Most Liked', sort_az:'🔤 A–Z',
     section_choose_cat:'Choose Your Category',
   },
   de: {
@@ -1201,6 +1291,9 @@ const TRANSLATIONS = {
     share_title:'🔗 Basis teilen',
     share_copy:'Link kopieren', share_whatsapp:'WhatsApp',
     share_discord:'Discord', share_more:'Mehr',
+    
+    sort_newest:'✨ Neueste', sort_popular:'🔥 Meistgenutzt',
+    sort_favs:'❤️ Meistgeliked', sort_az:'🔤 A–Z',
     section_choose_cat:'Kategorie wählen',
   },
   fr: {
@@ -1267,6 +1360,9 @@ const TRANSLATIONS = {
     share_title:'🔗 Partager cette base',
     share_copy:'Copier', share_whatsapp:'WhatsApp',
     share_discord:'Discord', share_more:'Plus',
+    
+    sort_newest:'✨ Plus récent', sort_popular:'🔥 Plus utilisé',
+    sort_favs:'❤️ Plus aimé', sort_az:'🔤 A–Z',
     section_choose_cat:'Choisir une catégorie',
   },
   es: {
@@ -1333,6 +1429,9 @@ const TRANSLATIONS = {
     share_title:'🔗 Compartir base',
     share_copy:'Copiar', share_whatsapp:'WhatsApp',
     share_discord:'Discord', share_more:'Más',
+    
+    sort_newest:'✨ Más reciente', sort_popular:'🔥 Más usado',
+    sort_favs:'❤️ Más gustado', sort_az:'🔤 A–Z',
     section_choose_cat:'Elige tu categoría',
   },
   pt: {
@@ -1399,6 +1498,9 @@ const TRANSLATIONS = {
     share_title:'🔗 Compartilhar base',
     share_copy:'Copiar', share_whatsapp:'WhatsApp',
     share_discord:'Discord', share_more:'Mais',
+    
+    sort_newest:'✨ Mais recente', sort_popular:'🔥 Mais usado',
+    sort_favs:'❤️ Mais curtido', sort_az:'🔤 A–Z',
     section_choose_cat:'Escolha sua categoria',
   },
   ar: {
@@ -1465,6 +1567,9 @@ const TRANSLATIONS = {
     share_title:'🔗 مشاركة القاعدة',
     share_copy:'نسخ', share_whatsapp:'واتساب',
     share_discord:'ديسكورد', share_more:'المزيد',
+    
+    sort_newest:'✨ الأحدث', sort_popular:'🔥 الأكثر استخداماً',
+    sort_favs:'❤️ الأكثر إعجاباً', sort_az:'🔤 أ–ي',
     section_choose_cat:'اختر فئتك',
   },
 };
@@ -1554,6 +1659,31 @@ function applyTranslations() {
       return `<div class="dd-item ${sel}" data-ddtype="type" data-val="${val}"
         onclick="selectType('${val}','${t(key)}')">${t(key)}</div>`;
     }).join('');
+  }
+
+  // Sort pills (browse)
+  document.querySelectorAll('[data-sort]').forEach(p => {
+    const key = 'sort_' + p.dataset.sort;
+    const label = t(key);
+    if (label) p.innerHTML = label;
+  });
+  // Sort pills (home)
+  document.querySelectorAll('[data-hsort]').forEach(p => {
+    const key = 'sort_' + p.dataset.hsort;
+    const label = t(key);
+    if (label) p.innerHTML = label;
+  });
+
+  // Browse dropdown label sync
+  const bvLabel = document.getElementById('browse-village-label');
+  if (bvLabel) {
+    const vMap = { home: t('village_home'), builder: t('village_builder'), all: t('filter_all') || 'Tümü' };
+    bvLabel.textContent = vMap[activeFilters.village] || bvLabel.textContent;
+  }
+  const btLabel = document.getElementById('browse-type-label');
+  if (btLabel) {
+    const tVal = activeFilters.type;
+    btLabel.textContent = tVal === 'all' ? (t('filter_all') || 'Tümü') : t('type_' + tVal) || btLabel.textContent;
   }
 
   // Upload screen dynamic texts
@@ -1661,7 +1791,15 @@ let filterPanelOpen   = false;
 let listFilterOpen    = false;
 
 // Active search filters
-let activeFilters = { village:'all', th:'all', type:'all' };
+let activeFilters = { village:'home', th:'TH 9', type:'war' };
+let activeSort = 'newest';
+
+const SORT_LABELS = {
+  newest:  () => t('sort_newest')  || 'Newest',
+  popular: () => t('sort_popular') || 'Most Used',
+  favs:    () => t('sort_favs')    || 'Most Liked',
+  az:      () => t('sort_az')      || 'A–Z',
+};
 
 // List-screen filters
 let listVillage   = 'home';
@@ -2020,6 +2158,104 @@ function toggleFilterPanel() {
   document.getElementById('filter-panel').style.display = filterPanelOpen ? 'block' : 'none';
 }
 
+let activeHomeSort = 'newest';
+
+function setHomeSort(sort) {
+  haptic.light();
+  activeHomeSort = sort;
+  document.querySelectorAll('[data-hsort]').forEach(p =>
+    p.classList.toggle('active', p.dataset.hsort === sort));
+  renderHomeBases();
+}
+
+function renderHomeBases() {
+  const grid  = document.getElementById('home-bases-grid');
+  const empty = document.getElementById('home-bases-empty');
+  if (!grid || !allBases.length) return;
+
+  let sorted = [...allBases];
+  switch (activeHomeSort) {
+    case 'popular':
+      sorted.sort((a, b) => (b.uses || 0) - (a.uses || 0)); break;
+    case 'favs':
+      sorted.sort((a, b) => (b.favs || 0) - (a.favs || 0)); break;
+    case 'newest': default:
+      sorted.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)); break;
+  }
+
+  const top = sorted.slice(0, 6); // show top 6
+  renderGrid(top, grid, empty);
+
+  // Update home sort pill labels with current language
+  document.querySelectorAll('[data-hsort]').forEach(p => {
+    const key = 'sort_' + p.dataset.hsort;
+    const lbl = t(key);
+    if (lbl) p.innerHTML = lbl;
+  });
+}
+
+function setSort(sort) {
+  haptic.light();
+  activeSort = sort;
+  document.querySelectorAll('.sort-pill').forEach(p =>
+    p.classList.toggle('active', p.dataset.sort === sort));
+  applyFilters();
+}
+
+function setBrowseVillage(val, label) {
+  haptic.light();
+  activeFilters.village = val;
+  document.getElementById('browse-village-label').textContent = label;
+  document.querySelectorAll('#browse-village-dd .dd-item').forEach(i =>
+    i.classList.toggle('selected', i.textContent.trim() === label.trim()));
+  document.getElementById('browse-village-dd').style.display = 'none';
+  // Update level dropdown items based on village
+  updateBrowseLevelItems(val);
+  applyFilters();
+}
+
+function setBrowseLevel(val, label) {
+  haptic.light();
+  activeFilters.th = val;
+  document.getElementById('browse-level-label').textContent = label;
+  document.querySelectorAll('#browse-level-dd .dd-item').forEach(i =>
+    i.classList.toggle('selected', i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + val + "'")));
+  document.getElementById('browse-level-dd').style.display = 'none';
+  applyFilters();
+}
+
+function setBrowseType(val, label) {
+  haptic.light();
+  activeFilters.type = val;
+  document.getElementById('browse-type-label').textContent = label;
+  document.querySelectorAll('#browse-type-dd .dd-item').forEach(i =>
+    i.classList.toggle('selected', i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + val + "'")));
+  document.getElementById('browse-type-dd').style.display = 'none';
+  applyFilters();
+}
+
+function updateBrowseLevelItems(village) {
+  const dd = document.getElementById('browse-level-dd');
+  if (!dd) return;
+  const isBuilder = village === 'builder';
+  const levels = isBuilder
+    ? ['4','5','6','7','8','9','10']
+    : ['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
+  const prefix = isBuilder ? 'BH' : 'TH';
+  const emoji  = isBuilder ? '🔨' : '🏰';
+  const defaultLvl = isBuilder ? '7' : '9';
+  let html = levels.map(l => {
+    const val = prefix + ' ' + l;
+    return `<div class="dd-item${l===defaultLvl?' selected':''}" onclick="setBrowseLevel('${val}','${emoji} ${val}')">${emoji} ${val}</div>`;
+  }).join('');
+  html += `<div class="dd-item" onclick="setBrowseLevel('all','🏘 ${t('filter_all')||'Tümü'}')">🏘 ${t('filter_all')||'Tümü'}</div>`;
+  dd.innerHTML = html;
+  // Reset level filter to default
+  const defVal = prefix + ' ' + defaultLvl;
+  activeFilters.th = defVal;
+  document.getElementById('browse-level-label').textContent = emoji + ' ' + defVal;
+}
+
 function toggleChip(el) {
   const group = el.dataset.group;
   document.querySelectorAll(`[data-group="${group}"]`).forEach(c => c.classList.remove('active'));
@@ -2030,7 +2266,7 @@ function toggleChip(el) {
 
 function applyFilters() {
   const q = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
-  const filtered = allBases.filter(b => {
+  let filtered = allBases.filter(b => {
     const tl  = thLabel(b);
     const thM = activeFilters.th === 'all' || tl === activeFilters.th;
     const viM = activeFilters.village === 'all' || b.village === activeFilters.village;
@@ -2038,6 +2274,31 @@ function applyFilters() {
     const txM = !q || b.title.toLowerCase().includes(q) || tl.toLowerCase().includes(q) || (b.type||'').includes(q);
     return thM && viM && tyM && txM;
   });
+
+  // ── Sort ──
+  switch (activeSort) {
+    case 'popular':
+      filtered.sort((a, b) => (b.uses || 0) - (a.uses || 0));
+      break;
+    case 'favs':
+      filtered.sort((a, b) => (b.favs || 0) - (a.favs || 0));
+      break;
+    case 'az':
+      filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      break;
+    case 'newest':
+    default:
+      filtered.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      break;
+  }
+
+  // ── Result count ──
+  const countEl = document.getElementById('sort-result-count');
+  if (countEl) {
+    countEl.textContent = filtered.length > 0
+      ? `${filtered.length} base${filtered.length !== 1 ? 's' : ''} found`
+      : '';
+  }
 
   const grid  = document.getElementById('search-grid');
   const empty = document.getElementById('search-empty');
@@ -2514,6 +2775,8 @@ async function init() {
 
   // Apply translations (now that data is loaded for counts)
   applyTranslations();
+  // Render home bases grid
+  renderHomeBases();
 
   // Update category counts
   const homeCount    = allBases.filter(b => b.village === 'home').length;
