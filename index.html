@@ -255,6 +255,14 @@ body::before {
 .similar-title::before { content:''; display:block; width:3px; height:.38rem; background:var(--gold); border-radius:2px; }
 .similar-grid { display:grid; grid-template-columns:1fr; gap:.33rem; }
 
+/* Dropdown items */
+.dd-item {
+  padding:.33rem .55rem; font-family:'Nunito',sans-serif;
+  font-size:.42rem; font-weight:700; color:var(--cream);
+  cursor:pointer; transition:background .15s;
+}
+.dd-item:hover, .dd-item.selected { background:rgba(245,166,35,.18); color:var(--gold); }
+
 /* ─────────────────────────────────────────
    SEARCH SCREEN
 ───────────────────────────────────────── */
@@ -460,25 +468,44 @@ body::before {
     </div>
   </div>
 
-  <!-- Collapsible filter header — hides on scroll down, shows on scroll up -->
-  <div id="list-filter-header" style="overflow:hidden; transition: max-height .3s ease, opacity .25s ease; max-height:600px; opacity:1; flex-shrink:0;">
-    <!-- Level pills (generated dynamically) -->
-    <div class="filter-scroll" id="list-level-pills"></div>
-
-    <!-- Type filter -->
-    <div id="list-filter-panel">
-      <div class="filter-group" style="padding-top:0;">
-        <div class="filter-group-title">Tür</div>
-        <div class="filter-chips">
-          <div class="filter-chip active" data-lgrp="type" data-lval="all"      onclick="listChip(this)">Tümü</div>
-          <div class="filter-chip"        data-lgrp="type" data-lval="war"      onclick="listChip(this)">⚔️ War</div>
-          <div class="filter-chip"        data-lgrp="type" data-lval="farm"     onclick="listChip(this)">🌾 Farm</div>
-          <div class="filter-chip"        data-lgrp="type" data-lval="trophy"   onclick="listChip(this)">🏆 Trophy</div>
-          <div class="filter-chip"        data-lgrp="type" data-lval="hybrid"   onclick="listChip(this)">🔥 Hybrid</div>
-          <div class="filter-chip"        data-lgrp="type" data-lval="progress" onclick="listChip(this)">⬆️ Progress</div>
+  <!-- Filter bar: two dropdown buttons, float over content -->
+  <div id="list-filter-bar" style="display:flex;gap:.28rem;padding:.28rem .45rem .33rem;flex-shrink:0;position:relative;z-index:100;">
+    <!-- Level dropdown -->
+    <div style="position:relative;flex:1;">
+      <button id="level-btn" onclick="toggleDropdown('level-dropdown','level-btn')"
+        style="width:100%;padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);
+               background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;
+               font-size:.42rem;font-weight:800;cursor:pointer;display:flex;align-items:center;
+               justify-content:space-between;gap:.22rem;">
+        <span id="level-btn-label">🏰 TH 9</span><span style="color:var(--gold);font-size:.5rem;">▾</span>
+      </button>
+      <div id="level-dropdown" style="display:none;position:absolute;top:calc(100% + .22rem);left:0;right:0;
+           background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;
+           overflow:hidden;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.6);">
+        <div id="level-dropdown-list" style="max-height:8rem;overflow-y:auto;"></div>
+      </div>
+    </div>
+    <!-- Type dropdown -->
+    <div style="position:relative;flex:1;">
+      <button id="type-btn" onclick="toggleDropdown('type-dropdown','type-btn')"
+        style="width:100%;padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);
+               background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;
+               font-size:.42rem;font-weight:800;cursor:pointer;display:flex;align-items:center;
+               justify-content:space-between;gap:.22rem;">
+        <span id="type-btn-label">🏷 Tümü</span><span style="color:var(--gold);font-size:.5rem;">▾</span>
+      </button>
+      <div id="type-dropdown" style="display:none;position:absolute;top:calc(100% + .22rem);left:0;right:0;
+           background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;
+           overflow:hidden;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.6);">
+        <div style="padding:.17rem 0;">
+          <div class="dd-item" data-ddtype="type" data-val="all"      onclick="selectType('all'     ,'🏷 Tümü'     )">🏷 Tümü</div>
+          <div class="dd-item" data-ddtype="type" data-val="war"      onclick="selectType('war'     ,'⚔️ War'      )">⚔️ War</div>
+          <div class="dd-item" data-ddtype="type" data-val="farm"     onclick="selectType('farm'    ,'🌾 Farm'     )">🌾 Farm</div>
+          <div class="dd-item" data-ddtype="type" data-val="trophy"   onclick="selectType('trophy'  ,'🏆 Trophy'   )">🏆 Trophy</div>
+          <div class="dd-item" data-ddtype="type" data-val="hybrid"   onclick="selectType('hybrid'  ,'🔥 Hybrid'   )">🔥 Hybrid</div>
+          <div class="dd-item" data-ddtype="type" data-val="progress" onclick="selectType('progress','⬆️ Progress' )">⬆️ Progress</div>
         </div>
       </div>
-      <div class="divider"></div>
     </div>
   </div>
 
@@ -994,13 +1021,15 @@ function openCategory(village) {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       listVillage     = village;
-      listLevelFilter = 'all';
+      listLevelFilter = 'all'; // will be reset to first level in buildLevelDropdown
       listTypeFilter  = 'all';
-      buildListPills();
+      buildLevelDropdown();
 
-      document.querySelectorAll('[data-lgrp="type"]').forEach(c => c.classList.remove('active'));
-      const allChip = document.querySelector('[data-lgrp="type"][data-lval="all"]');
-      if (allChip) allChip.classList.add('active');
+      // Reset type dropdown label
+      document.getElementById('type-btn-label').textContent = '🏷 Tümü';
+      document.querySelectorAll('#type-dropdown .dd-item').forEach(el => {
+        el.classList.toggle('selected', el.dataset.val === 'all');
+      });
 
       document.getElementById('list-screen-title').innerHTML =
         village === 'builder'
@@ -1012,25 +1041,58 @@ function openCategory(village) {
   });
 }
 
-/* ─ Level pills for list screen ─ */
-function buildListPills() {
-  const container = document.getElementById('list-level-pills');
-  const levels = listVillage === 'builder'
-    ? ['all','4','5','6','7','8','9','10']
-    : ['all','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
+/* ─ Dropdown logic ─ */
+function toggleDropdown(ddId, btnId) {
+  const dd = document.getElementById(ddId);
+  const isOpen = dd.style.display !== 'none';
+  // Close all dropdowns first
+  ['level-dropdown','type-dropdown'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  if (!isOpen) dd.style.display = 'block';
+}
 
+// Close dropdowns when tapping outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#list-filter-bar')) {
+    ['level-dropdown','type-dropdown'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+  }
+});
+
+function buildLevelDropdown() {
+  const levels = listVillage === 'builder'
+    ? ['4','5','6','7','8','9','10']
+    : ['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
   const prefix = listVillage === 'builder' ? 'BH' : 'TH';
 
-  container.innerHTML = levels.map((v, i) => {
-    const label = v === 'all' ? 'All' : `${prefix} ${v}`;
-    return `<div class="pill ${i===0?'active':''}" onclick="listPillClick(this,'${v}')">${label}</div>`;
-  }).join('');
+  // Default to first level if current filter is 'all' or wrong prefix
+  const validLevels = levels;
+  if (listLevelFilter === 'all' || !validLevels.includes(listLevelFilter)) {
+    listLevelFilter = levels[0];
+  }
+
+  const list = document.getElementById('level-dropdown-list');
+  list.innerHTML = '<div style="padding:.17rem 0;">' + levels.map(v => {
+    const label = `${prefix} ${v}`;
+    const sel = v === listLevelFilter ? 'selected' : '';
+    return `<div class="dd-item ${sel}" data-val="${v}" onclick="selectLevel('${v}','${prefix} ${v}')">${label}</div>`;
+  }).join('') + '</div>';
+
+  // Update button label
+  document.getElementById('level-btn-label').textContent = `${prefix === 'BH' ? '🔨' : '🏰'} ${prefix} ${listLevelFilter}`;
 }
 
-function listPillClick(el, val) {
-  document.querySelectorAll('#list-level-pills .pill').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
+function selectLevel(val, label) {
   listLevelFilter = val;
+  document.getElementById('level-btn-label').textContent = `${listVillage === 'builder' ? '🔨' : '🏰'} ${label}`;
+  document.getElementById('level-dropdown').style.display = 'none';
+  // Highlight selected
+  document.querySelectorAll('#level-dropdown-list .dd-item').forEach(el => {
+    el.classList.toggle('selected', el.dataset.val === val);
+  });
   showLoading('Filtreleniyor');
   requestAnimationFrame(() => requestAnimationFrame(() => {
     renderListScreen();
@@ -1038,22 +1100,22 @@ function listPillClick(el, val) {
   }));
 }
 
-function toggleListFilter() {
-  listFilterOpen = !listFilterOpen;
-  document.getElementById('list-filter-panel').style.display = listFilterOpen ? 'block' : 'none';
-}
-
-function listChip(el) {
-  const grp = el.dataset.lgrp;
-  document.querySelectorAll(`[data-lgrp="${grp}"]`).forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  listTypeFilter = el.dataset.lval;
+function selectType(val, label) {
+  listTypeFilter = val;
+  document.getElementById('type-btn-label').textContent = label;
+  document.getElementById('type-dropdown').style.display = 'none';
+  // Highlight selected
+  document.querySelectorAll('#type-dropdown .dd-item').forEach(el => {
+    el.classList.toggle('selected', el.dataset.val === val);
+  });
   showLoading('Filtreleniyor');
   requestAnimationFrame(() => requestAnimationFrame(() => {
     renderListScreen();
     hideLoading(true);
   }));
 }
+
+function toggleListFilter() {} // kept for compat
 
 function renderListScreen() {
   const filtered = allBases.filter(b => {
@@ -1154,11 +1216,13 @@ async function openDetail(id) {
   // Detail ad — push once
   pushAd('detail-ad');
 
-  // Similar bases
+  // Similar bases — same TH level AND same type (strict match)
   const similar = allBases.filter(b =>
     b.id !== id &&
-    (String(b.th_level) === String(currentBase.th_level) || b.type === currentBase.type)
-  ).slice(0, 8);
+    String(b.th_level) === String(currentBase.th_level) &&
+    b.type === currentBase.type &&
+    b.village === currentBase.village
+  ).slice(0, 6);
 
   // Render similar bases as full-width vertical cards (same as list screen)
   document.getElementById('similar-list').innerHTML = similar.map(b => cardHtml(b)).join('');
@@ -1291,42 +1355,7 @@ async function init() {
   // Push home banner ad
   pushAd('home-banner');
 
-  // ── Scroll-to-hide filter bar for list screen ──
-  (function() {
-    const scrollEl = document.getElementById('list-scroll-content');
-    const header   = document.getElementById('list-filter-header');
-    if (!scrollEl || !header) return;
-
-    let lastScrollY  = 0;
-    let headerHeight = header.scrollHeight;
-    let hidden       = false;
-    let ticking      = false;
-
-    scrollEl.addEventListener('scroll', () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const currentY = scrollEl.scrollTop;
-        const delta    = currentY - lastScrollY;
-
-        if (delta > 6 && !hidden && currentY > 30) {
-          // Scrolling DOWN — hide filter bar
-          headerHeight = header.scrollHeight;
-          header.style.maxHeight = '0px';
-          header.style.opacity   = '0';
-          hidden = true;
-        } else if (delta < -6 && hidden) {
-          // Scrolling UP — show filter bar
-          header.style.maxHeight = headerHeight + 'px';
-          header.style.opacity   = '1';
-          hidden = false;
-        }
-
-        lastScrollY = currentY;
-        ticking = false;
-      });
-    }, { passive: true });
-  })();
+  // (scroll listener removed — using dropdown instead)
 }
 
 init();
