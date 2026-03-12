@@ -556,6 +556,115 @@ body::before {
 }
 .crop-btn-cancel  { background:var(--brown-card2); color:var(--text-muted); border:1.5px solid var(--brown-border); }
 .crop-btn-confirm { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:var(--brown-deep); }
+
+/* ── Card uploader name ── */
+.card-uploader {
+  display:flex; align-items:center; gap:.14rem;
+  font-size:.33rem; font-weight:700; color:var(--gold);
+  margin-top:.17rem; letter-spacing:.2px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.card-uploader-icon { font-size:.3rem; opacity:.8; }
+
+/* ── Community Top 3 Podium ── */
+.comm-podium {
+  padding:.33rem .45rem .11rem;
+  flex-shrink:0;
+}
+.comm-podium-title {
+  font-family:'Cinzel Decorative',serif;
+  font-size:.38rem; color:var(--gold-light);
+  display:flex; align-items:center; gap:.22rem;
+  margin-bottom:.33rem;
+}
+.comm-podium-title::before {
+  content:''; display:block; width:3px; height:.44rem;
+  background:var(--gold); border-radius:2px;
+}
+.podium-cards { display:flex; gap:.22rem; }
+.podium-card {
+  flex:1; background:var(--brown-card);
+  border-radius:.44rem; overflow:hidden;
+  border:1.5px solid var(--brown-border);
+  cursor:pointer; position:relative;
+  transition:all .2s;
+}
+.podium-card:hover { border-color:var(--gold-dark); }
+.podium-card.rank-1 { border-color:rgba(255,215,0,.6); box-shadow:0 4px 16px rgba(255,215,0,.2); }
+.podium-card.rank-2 { border-color:rgba(192,192,192,.5); }
+.podium-card.rank-3 { border-color:rgba(205,127,50,.5); }
+.podium-thumb { width:100%; aspect-ratio:3/2; object-fit:cover; display:block; background:#1a1040; }
+.podium-rank-badge {
+  position:absolute; top:.22rem; left:.22rem;
+  font-size:.55rem; line-height:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,.7));
+}
+.podium-info { padding:.22rem .28rem .28rem; }
+.podium-name {
+  font-size:.36rem; font-weight:800; color:var(--cream);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  margin-bottom:.1rem; line-height:1.2;
+}
+.podium-uploader {
+  font-size:.3rem; color:var(--gold); font-weight:700;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.podium-score {
+  display:flex; gap:.18rem; align-items:center;
+  font-size:.28rem; color:var(--text-muted); margin-top:.1rem;
+  font-weight:700;
+}
+
+/* ── Community filter bar ── */
+.comm-filter-bar {
+  display:flex; gap:.22rem; padding:.11rem .45rem .28rem;
+  overflow-x:auto; flex-shrink:0;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.comm-filter-bar::-webkit-scrollbar { display:none; }
+.comm-sort-pill {
+  flex-shrink:0; display:flex; align-items:center; gap:.15rem;
+  padding:.2rem .38rem; border-radius:2rem;
+  border:1.5px solid var(--brown-border);
+  background:var(--brown-card); color:var(--text-muted);
+  font-family:'Nunito',sans-serif; font-size:.35rem; font-weight:700;
+  cursor:pointer; white-space:nowrap; user-select:none; transition:all .18s;
+}
+.comm-sort-pill.active {
+  background:var(--gold-dark); border-color:var(--gold); color:var(--brown-deep);
+}
+
+/* ── Comm type filter chips (horizontal scroll) ── */
+.comm-type-row {
+  display:flex; gap:.17rem; padding:.05rem .45rem .22rem;
+  overflow-x:auto; flex-shrink:0; scrollbar-width:none;
+}
+.comm-type-row::-webkit-scrollbar { display:none; }
+.comm-type-chip {
+  flex-shrink:0; padding:.17rem .33rem; border-radius:2rem;
+  border:1.5px solid var(--brown-border);
+  background:var(--brown-card); color:var(--text-muted);
+  font-family:'Nunito',sans-serif; font-size:.32rem; font-weight:700;
+  cursor:pointer; white-space:nowrap; user-select:none; transition:all .18s;
+}
+.comm-type-chip.active {
+  background:rgba(245,166,35,.18); border-color:var(--gold-dark); color:var(--gold);
+}
+
+/* ── Comm village filter ── */
+.comm-village-row {
+  display:flex; gap:.17rem; padding:.0rem .45rem .17rem;
+  flex-shrink:0;
+}
+.comm-village-chip {
+  flex:1; padding:.18rem .22rem; border-radius:.44rem;
+  border:1.5px solid var(--brown-border);
+  background:var(--brown-card); color:var(--text-muted);
+  font-family:'Nunito',sans-serif; font-size:.33rem; font-weight:700;
+  cursor:pointer; text-align:center; user-select:none; transition:all .18s;
+}
+.comm-village-chip.active {
+  background:rgba(245,166,35,.18); border-color:var(--gold-dark); color:var(--gold);
+}
 </style>
 </head>
 <body>
@@ -949,15 +1058,49 @@ body::before {
   <div class="topbar">
     <div class="topbar-logo" data-i18n="comm_title">👥 <span>Community</span></div>
   </div>
+
+  <!-- Tabs -->
   <div class="community-tabs">
-    <button class="comm-tab active" id="comm-tab-all" data-i18n="comm_tab_all" onclick="switchCommTab('all')">All Bases</button>
-    <button class="comm-tab" id="comm-tab-mine" data-i18n="comm_tab_mine" onclick="switchCommTab('mine')">My Uploads</button>
+    <button class="comm-tab active" id="comm-tab-all"  data-i18n="comm_tab_all"  onclick="switchCommTab('all')">Tüm Düzenler</button>
+    <button class="comm-tab"        id="comm-tab-mine" data-i18n="comm_tab_mine" onclick="switchCommTab('mine')">Yüklemelerim</button>
   </div>
+
+  <!-- TOP 3 PODIUM (sadece 'all' tabında görünür) -->
+  <div class="comm-podium" id="comm-podium">
+    <div class="comm-podium-title">🏆 En Başarılı 3 Düzen</div>
+    <div class="podium-cards" id="podium-cards"></div>
+  </div>
+
+  <!-- SORT PILLS -->
+  <div class="comm-filter-bar" id="comm-sort-bar">
+    <div class="comm-sort-pill active" data-csort="score"   onclick="setCommSort('score')">🏆 En Başarılı</div>
+    <div class="comm-sort-pill"       data-csort="newest"  onclick="setCommSort('newest')">✨ En Yeni</div>
+    <div class="comm-sort-pill"       data-csort="popular" onclick="setCommSort('popular')">🔥 En Popüler</div>
+    <div class="comm-sort-pill"       data-csort="favs"    onclick="setCommSort('favs')">❤️ En Beğenilen</div>
+  </div>
+
+  <!-- VILLAGE FILTER -->
+  <div class="comm-village-row" id="comm-village-row">
+    <div class="comm-village-chip active" data-cvillage="all"     onclick="setCommVillage('all')">🏘 Tümü</div>
+    <div class="comm-village-chip"        data-cvillage="home"    onclick="setCommVillage('home')">🏰 Ana Köy</div>
+    <div class="comm-village-chip"        data-cvillage="builder" onclick="setCommVillage('builder')">🔨 İnşaatçı</div>
+  </div>
+
+  <!-- TYPE FILTER CHIPS -->
+  <div class="comm-type-row" id="comm-type-row">
+    <div class="comm-type-chip active" data-ctype="all"      onclick="setCommType('all')">🏷 Tümü</div>
+    <div class="comm-type-chip"        data-ctype="war"      onclick="setCommType('war')">⚔️ War</div>
+    <div class="comm-type-chip"        data-ctype="farm"     onclick="setCommType('farm')">🌾 Farm</div>
+    <div class="comm-type-chip"        data-ctype="trophy"   onclick="setCommType('trophy')">🏆 Trophy</div>
+    <div class="comm-type-chip"        data-ctype="hybrid"   onclick="setCommType('hybrid')">🔥 Hybrid</div>
+    <div class="comm-type-chip"        data-ctype="progress" onclick="setCommType('progress')">⬆️ Progress</div>
+  </div>
+
   <div class="scroll-content">
     <div id="comm-empty" class="empty-state" style="display:none;">
       <div class="empty-icon">👥</div>
-      <div class="empty-title" data-i18n="comm_empty_title">No Bases Yet</div>
-      <div class="empty-sub" data-i18n="comm_empty_sub">Be the first to upload!</div>
+      <div class="empty-title" data-i18n="comm_empty_title">Henüz Düzen Yok</div>
+      <div class="empty-sub" data-i18n="comm_empty_sub">İlk yükleyen sen ol!</div>
     </div>
     <div class="cards-grid" id="comm-grid"></div>
     <div style="height:20px;"></div>
@@ -1977,11 +2120,11 @@ async function loadAllBases() {
 /* ═══════════════════════════════════════════
    CARD HTML
 ═══════════════════════════════════════════ */
-function cardHtml(base) {
+function cardHtml(base, opts={}) {
   const fav      = isFav(base.id);
   const tl       = thLabel(base);
-  const typeTag  = TYPES[base.type] || '';
   const typeL    = getTypeLabel(base.type);
+  const showUploader = opts.showUploader && base.uploader_name && base.uploader_name !== 'Anonymous';
   return `
   <div class="base-card" onclick="openDetail(${base.id})">
     <div class="card-thumb" style="position:relative;">
@@ -1999,8 +2142,13 @@ function cardHtml(base) {
         <div class="stat-chip">❤️ ${fmtNum(base.favs)}</div>
         <div class="stat-chip">🏷 ${typeL.split(' ')[0]||'—'}</div>
       </div>
+      ${showUploader ? `<div class="card-uploader"><span class="card-uploader-icon">👤</span>${escHtml(base.uploader_name)}</div>` : ''}
     </div>
   </div>`;
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // Render bases into a grid element, inserting a feed ad every 6 cards
@@ -3068,9 +3216,16 @@ function getUserId() {
 ═══════════════════════════════════════════ */
 let communityBases = [];
 
+// ── Community state ──
+let commSort    = 'score';   // score | newest | popular | favs
+let commVillage = 'all';
+let commType    = 'all';
+
+// Başarı skoru: favs * 2 + uses (favori daha değerli)
+function commScore(b) { return (b.favs || 0) * 2 + (b.uses || 0); }
+
 async function loadCommunityBases() {
   try {
-    // Only show approved community bases (is_active=true, source=community)
     const data = await sbGet('layouts?select=*&source=eq.community&is_active=eq.true&order=created_at.desc');
     communityBases = Array.isArray(data) ? data : [];
   } catch(e) {
@@ -3082,31 +3237,81 @@ function switchCommTab(tab) {
   commTab = tab;
   document.getElementById('comm-tab-all').classList.toggle('active',  tab === 'all');
   document.getElementById('comm-tab-mine').classList.toggle('active', tab === 'mine');
+  // Podium + filtreler sadece 'all' tabında
+  const showAll = tab === 'all';
+  document.getElementById('comm-podium').style.display     = showAll ? '' : 'none';
+  document.getElementById('comm-sort-bar').style.display   = showAll ? '' : 'none';
+  document.getElementById('comm-village-row').style.display= showAll ? '' : 'none';
+  document.getElementById('comm-type-row').style.display   = showAll ? '' : 'none';
   renderCommunityScreen();
+}
+
+function setCommSort(sort) {
+  haptic.light();
+  commSort = sort;
+  document.querySelectorAll('[data-csort]').forEach(p =>
+    p.classList.toggle('active', p.dataset.csort === sort));
+  renderCommunityScreen();
+}
+
+function setCommVillage(val) {
+  haptic.light();
+  commVillage = val;
+  document.querySelectorAll('[data-cvillage]').forEach(c =>
+    c.classList.toggle('active', c.dataset.cvillage === val));
+  renderCommunityScreen();
+}
+
+function setCommType(val) {
+  haptic.light();
+  commType = val;
+  document.querySelectorAll('[data-ctype]').forEach(c =>
+    c.classList.toggle('active', c.dataset.ctype === val));
+  renderCommunityScreen();
+}
+
+function renderPodium(top3) {
+  const medals = ['🥇','🥈','🥉'];
+  const rankClass = ['rank-1','rank-2','rank-3'];
+  document.getElementById('podium-cards').innerHTML = top3.map((b, i) => `
+    <div class="podium-card ${rankClass[i]}" onclick="openDetail(${b.id})">
+      ${b.image_url
+        ? `<img class="podium-thumb" src="${b.image_url}" alt="${escHtml(b.title)}" loading="lazy">`
+        : `<div class="podium-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;opacity:.3;">🏰</div>`}
+      <div class="podium-rank-badge">${medals[i]}</div>
+      <div class="podium-info">
+        <div class="podium-name">${escHtml(b.title)}</div>
+        ${b.uploader_name && b.uploader_name !== 'Anonymous'
+          ? `<div class="podium-uploader">👤 ${escHtml(b.uploader_name)}</div>` : ''}
+        <div class="podium-score">
+          <span>❤️ ${fmtNum(b.favs)}</span>
+          <span>·</span>
+          <span>👁 ${fmtNum(b.uses)}</span>
+        </div>
+      </div>
+    </div>`).join('');
 }
 
 function renderCommunityScreen() {
   const grid  = document.getElementById('comm-grid');
   const empty = document.getElementById('comm-empty');
-  let bases = communityBases;
+
   if (commTab === 'mine') {
+    // Kendi yüklemeleri
     const uid = getUserId();
-    bases = communityBases.filter(b => b.uploaded_by === uid);
-    // Also check pending ones from allBases
+    let bases = communityBases.filter(b => b.uploaded_by === uid);
     const pending = allBases.filter(b => b.source === 'community' && b.uploaded_by === uid);
-    // Merge without duplicates
     const ids = new Set(bases.map(b => b.id));
     pending.forEach(b => { if (!ids.has(b.id)) bases.push(b); });
-  }
-  if (!bases.length) {
-    empty.style.display = 'flex'; grid.innerHTML = '';
-  } else {
+
+    if (!bases.length) {
+      empty.style.display = 'flex'; grid.innerHTML = ''; return;
+    }
     empty.style.display = 'none';
     grid.innerHTML = bases.map(b => {
-      // Show pending badge for user's own pending bases
       const isPending = b.is_active === false || b.status === 'pending';
-      const card = cardHtml(b);
-      if (isPending && commTab === 'mine') {
+      const card = cardHtml(b, { showUploader: false });
+      if (isPending) {
         return card.replace('<div class="base-card"',
           '<div class="base-card" style="opacity:.7;border-color:rgba(245,166,35,.4);"'
         ).replace('<div class="card-type">',
@@ -3114,7 +3319,35 @@ function renderCommunityScreen() {
       }
       return card;
     }).join('');
+    return;
   }
+
+  // 'all' tab — filtrele
+  let bases = [...communityBases];
+  if (commVillage !== 'all') bases = bases.filter(b => b.village === commVillage);
+  if (commType    !== 'all') bases = bases.filter(b => b.type    === commType);
+
+  // Podium: filtresiz top 3 (skor bazlı)
+  const top3 = [...communityBases]
+    .sort((a, b) => commScore(b) - commScore(a))
+    .slice(0, 3);
+  if (top3.length) renderPodium(top3);
+  document.getElementById('comm-podium').style.display = top3.length ? '' : 'none';
+
+  // Sırala
+  switch (commSort) {
+    case 'newest':  bases.sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0)); break;
+    case 'popular': bases.sort((a,b) => (b.uses||0) - (a.uses||0)); break;
+    case 'favs':    bases.sort((a,b) => (b.favs||0) - (a.favs||0)); break;
+    case 'score': default:
+      bases.sort((a,b) => commScore(b) - commScore(a)); break;
+  }
+
+  if (!bases.length) {
+    empty.style.display = 'flex'; grid.innerHTML = ''; return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = bases.map(b => cardHtml(b, { showUploader: true })).join('');
 }
 
 /* ═══════════════════════════════════════════
