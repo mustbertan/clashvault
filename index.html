@@ -288,6 +288,63 @@ body::before {
 .filter-chip.active { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); border-color:var(--gold); color:var(--brown-dark); box-shadow:0 2px 8px rgba(245,166,35,.3); }
 
 /* ─────────────────────────────────────────
+   GLOBAL LOADING OVERLAY
+───────────────────────────────────────── */
+.loading-overlay {
+  position: fixed; inset: 0; z-index: 800;
+  background: rgba(26,15,0,0.82);
+  backdrop-filter: blur(3px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s ease;
+}
+.loading-overlay.show {
+  opacity: 1; pointer-events: all;
+}
+.loading-ring {
+  width: 60px; height: 60px; position: relative;
+}
+.loading-ring::before, .loading-ring::after {
+  content: ''; position: absolute; border-radius: 50%;
+  border: 3px solid transparent;
+}
+.loading-ring::before {
+  inset: 0;
+  border-top-color: var(--gold);
+  border-right-color: var(--gold-dark);
+  animation: spin .8s linear infinite;
+}
+.loading-ring::after {
+  inset: 8px;
+  border-bottom-color: rgba(245,166,35,.35);
+  animation: spin 1.4s linear infinite reverse;
+}
+.loading-ring-icon {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.loading-msg {
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px; font-weight: 800;
+  color: var(--gold-light);
+  letter-spacing: .5px;
+}
+.loading-dots span {
+  display: inline-block;
+  animation: dotBounce .9s infinite;
+  opacity: 0;
+}
+.loading-dots span:nth-child(2) { animation-delay: .2s; }
+.loading-dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes dotBounce {
+  0%,80%,100% { opacity: 0; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-4px); }
+}
+
+/* ─────────────────────────────────────────
    EMPTY / LOADING
 ───────────────────────────────────────── */
 .empty-state { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 24px; text-align:center; }
@@ -698,9 +755,35 @@ body::before {
   </div>
 </div>
 
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-ring">
+    <div class="loading-ring-icon">⚔️</div>
+  </div>
+  <div class="loading-msg">
+    <span id="loading-msg-text">Yükleniyor</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
+/* ═══════════════════════════════════════════
+   LOADING OVERLAY
+═══════════════════════════════════════════ */
+let loadingTimer = null;
+function showLoading(msg) {
+  clearTimeout(loadingTimer);
+  const el = document.getElementById('loading-msg-text');
+  if (el) el.textContent = msg || 'Yükleniyor';
+  document.getElementById('loading-overlay').classList.add('show');
+}
+function hideLoading() {
+  // Small delay so it doesn't flash too fast
+  loadingTimer = setTimeout(() => {
+    document.getElementById('loading-overlay').classList.remove('show');
+  }, 200);
+}
+
 /* ═══════════════════════════════════════════
    SUPABASE
 ═══════════════════════════════════════════ */
@@ -797,6 +880,7 @@ function thLabel(base) {
    DATA LOADING
 ═══════════════════════════════════════════ */
 async function loadAllBases() {
+  showLoading('Baseler yükleniyor');
   try {
     let data;
     try {
@@ -808,6 +892,8 @@ async function loadAllBases() {
   } catch(e) {
     console.error('Supabase load error:', e);
     allBases = [];
+  } finally {
+    hideLoading();
   }
 }
 
@@ -893,9 +979,9 @@ function goScreen(id) {
     tickTransition();
   }
 
-  if (id === 'screen-search') applyFilters();
-  if (id === 'screen-favs')   renderFavs();
-  if (id === 'screen-list')   renderListScreen();
+  if (id === 'screen-search') { applyFilters(); hideLoading(); }
+  if (id === 'screen-favs')   { renderFavs();   hideLoading(); }
+  if (id === 'screen-list')   { renderListScreen(); hideLoading(); }
 }
 
 function goBack() { goScreen(prevScreen); }
@@ -923,6 +1009,7 @@ window.addEventListener('popstate', function(e) {
    CATEGORY OPEN
 ═══════════════════════════════════════════ */
 function openCategory(village) {
+  showLoading('Kategoriye giriliyor');
   listVillage     = village;
   listLevelFilter = 'all';
   listTypeFilter  = 'all';
@@ -1030,8 +1117,10 @@ function applyFilters() {
    DETAIL SCREEN
 ═══════════════════════════════════════════ */
 async function openDetail(id) {
+  showLoading('Base yükleniyor');
+
   currentBase = allBases.find(b => b.id === id);
-  if (!currentBase) return;
+  if (!currentBase) { hideLoading(); return; }
 
   // Increment uses counter (background)
   const newUses = (currentBase.uses || 0) + 1;
@@ -1046,9 +1135,17 @@ async function openDetail(id) {
 
   // Preview image
   const preview = document.getElementById('detail-preview');
-  preview.innerHTML = currentBase.image_url
-    ? `<img src="${currentBase.image_url}" alt="${currentBase.title}">`
-    : `<div class="no-img">🏰</div>`;
+  if (currentBase.image_url) {
+    preview.innerHTML = `<img src="${currentBase.image_url}" alt="${currentBase.title}">`;
+    // Wait for image to load before hiding overlay
+    const img = preview.querySelector('img');
+    await new Promise(resolve => {
+      if (img.complete) { resolve(); }
+      else { img.onload = resolve; img.onerror = resolve; }
+    });
+  } else {
+    preview.innerHTML = `<div class="no-img">🏰</div>`;
+  }
 
   // Tags
   const typeTag  = TYPES[currentBase.type] || '';
@@ -1090,6 +1187,9 @@ async function openDetail(id) {
   if (leaving !== 'screen-detail') prevScreen = leaving || 'screen-home';
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-detail').classList.add('active');
+  history.pushState({ screen: 'screen-detail' }, '', '');
+
+  hideLoading();
 }
 
 /* ═══════════════════════════════════════════
