@@ -493,48 +493,69 @@ body::before {
 /* ── Image Crop Modal ── */
 #crop-modal {
   position:fixed; inset:0; z-index:900;
-  background:rgba(0,0,0,.92);
+  background:#0d0a06;
   display:none; flex-direction:column;
-  align-items:center; justify-content:center;
-  padding:.55rem;
+  align-items:stretch;
+  padding:0;
+  overflow:hidden;
 }
 #crop-modal.show { display:flex; }
-.crop-modal-title {
-  font-family:'Cinzel Decorative',serif;
-  font-size:.44rem; color:var(--gold-light);
-  margin-bottom:.33rem; text-align:center;
-}
-.crop-modal-hint {
-  font-size:.33rem; color:var(--text-muted);
-  margin-bottom:.44rem; text-align:center;
-}
-#crop-canvas-wrap {
-  position:relative; width:100%; max-width:340px;
-  background:#111; border-radius:.44rem;
-  overflow:hidden; touch-action:none; cursor:crosshair;
-  border:2px solid var(--brown-border);
+
+/* ── Top bar ── */
+#crop-topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.44rem .55rem .33rem;
   flex-shrink:0;
+  border-bottom:1px solid rgba(245,166,35,.18);
 }
-#crop-canvas { display:block; width:100%; height:auto; }
-/* The crop overlay drawn by JS — no extra element needed */
-.crop-btn-row {
-  display:flex; gap:.44rem; margin-top:.55rem; width:100%; max-width:340px;
+#crop-topbar-title {
+  font-family:'Cinzel Decorative',serif;
+  font-size:.46rem; color:var(--gold-light);
 }
-.crop-btn {
-  flex:1; padding:.38rem 0; border-radius:.44rem;
-  font-family:'Nunito',sans-serif; font-size:.42rem;
-  font-weight:800; cursor:pointer; border:none;
-  transition:opacity .15s;
-}
-.crop-btn-cancel { background:var(--brown-card2); color:var(--text-muted); border:1.5px solid var(--brown-border); }
-.crop-btn-confirm { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:var(--brown-deep); }
 .crop-ratio-badge {
-  margin-bottom:.28rem;
-  background:rgba(245,166,35,.15); border:1px solid rgba(245,166,35,.35);
-  border-radius:.33rem; padding:.12rem .44rem;
-  font-size:.33rem; font-weight:800; color:var(--gold-light);
+  background:rgba(245,166,35,.18); border:1px solid rgba(245,166,35,.4);
+  border-radius:.33rem; padding:.11rem .38rem;
+  font-size:.32rem; font-weight:800; color:var(--gold);
   letter-spacing:.5px;
 }
+
+/* ── Hint ── */
+#crop-hint {
+  font-size:.35rem; color:var(--text-muted);
+  text-align:center; padding:.28rem .55rem .11rem;
+  flex-shrink:0;
+}
+
+/* ── Canvas — fills all available vertical space ── */
+#crop-canvas-wrap {
+  flex:1; position:relative;
+  display:flex; align-items:center; justify-content:center;
+  background:#0d0a06; overflow:hidden;
+  touch-action:none;
+  min-height:0; /* allow flex shrink */
+}
+#crop-canvas {
+  display:block;
+  max-width:100%; max-height:100%;
+  object-fit:contain;
+  cursor:crosshair;
+}
+
+/* ── Bottom buttons ── */
+.crop-btn-row {
+  display:flex; gap:.33rem;
+  padding:.44rem .55rem .55rem;
+  flex-shrink:0;
+  border-top:1px solid rgba(245,166,35,.18);
+}
+.crop-btn {
+  flex:1; padding:.5rem 0; border-radius:.55rem;
+  font-family:'Nunito',sans-serif; font-size:.44rem;
+  font-weight:800; cursor:pointer; border:none;
+  letter-spacing:.2px;
+}
+.crop-btn-cancel  { background:var(--brown-card2); color:var(--text-muted); border:1.5px solid var(--brown-border); }
+.crop-btn-confirm { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:var(--brown-deep); }
 </style>
 </head>
 <body>
@@ -1103,9 +1124,11 @@ body::before {
 
 <!-- CROP MODAL -->
 <div id="crop-modal">
-  <div class="crop-modal-title">✂️ Görseli Kırp</div>
-  <div class="crop-ratio-badge">3 : 2 — Base Düzeni</div>
-  <div class="crop-modal-hint">Sürükleyerek kırpma alanını ayarla</div>
+  <div id="crop-topbar">
+    <div id="crop-topbar-title">✂️ Görseli Kırp</div>
+    <div class="crop-ratio-badge">3 : 2</div>
+  </div>
+  <div id="crop-hint">Köşelerden boyutlandır · Sürükleyerek taşı</div>
   <div id="crop-canvas-wrap">
     <canvas id="crop-canvas"></canvas>
   </div>
@@ -2606,7 +2629,7 @@ let cropState = {
   pendingFile: null,
 };
 
-const HANDLE_SIZE = 18; // px hit-area for corner/edge handles
+const HANDLE_SIZE = 32; // px hit-area for corner handles (finger-friendly)
 
 function openCropModal(file) {
   const reader = new FileReader();
@@ -2617,8 +2640,10 @@ function openCropModal(file) {
       cropState.naturalW = img.naturalWidth;
       cropState.naturalH = img.naturalHeight;
       cropState.pendingFile = file;
-      initCropCanvas();
+      // Show modal first so wrap has real dimensions
       document.getElementById('crop-modal').classList.add('show');
+      // Then init canvas in next frame so layout is stable
+      requestAnimationFrame(() => requestAnimationFrame(() => initCropCanvas()));
     };
     img.src = ev.target.result;
   };
@@ -2628,29 +2653,42 @@ function openCropModal(file) {
 function initCropCanvas() {
   const wrap   = document.getElementById('crop-canvas-wrap');
   const canvas = document.getElementById('crop-canvas');
-  const ctx    = canvas.getContext('2d');
 
-  // Fit image into wrap — max 340px wide
-  const maxW  = Math.min(wrap.clientWidth || 320, 340);
-  const scale = maxW / cropState.naturalW;
-  const cW    = Math.round(cropState.naturalW * scale);
-  const cH    = Math.round(cropState.naturalH * scale);
+  // Wrap size: full screen minus topbar(~2.4rem) + hint(~1.1rem) + buttons(~2.8rem)
+  // Use actual available space — wait one frame so layout is stable
+  const availW = wrap.clientWidth  || window.innerWidth;
+  const availH = wrap.clientHeight || (window.innerHeight * 0.62);
+
+  // Scale image to fill available space while keeping aspect ratio
+  const imgRatio = cropState.naturalW / cropState.naturalH;
+  let cW, cH;
+  if (availW / availH > imgRatio) {
+    // Height-limited
+    cH = availH;
+    cW = Math.round(cH * imgRatio);
+  } else {
+    // Width-limited
+    cW = availW;
+    cH = Math.round(cW / imgRatio);
+  }
 
   canvas.width  = cW;
   canvas.height = cH;
   cropState.canvasW = cW;
   cropState.canvasH = cH;
-  cropState.scale   = 1 / scale; // canvas px → natural px
+  cropState.scale   = cropState.naturalW / cW; // canvas px → natural px
 
-  // Initial crop rect: centered, full width, 3:2
-  const initW = cW;
-  const initH = Math.round(initW / CROP_RATIO);
-  const initX = 0;
-  const initY = Math.max(0, Math.round((cH - initH) / 2));
-  cropState.cx = initX;
-  cropState.cy = Math.min(initY, cH - initH);
+  // Initial crop: largest 3:2 rect that fits, centered
+  let initW = cW;
+  let initH = Math.round(initW / CROP_RATIO);
+  if (initH > cH) {
+    initH = cH;
+    initW = Math.round(initH * CROP_RATIO);
+  }
+  cropState.cx = Math.round((cW - initW) / 2);
+  cropState.cy = Math.round((cH - initH) / 2);
   cropState.cw = initW;
-  cropState.ch = Math.min(initH, cH);
+  cropState.ch = initH;
 
   drawCrop();
   attachCropEvents(canvas);
@@ -2691,22 +2729,29 @@ function drawCrop() {
     ctx.stroke();
   }
 
-  // Corner handles
-  const hs = HANDLE_SIZE / 2;
+  // Corner L-shaped handles (visible, easy to grab)
+  const arm = Math.max(14, Math.round(cw * 0.06)); // arm length
+  const hw  = 3; // line width
   ctx.fillStyle = '#F5A623';
   const corners = [
-    [cx, cy], [cx + cw, cy], [cx, cy + ch], [cx + cw, cy + ch]
+    { x: cx,      y: cy,      dx:  1, dy:  1 },
+    { x: cx + cw, y: cy,      dx: -1, dy:  1 },
+    { x: cx,      y: cy + ch, dx:  1, dy: -1 },
+    { x: cx + cw, y: cy + ch, dx: -1, dy: -1 },
   ];
-  corners.forEach(([hx, hy]) => {
-    ctx.fillRect(hx - hs / 2, hy - hs / 2, hs, hs);
+  corners.forEach(({ x, y, dx, dy }) => {
+    // Horizontal arm
+    ctx.fillRect(x, y - hw/2, dx * arm, hw);
+    // Vertical arm
+    ctx.fillRect(x - hw/2, y, hw, dy * arm);
   });
 
-  // Ratio badge in crop area
-  ctx.fillStyle = 'rgba(245,166,35,0.85)';
-  ctx.font = `bold ${Math.max(10, Math.round(cw * 0.04))}px sans-serif`;
+  // Ratio badge
+  ctx.fillStyle = 'rgba(245,166,35,0.9)';
+  ctx.font = `bold ${Math.max(11, Math.round(cw * 0.035))}px sans-serif`;
   ctx.textAlign = 'right';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('3:2', cx + cw - 6, cy + ch - 4);
+  ctx.fillText('3:2', cx + cw - 6, cy + ch - 5);
 }
 
 function getHandleAt(px, py) {
@@ -2816,8 +2861,8 @@ function attachCropEvents(canvas) {
 
 function reOpenCrop() {
   if (!cropState.img) return;
-  initCropCanvas();
   document.getElementById('crop-modal').classList.add('show');
+  requestAnimationFrame(() => requestAnimationFrame(() => initCropCanvas()));
 }
 
 function cancelCrop() {
