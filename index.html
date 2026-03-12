@@ -28,7 +28,7 @@
   --shadow-gold:0 0 20px rgba(245,166,35,0.3); --radius:16px;
 }
 /* ─── GLOBAL FONT SCALE ─── */
-html { font-size: clamp(72px, 19.2vw, 88px); }
+html { font-size: clamp(18px, 4.8vw, 22px); }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
 html, body {
   height: 100%;
@@ -454,6 +454,15 @@ body::before {
 /* Upload progress bar */
 .progress-bar-wrap { background:var(--brown-card); border-radius:.33rem; overflow:hidden; height:.33rem; }
 .progress-bar { height:100%; background:linear-gradient(90deg,var(--gold-dark),var(--gold)); border-radius:.33rem; transition:width .3s ease; width:0%; }
+
+/* ── Language menu ── */
+.lang-opt {
+  padding:.33rem .55rem; font-family:'Nunito',sans-serif;
+  font-size:.42rem; font-weight:700; color:var(--cream);
+  cursor:pointer; transition:background .15s;
+}
+.lang-opt:hover { background:rgba(245,166,35,.18); color:var(--gold); }
+.lang-opt.active { color:var(--gold); background:rgba(245,166,35,.12); }
 </style>
 </head>
 <body>
@@ -467,18 +476,11 @@ body::before {
     <div class="topbar-logo">Clash<span>Vault</span></div>
     <div class="topbar-actions">
       <div class="icon-btn" onclick="goScreen('screen-search')">🔍</div>
-      <div class="icon-btn" onclick="openShare(null)">🔔</div>
+      <div class="icon-btn" id="lang-btn" onclick="toggleLangMenu()" style="font-size:.38rem;font-weight:900;letter-spacing:-.5px;">EN</div>
     </div>
   </div>
 
   <div class="scroll-content">
-
-    <!-- HERO -->
-    <div class="hero">
-      <div class="hero-tag">✨ New Bases Added</div>
-      <h2>Find Your Perfect Base Layout</h2>
-      <p>Curated layouts for every Town Hall level &amp; strategy</p>
-    </div>
 
     <!-- HOME BANNER AD -->
     <div class="ad-inline" id="ad-home-banner">
@@ -493,7 +495,7 @@ body::before {
 
     <!-- SECTION LABEL -->
     <div class="section-head" style="margin-top:4px;">
-      <div class="section-title">Choose Your Category</div>
+      <div class="section-title" data-i18n="section_choose_cat">Choose Your Category</div>
     </div>
 
     <!-- CATEGORY CARDS -->
@@ -504,8 +506,8 @@ body::before {
         <div class="cat-card-body">
           <div>
             <div class="cat-card-icon">🏰</div>
-            <div class="cat-card-title">Town Hall Bases</div>
-            <div class="cat-card-sub">TH 4 – TH 18 · Home Village</div>
+            <div class="cat-card-title" data-i18n="home_th_title">Town Hall Bases</div>
+            <div class="cat-card-sub" data-i18n="home_th_sub">TH 4 – TH 18 · Home Village</div>
             <div class="cat-card-badges">
               <span class="type-tag tag-war" >⚔️ War</span>
               <span class="type-tag tag-farm" >🌾 Farm</span>
@@ -524,8 +526,8 @@ body::before {
         <div class="cat-card-body">
           <div>
             <div class="cat-card-icon">🔨</div>
-            <div class="cat-card-title">Builder Base Layouts</div>
-            <div class="cat-card-sub">BH 4 – BH 10 · Builder Village</div>
+            <div class="cat-card-title" data-i18n="home_bh_title">Builder Base Layouts</div>
+            <div class="cat-card-sub" data-i18n="home_bh_sub">BH 4 – BH 10 · Builder Village</div>
             <div class="cat-card-badges">
               <span class="type-tag tag-war" >⚔️ War</span>
               <span class="type-tag tag-trophy" >🏆 Trophy</span>
@@ -541,11 +543,11 @@ body::before {
   </div>
 
   <nav class="navbar">
-    <div class="nav-item active" onclick="goScreen('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
-    <div class="nav-item" onclick="goScreen('screen-search')"><div class="nav-icon">🔍</div><div class="nav-label">Browse</div></div>
-    <div class="nav-item" onclick="goScreen('screen-community')"><div class="nav-icon">👥</div><div class="nav-label">Community</div></div>
-    <div class="nav-item" onclick="goScreen('screen-upload')"><div class="nav-icon">⬆️</div><div class="nav-label">Upload</div></div>
-    <div class="nav-item" onclick="goScreen('screen-favs')"><div class="nav-icon">❤️</div><div class="nav-label">Favorites</div></div>
+    <div class="nav-item active" onclick="goScreen('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label" data-i18n="nav_home">Home</div></div>
+    <div class="nav-item" onclick="goScreen('screen-search')"><div class="nav-icon">🔍</div><div class="nav-label" data-i18n="nav_browse">Browse</div></div>
+    <div class="nav-item" onclick="goScreen('screen-community')"><div class="nav-icon">👥</div><div class="nav-label" data-i18n="nav_community">Community</div></div>
+    <div class="nav-item" onclick="goScreen('screen-upload')"><div class="nav-icon">⬆️</div><div class="nav-label" data-i18n="nav_upload">Upload</div></div>
+    <div class="nav-item" onclick="goScreen('screen-favs')"><div class="nav-icon">❤️</div><div class="nav-label" data-i18n="nav_favs">Favorites</div></div>
   </nav>
 </div>
 
@@ -615,8 +617,8 @@ body::before {
 
     <div id="list-empty" class="empty-state" style="display:none;">
       <div class="empty-icon">🏰</div>
-      <div class="empty-title">No Bases Found</div>
-      <div class="empty-sub">Try a different filter.</div>
+      <div class="empty-title" data-i18n="empty_title">No Bases Found</div>
+      <div class="empty-sub" data-i18n="empty_sub">Try a different filter.</div>
     </div>
     <div class="cards-grid" id="list-grid"></div>
     <div style="height:20px;"></div>
@@ -642,7 +644,7 @@ body::before {
   <div class="search-bar">
     <div class="search-input-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" placeholder="Search bases..." id="search-input" oninput="applyFilters()">
+      <input type="text" placeholder="Search bases..." data-i18n="search_placeholder" id="search-input" oninput="applyFilters()">
     </div>
     <button class="filter-btn" onclick="toggleFilterPanel()">⚡</button>
   </div>
@@ -733,7 +735,7 @@ body::before {
 
     <!-- Share button below preview image -->
     <div style="padding:.33rem .45rem 0;">
-      <button class="btn-share" onclick="openShare(currentBase)">↗ Share This Base</button>
+      <button class="btn-share" data-i18n="detail_share" onclick="openShare(currentBase)">↗ Share This Base</button>
     </div>
 
     <div class="detail-tags" id="detail-tags"></div>
@@ -755,11 +757,11 @@ body::before {
     </div>
 
     <div class="action-btns">
-      <button class="btn-primary" onclick="copyToClash()">🏰 Copy to Clash of Clans</button>
+      <button class="btn-primary" data-i18n="detail_copy" onclick="copyToClash()">🏰 Copy to Clash of Clans</button>
       <button class="btn-secondary" id="fav-btn" onclick="toggleDetailFav()">🤍</button>
     </div>
     <div class="similar-section">
-      <div class="similar-title">Similar Bases</div>
+      <div class="similar-title" data-i18n="similar_title">Similar Bases</div>
       <div class="similar-grid" id="similar-list"></div>
     </div>
     <div style="height:20px;"></div>
@@ -770,12 +772,12 @@ body::before {
      SCREEN — FAVORITES
 ═══════════════════════════════════════════ -->
 <div id="screen-favs" class="screen" style="flex-direction:column;">
-  <div class="topbar"><div class="topbar-logo">My <span>Favorites</span></div></div>
+  <div class="topbar"><div class="topbar-logo" data-i18n="favs_title">My <span>Favorites</span></div></div>
   <div class="scroll-content">
     <div class="empty-state" id="favs-empty">
       <div class="empty-icon">💛</div>
-      <div class="empty-title">No Favorites Yet</div>
-      <div class="empty-sub">Tap the ❤️ on any base to save it here.</div>
+      <div class="empty-title" data-i18n="favs_empty_title">No Favorites Yet</div>
+      <div class="empty-sub" data-i18n="favs_empty_sub">Tap the ❤️ on any base to save it here.</div>
     </div>
     <div class="cards-grid" id="favs-grid" style="display:none;"></div>
   </div>
@@ -794,17 +796,17 @@ body::before {
 ═══════════════════════════════════════════ -->
 <div id="screen-community" class="screen" style="flex-direction:column;">
   <div class="topbar">
-    <div class="topbar-logo">👥 <span>Community</span></div>
+    <div class="topbar-logo" data-i18n="comm_title">👥 <span>Community</span></div>
   </div>
   <div class="community-tabs">
-    <button class="comm-tab active" id="comm-tab-all" onclick="switchCommTab('all')">Tüm Baseler</button>
-    <button class="comm-tab" id="comm-tab-mine" onclick="switchCommTab('mine')">Benim Yüklediklerim</button>
+    <button class="comm-tab active" id="comm-tab-all" data-i18n="comm_tab_all" onclick="switchCommTab('all')">All Bases</button>
+    <button class="comm-tab" id="comm-tab-mine" data-i18n="comm_tab_mine" onclick="switchCommTab('mine')">My Uploads</button>
   </div>
   <div class="scroll-content">
     <div id="comm-empty" class="empty-state" style="display:none;">
       <div class="empty-icon">👥</div>
-      <div class="empty-title">Henüz Base Yok</div>
-      <div class="empty-sub">İlk community base'i sen yükle!</div>
+      <div class="empty-title" data-i18n="comm_empty_title">No Bases Yet</div>
+      <div class="empty-sub" data-i18n="comm_empty_sub">Be the first to upload!</div>
     </div>
     <div class="cards-grid" id="comm-grid"></div>
     <div style="height:20px;"></div>
@@ -823,16 +825,16 @@ body::before {
 ═══════════════════════════════════════════ -->
 <div id="screen-upload" class="screen" style="flex-direction:column;">
   <div class="topbar">
-    <div class="topbar-logo">⬆️ <span>Upload Base</span></div>
+    <div class="topbar-logo" data-i18n="upload_title">⬆️ <span>Upload Base</span></div>
   </div>
   <div class="scroll-content">
 
     <!-- Success state (hidden by default) -->
     <div class="upload-success" id="upload-success">
       <div class="upload-success-icon">✅</div>
-      <div class="upload-success-title">Yüklendi!</div>
-      <div class="upload-success-sub">Base'in incelemeye alındı.<br>Onaylandıktan sonra Community'de görünecek.</div>
-      <button class="btn-upload-submit" style="margin-top:.33rem;" onclick="resetUploadForm()">⬆️ Yeni Base Yükle</button>
+      <div class="upload-success-title" data-i18n="upload_success_title">Uploaded!</div>
+      <div class="upload-success-sub" data-i18n="upload_success_sub">Your base is under review.<br>It will appear in Community once approved.</div>
+      <button class="btn-upload-submit" data-i18n="upload_new_btn" style="margin-top:.33rem;" onclick="resetUploadForm()">⬆️ Upload Another Base</button>
     </div>
 
     <!-- Form -->
@@ -840,12 +842,12 @@ body::before {
 
       <!-- Fotoğraf -->
       <div class="form-group">
-        <div class="form-label">📷 Base Fotoğrafı *</div>
+        <div class="form-label" data-i18n="upload_photo_label">📷 Base Screenshot *</div>
         <div class="img-upload-area" id="img-upload-area">
           <input type="file" id="upload-file-input" accept="image/*" onchange="handleImageSelect(event)">
           <div class="img-upload-icon">🖼️</div>
-          <div class="img-upload-text">Fotoğraf seç veya bırak</div>
-          <div class="img-upload-sub">JPG, PNG · Max 5MB</div>
+          <div class="img-upload-text" data-i18n="upload_photo_text">Select or drop photo</div>
+          <div class="img-upload-sub" data-i18n="upload_photo_sub">JPG, PNG · Max 5MB</div>
         </div>
         <div class="img-preview-wrap" id="img-preview-wrap" style="display:none;">
           <img id="img-preview" src="" alt="preview">
@@ -858,13 +860,13 @@ body::before {
 
       <!-- Base Adı -->
       <div class="form-group">
-        <div class="form-label">🏷 Base Adı *</div>
-        <input class="form-input" type="text" id="upload-title" placeholder="örn: TH9 Anti-3 Star War Base" maxlength="120">
+        <div class="form-label" data-i18n="upload_name_label">🏷 Base Name *</div>
+        <input class="form-input" type="text" id="upload-title" placeholder="e.g. TH9 Anti-3 Star War Base" data-i18n="upload_name_ph" maxlength="120">
       </div>
 
       <!-- Köy Tipi -->
       <div class="form-group">
-        <div class="form-label">🏘 Köy Tipi *</div>
+        <div class="form-label" data-i18n="upload_village_label">🏘 Village Type *</div>
         <select class="form-input form-select" id="upload-village" onchange="updateUploadLevels()">
           <option value="home">🏰 Home Village</option>
           <option value="builder">🔨 Builder Base</option>
@@ -873,13 +875,13 @@ body::before {
 
       <!-- TH Level -->
       <div class="form-group">
-        <div class="form-label">⭐ Seviye *</div>
+        <div class="form-label" data-i18n="upload_level_label">⭐ Level *</div>
         <select class="form-input form-select" id="upload-level"></select>
       </div>
 
       <!-- Tür -->
       <div class="form-group">
-        <div class="form-label">⚔️ Base Türü *</div>
+        <div class="form-label" data-i18n="upload_type_label">⚔️ Base Type *</div>
         <select class="form-input form-select" id="upload-type">
           <option value="war">⚔️ War</option>
           <option value="farm">🌾 Farm</option>
@@ -891,22 +893,22 @@ body::before {
 
       <!-- CoC Linki -->
       <div class="form-group">
-        <div class="form-label">🔗 Clash of Clans Linki *</div>
-        <input class="form-input" type="url" id="upload-coc-link" placeholder="https://link.clashofclans.com/...">
-        <div style="font-size:.33rem;color:var(--text-muted);margin-top:.1rem;">CoC → Base → Paylaş → Bağlantıyı Kopyala</div>
+        <div class="form-label" data-i18n="upload_coc_label">🔗 Clash of Clans Link *</div>
+        <input class="form-input" type="url" id="upload-coc-link" placeholder="https://link.clashofclans.com/..." data-i18n="upload_coc_ph">
+        <div style="font-size:.33rem;color:var(--text-muted);margin-top:.1rem;" data-i18n="upload_coc_hint">CoC → Base → Share → Copy Link</div>
       </div>
 
       <!-- Takma Ad -->
       <div class="form-group">
-        <div class="form-label">👤 Takma Adın (opsiyonel)</div>
-        <input class="form-input" type="text" id="upload-nickname" placeholder="örn: ClashMaster99" maxlength="40">
+        <div class="form-label" data-i18n="upload_nick_label">👤 Nickname (optional)</div>
+        <input class="form-input" type="text" id="upload-nickname" placeholder="e.g. ClashMaster99" data-i18n="upload_nick_ph" maxlength="40">
       </div>
 
-      <button class="btn-upload-submit" id="upload-submit-btn" onclick="submitUpload()">
-        ⬆️ Yükle & İncelemeye Gönder
+      <button class="btn-upload-submit" data-i18n="upload_btn" id="upload-submit-btn" onclick="submitUpload()">
+        ⬆️ Upload for Review
       </button>
-      <div style="font-size:.33rem;color:var(--text-muted);text-align:center;padding-bottom:.22rem;">
-        Yüklenen baseler moderasyon sonrası yayınlanır.
+      <div style="font-size:.33rem;color:var(--text-muted);text-align:center;padding-bottom:.22rem;" data-i18n="upload_moderation">
+        Uploads are reviewed before going live.
       </div>
     </div>
   </div>
@@ -941,15 +943,31 @@ body::before {
 <div class="modal-overlay" id="share-modal" onclick="closeShare(event)">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">🔗 Share This Base</div>
+    <div class="modal-title" data-i18n="share_title">🔗 Share This Base</div>
     <div class="share-url" id="share-url-text"></div>
     <div class="share-options">
-      <div class="share-opt" onclick="copyShareLink()"><div class="share-opt-icon">📋</div><div class="share-opt-label">Copy Link</div></div>
+      <div class="share-opt" onclick="copyShareLink()"><div class="share-opt-icon">📋</div><div class="share-opt-label" data-i18n="share_copy">Copy Link</div></div>
       <div class="share-opt" onclick="shareWhatsApp()"><div class="share-opt-icon">💬</div><div class="share-opt-label">WhatsApp</div></div>
       <div class="share-opt" onclick="copyShareLink()"><div class="share-opt-icon">🎮</div><div class="share-opt-label">Discord</div></div>
-      <div class="share-opt" onclick="nativeShare()"><div class="share-opt-icon">⬆️</div><div class="share-opt-label">More</div></div>
+      <div class="share-opt" onclick="nativeShare()"><div class="share-opt-icon">⬆️</div><div class="share-opt-label" data-i18n="share_more">More</div></div>
     </div>
   </div>
+</div>
+
+<!-- LANGUAGE MENU -->
+<div id="lang-menu" style="
+  display:none; position:fixed; top:3.2rem; right:.45rem; z-index:600;
+  background:var(--brown-card2); border:1.5px solid var(--gold-dark);
+  border-radius:.44rem; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.6);
+  min-width:5rem;">
+  <div style="padding:.22rem .44rem; font-size:.33rem; font-weight:800; color:var(--text-muted); letter-spacing:.8px; text-transform:uppercase; border-bottom:1px solid var(--brown-border);">🌐 Language</div>
+  <div id="lang-opt-tr" class="lang-opt" onclick="setLang('tr')">🇹🇷 Türkçe</div>
+  <div id="lang-opt-en" class="lang-opt" onclick="setLang('en')">🇬🇧 English</div>
+  <div id="lang-opt-de" class="lang-opt" onclick="setLang('de')">🇩🇪 Deutsch</div>
+  <div id="lang-opt-fr" class="lang-opt" onclick="setLang('fr')">🇫🇷 Français</div>
+  <div id="lang-opt-es" class="lang-opt" onclick="setLang('es')">🇪🇸 Español</div>
+  <div id="lang-opt-pt" class="lang-opt" onclick="setLang('pt')">🇧🇷 Português</div>
+  <div id="lang-opt-ar" class="lang-opt" onclick="setLang('ar')">🇸🇦 العربية</div>
 </div>
 
 <!-- LIGHTBOX -->
@@ -970,6 +988,619 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
+
+/* ═══════════════════════════════════════════
+   i18n — TRANSLATION SYSTEM
+═══════════════════════════════════════════ */
+const TRANSLATIONS = {
+  tr: {
+    // Navbar
+    nav_home:'Ana Sayfa', nav_browse:'Keşfet', nav_community:'Topluluk',
+    nav_upload:'Yükle', nav_favs:'Favoriler',
+    // Home screen
+    home_cat_title:'Kategori Seç',
+    home_th_title:'Belediye Binası', home_th_sub:'TH 4 – TH 18 · Ana Köy',
+    home_bh_title:'İnşaatçı Köyü', home_bh_sub:'BH 4 – BH 10 · İnşaatçı Köyü',
+    home_layouts:'düzen',
+    // List screen
+    list_th_title:'🏰 Belediye <span>Binası</span>',
+    list_bh_title:'🔨 İnşaatçı <span>Köyü</span>',
+    filter_all_types:'🏷 Tümü',
+    // Types
+    type_war:'⚔️ Savaş', type_farm:'🌾 Çiftlik', type_trophy:'🏆 Kupa',
+    type_hybrid:'🔥 Karma', type_progress:'⬆️ İlerleme',
+    // Detail screen
+    detail_share:'↗ Bu Düzeni Paylaş',
+    detail_copy:'🏰 Clash of Clans\u02BCa Kopyala',
+    stat_uses:'Kullanım', stat_favs:'Favori', stat_th:'Seviye',
+    similar_title:'Benzer Düzenler',
+    village_home:'🏰 Ana Köy', village_builder:'🔨 İnşaatçı Köyü',
+    // Search screen
+    search_placeholder:'Base ara...',
+    filter_village:'Köy Tipi', filter_level:'Seviye', filter_type:'Tür',
+    filter_all:'Tümü', filter_home_v:'🏰 Ana Köy', filter_builder_v:'🔨 İnşaatçı Köyü',
+    empty_title:'Base Bulunamadı', empty_sub:'Farklı bir filtre deneyin.',
+    // Favs screen
+    favs_title:'Favorilerim',
+    favs_empty_title:'Henüz Favori Yok',
+    favs_empty_sub:'Kaydetmek için herhangi bir basede kalp simgesine bas.',
+    // Community screen
+    comm_title:'👥 Topluluk',
+    comm_tab_all:'Tüm Baseler', comm_tab_mine:'Benim Yüklediklerim',
+    comm_empty_title:'Henüz Base Yok',
+    comm_empty_sub:'İlk community baseni yükle!',
+    pending_label:'⏳ İncelemede',
+    // Upload screen
+    upload_title:'⬆️ Base Yükle',
+    upload_photo_label:'📷 Base Fotoğrafı *',
+    upload_photo_text:'Fotoğraf seç veya bırak',
+    upload_photo_sub:'JPG, PNG · Max 5MB',
+    upload_name_label:'🏷 Base Adı *',
+    upload_name_ph:'örn: TH9 Anti-3 Star Savaş Düzeni',
+    upload_village_label:'🏘 Köy Tipi *',
+    upload_level_label:'⭐ Seviye *',
+    upload_type_label:'⚔️ Base Türü *',
+    upload_coc_label:'🔗 Clash of Clans Linki *',
+    upload_coc_ph:'https://link.clashofclans.com/...',
+    upload_coc_hint:'CoC → Base → Paylaş → Bağlantıyı Kopyala',
+    upload_nick_label:'👤 Takma Adın (opsiyonel)',
+    upload_nick_ph:'örn: ClashMaster99',
+    upload_btn:'⬆️ Yükle & İncelemeye Gönder',
+    upload_uploading:'⏳ Yükleniyor...',
+    upload_moderation:'Yüklenen baseler moderasyon sonrası yayınlanır.',
+    upload_success_title:'Yüklendi!',
+    upload_success_sub:'Base incelemeye alındı. Community görünecek.',
+    upload_new_btn:'⬆️ Yeni Base Yükle',
+    // Toasts & loading
+    toast_fav_add:'❤️ Favorilere eklendi!', toast_fav_remove:'Favorilerden kaldırıldı',
+    toast_copied:'🔗 Link kopyalandı!', toast_coc_open:'🏰 CoC açılıyor...',
+    toast_coc_missing:'⚠️ CoC linki bulunamadı',
+    toast_img_big:'⚠️ Dosya 5MB den büyük!',
+    toast_no_img:'⚠️ Fotoğraf seç!',
+    toast_no_title:'⚠️ Base adı gir!',
+    toast_no_coc:'⚠️ CoC linki gir!',
+    loading_bases:'Baseler yükleniyor', loading_home:'Ana sayfa yükleniyor',
+    loading_search:'Arama yükleniyor', loading_favs:'Favoriler yükleniyor',
+    loading_community:'Topluluk yükleniyor', loading_upload:'Yükleme sayfası',
+    loading_category:'Kategoriye giriliyor', loading_filtering:'Filtreleniyor',
+    loading_detail:'Base yükleniyor', loading_back:'Geri dönülüyor',
+    // Share modal
+    share_title:'🔗 Bu Düzeni Paylaş',
+    share_copy:'Kopyala', share_whatsapp:'WhatsApp',
+    share_discord:'Discord', share_more:'Daha Fazla',
+    // Section
+    section_choose_cat:'Kategori Seç',
+  },
+  en: {
+    nav_home:'Home', nav_browse:'Browse', nav_community:'Community',
+    nav_upload:'Upload', nav_favs:'Favorites',
+    home_cat_title:'Choose Category',
+    home_th_title:'Town Hall Bases', home_th_sub:'TH 4 – TH 18 · Home Village',
+    home_bh_title:'Builder Base Layouts', home_bh_sub:'BH 4 – BH 10 · Builder Village',
+    home_layouts:'layouts',
+    list_th_title:'🏰 Town Hall <span>Bases</span>',
+    list_bh_title:'🔨 Builder <span>Bases</span>',
+    filter_all_types:'🏷 All Types',
+    type_war:'⚔️ War', type_farm:'🌾 Farm', type_trophy:'🏆 Trophy',
+    type_hybrid:'🔥 Hybrid', type_progress:'⬆️ Progress',
+    detail_share:'↗ Share This Base',
+    detail_copy:'🏰 Copy to Clash of Clans',
+    stat_uses:'Uses', stat_favs:'Favorites', stat_th:'Town Hall',
+    similar_title:'Similar Bases',
+    village_home:'🏰 Home Village', village_builder:'🔨 Builder Base',
+    search_placeholder:'Search bases...',
+    filter_village:'Village Type', filter_level:'Level', filter_type:'Base Type',
+    filter_all:'All', filter_home_v:'🏰 Home Village', filter_builder_v:'🔨 Builder Base',
+    empty_title:'No Bases Found', empty_sub:'Try a different filter.',
+    favs_title:'My Favorites',
+    favs_empty_title:'No Favorites Yet',
+    favs_empty_sub:'Tap ❤️ on any base to save it here.',
+    comm_title:'👥 Community',
+    comm_tab_all:'All Bases', comm_tab_mine:'My Uploads',
+    comm_empty_title:'No Bases Yet',
+    comm_empty_sub:'Be the first to upload a community base!',
+    pending_label:'⏳ Pending Review',
+    upload_title:'⬆️ Upload Base',
+    upload_photo_label:'📷 Base Screenshot *',
+    upload_photo_text:'Select or drop photo',
+    upload_photo_sub:'JPG, PNG · Max 5MB',
+    upload_name_label:'🏷 Base Name *',
+    upload_name_ph:'e.g. TH9 Anti-3 Star War Base',
+    upload_village_label:'🏘 Village Type *',
+    upload_level_label:'⭐ Level *',
+    upload_type_label:'⚔️ Base Type *',
+    upload_coc_label:'🔗 Clash of Clans Link *',
+    upload_coc_ph:'https://link.clashofclans.com/...',
+    upload_coc_hint:'CoC → Base → Share → Copy Link',
+    upload_nick_label:'👤 Nickname (optional)',
+    upload_nick_ph:'e.g. ClashMaster99',
+    upload_btn:'⬆️ Upload for Review',
+    upload_uploading:'⏳ Uploading...',
+    upload_moderation:'Uploads are reviewed before going live.',
+    upload_success_title:'Uploaded!',
+    upload_success_sub:'Your base is under review. It will appear in Community once approved.',
+    upload_new_btn:'⬆️ Upload Another Base',
+    toast_fav_add:'❤️ Added to favorites!', toast_fav_remove:'Removed from favorites',
+    toast_copied:'🔗 Link copied!', toast_coc_open:'🏰 Opening Clash of Clans…',
+    toast_coc_missing:'⚠️ CoC link not available',
+    toast_img_big:'⚠️ File exceeds 5MB!',
+    toast_no_img:'⚠️ Please select a photo!',
+    toast_no_title:'⚠️ Please enter a base name!',
+    toast_no_coc:'⚠️ Please enter CoC link!',
+    loading_bases:'Loading bases', loading_home:'Loading home',
+    loading_search:'Loading search', loading_favs:'Loading favorites',
+    loading_community:'Loading community', loading_upload:'Loading upload',
+    loading_category:'Opening category', loading_filtering:'Filtering',
+    loading_detail:'Loading base', loading_back:'Going back',
+    share_title:'🔗 Share This Base',
+    share_copy:'Copy Link', share_whatsapp:'WhatsApp',
+    share_discord:'Discord', share_more:'More',
+    section_choose_cat:'Choose Your Category',
+  },
+  de: {
+    nav_home:'Start', nav_browse:'Suchen', nav_community:'Community',
+    nav_upload:'Hochladen', nav_favs:'Favoriten',
+    home_cat_title:'Kategorie wählen',
+    home_th_title:'Rathaus-Basen', home_th_sub:'TH 4 – TH 18 · Heimatdorf',
+    home_bh_title:'Baumeister-Basen', home_bh_sub:'BH 4 – BH 10 · Baumeisterdorf',
+    home_layouts:'Layouts',
+    list_th_title:'🏰 Rathaus-<span>Basen</span>',
+    list_bh_title:'🔨 Baumeister-<span>Basen</span>',
+    filter_all_types:'🏷 Alle',
+    type_war:'⚔️ Krieg', type_farm:'🌾 Farm', type_trophy:'🏆 Pokal',
+    type_hybrid:'🔥 Hybrid', type_progress:'⬆️ Fortschritt',
+    detail_share:'↗ Basis teilen',
+    detail_copy:'🏰 In CoC kopieren',
+    stat_uses:'Nutzungen', stat_favs:'Favoriten', stat_th:'Rathaus',
+    similar_title:'Ähnliche Basen',
+    village_home:'🏰 Heimatdorf', village_builder:'🔨 Baumeisterdorf',
+    search_placeholder:'Basis suchen...',
+    filter_village:'Dorftyp', filter_level:'Level', filter_type:'Basistyp',
+    filter_all:'Alle', filter_home_v:'🏰 Heimatdorf', filter_builder_v:'🔨 Baumeisterdorf',
+    empty_title:'Keine Basen gefunden', empty_sub:'Anderen Filter versuchen.',
+    favs_title:'Meine Favoriten',
+    favs_empty_title:'Noch keine Favoriten',
+    favs_empty_sub:'Tippe ❤️ um eine Basis zu speichern.',
+    comm_title:'👥 Community',
+    comm_tab_all:'Alle Basen', comm_tab_mine:'Meine Uploads',
+    comm_empty_title:'Noch keine Basen',
+    comm_empty_sub:'Lade die erste Community-Basis hoch!',
+    pending_label:'⏳ In Prüfung',
+    upload_title:'⬆️ Basis hochladen',
+    upload_photo_label:'📷 Basis-Screenshot *',
+    upload_photo_text:'Foto auswählen oder ablegen',
+    upload_photo_sub:'JPG, PNG · Max 5MB',
+    upload_name_label:'🏷 Basisname *',
+    upload_name_ph:'z.B. TH9 Anti-3 Stern Kriegsbasis',
+    upload_village_label:'🏘 Dorftyp *',
+    upload_level_label:'⭐ Level *',
+    upload_type_label:'⚔️ Basistyp *',
+    upload_coc_label:'🔗 Clash of Clans Link *',
+    upload_coc_ph:'https://link.clashofclans.com/...',
+    upload_coc_hint:'CoC → Basis → Teilen → Link kopieren',
+    upload_nick_label:'👤 Spitzname (optional)',
+    upload_nick_ph:'z.B. ClashMaster99',
+    upload_btn:'⬆️ Hochladen & Prüfen',
+    upload_uploading:'⏳ Wird hochgeladen...',
+    upload_moderation:'Uploads werden vor Veröffentlichung geprüft.',
+    upload_success_title:'Hochgeladen!',
+    upload_success_sub:'Deine Basis wird geprüft. Sie erscheint nach Genehmigung in der Community.',
+    upload_new_btn:'⬆️ Weitere Basis hochladen',
+    toast_fav_add:'❤️ Zu Favoriten hinzugefügt!', toast_fav_remove:'Aus Favoriten entfernt',
+    toast_copied:'🔗 Link kopiert!', toast_coc_open:'🏰 CoC wird geöffnet…',
+    toast_coc_missing:'⚠️ CoC-Link nicht verfügbar',
+    toast_img_big:'⚠️ Datei überschreitet 5MB!',
+    toast_no_img:'⚠️ Bitte Foto auswählen!',
+    toast_no_title:'⚠️ Bitte Basisname eingeben!',
+    toast_no_coc:'⚠️ Bitte CoC-Link eingeben!',
+    loading_bases:'Basen laden', loading_home:'Startseite laden',
+    loading_search:'Suche laden', loading_favs:'Favoriten laden',
+    loading_community:'Community laden', loading_upload:'Upload laden',
+    loading_category:'Kategorie öffnen', loading_filtering:'Filtern',
+    loading_detail:'Basis laden', loading_back:'Zurück',
+    share_title:'🔗 Basis teilen',
+    share_copy:'Link kopieren', share_whatsapp:'WhatsApp',
+    share_discord:'Discord', share_more:'Mehr',
+    section_choose_cat:'Kategorie wählen',
+  },
+  fr: {
+    nav_home:'Accueil', nav_browse:'Explorer', nav_community:'Communauté',
+    nav_upload:'Uploader', nav_favs:'Favoris',
+    home_cat_title:'Choisir une catégorie',
+    home_th_title:'Bases Hôtel de Ville', home_th_sub:'HV 4 – HV 18 · Village Principal',
+    home_bh_title:'Bases Maître Bâtisseur', home_bh_sub:'MB 4 – MB 10 · Village Bâtisseur',
+    home_layouts:'layouts',
+    list_th_title:'🏰 Bases <span>HdV</span>',
+    list_bh_title:'🔨 Bases <span>Bâtisseur</span>',
+    filter_all_types:'🏷 Tous',
+    type_war:'⚔️ Guerre', type_farm:'🌾 Farm', type_trophy:'🏆 Trophées',
+    type_hybrid:'🔥 Hybride', type_progress:'⬆️ Progression',
+    detail_share:'↗ Partager cette base',
+    detail_copy:'🏰 Copier dans CoC',
+    stat_uses:'Utilisations', stat_favs:'Favoris', stat_th:'Hôtel de Ville',
+    similar_title:'Bases similaires',
+    village_home:'🏰 Village Principal', village_builder:'🔨 Village Bâtisseur',
+    search_placeholder:'Rechercher des bases...',
+    filter_village:'Type de village', filter_level:'Niveau', filter_type:'Type de base',
+    filter_all:'Tous', filter_home_v:'🏰 Village Principal', filter_builder_v:'🔨 Village Bâtisseur',
+    empty_title:'Aucune base trouvée', empty_sub:'Essayez un autre filtre.',
+    favs_title:'Mes Favoris',
+    favs_empty_title:'Pas encore de favoris',
+    favs_empty_sub:'Appuyez sur ❤️ pour sauvegarder une base.',
+    comm_title:'👥 Communauté',
+    comm_tab_all:'Toutes les bases', comm_tab_mine:'Mes uploads',
+    comm_empty_title:'Pas encore de bases',
+    comm_empty_sub:'Soyez le premier à uploader!',
+    pending_label:'⏳ En cours de vérification',
+    upload_title:'⬆️ Uploader une base',
+    upload_photo_label:'📷 Capture ecran *',
+    upload_photo_text:'Sélectionner ou déposer',
+    upload_photo_sub:'JPG, PNG · Max 5Mo',
+    upload_name_label:'🏷 Nom de la base *',
+    upload_name_ph:'ex: HV9 Anti-3 Étoiles Guerre',
+    upload_village_label:'🏘 Type de village *',
+    upload_level_label:'⭐ Niveau *',
+    upload_type_label:'⚔️ Type de base *',
+    upload_coc_label:'🔗 Lien Clash of Clans *',
+    upload_coc_ph:'https://link.clashofclans.com/...',
+    upload_coc_hint:'CoC → Base → Partager → Copier le lien',
+    upload_nick_label:'👤 Pseudo (optionnel)',
+    upload_nick_ph:'ex: ClashMaster99',
+    upload_btn:'⬆️ Uploader pour vérification',
+    upload_uploading:'⏳ Envoi en cours...',
+    upload_moderation:'Les uploads sont vérifiés avant publication.',
+    upload_success_title:'Uploadé!',
+    upload_success_sub:'Votre base est en cours de verification.',
+    upload_new_btn:'⬆️ Uploader une autre base',
+    toast_fav_add:'❤️ Ajouté aux favoris!', toast_fav_remove:'Retiré des favoris',
+    toast_copied:'🔗 Lien copié!', toast_coc_open:'🏰 Ouverture de CoC…',
+    toast_coc_missing:'⚠️ Lien CoC non disponible',
+    toast_img_big:'⚠️ Fichier trop grand (max 5Mo)!',
+    toast_no_img:'⚠️ Veuillez sélectionner une photo!',
+    toast_no_title:'⚠️ Veuillez saisir un nom!',
+    toast_no_coc:'⚠️ Veuillez saisir le lien CoC!',
+    loading_bases:'Chargement des bases', loading_home:'Chargement accueil',
+    loading_search:'Chargement recherche', loading_favs:'Chargement favoris',
+    loading_community:'Chargement communauté', loading_upload:'Chargement upload',
+    loading_category:'Ouverture catégorie', loading_filtering:'Filtrage',
+    loading_detail:'Chargement base', loading_back:'Retour',
+    share_title:'🔗 Partager cette base',
+    share_copy:'Copier', share_whatsapp:'WhatsApp',
+    share_discord:'Discord', share_more:'Plus',
+    section_choose_cat:'Choisir une catégorie',
+  },
+  es: {
+    nav_home:'Inicio', nav_browse:'Explorar', nav_community:'Comunidad',
+    nav_upload:'Subir', nav_favs:'Favoritos',
+    home_cat_title:'Elegir categoría',
+    home_th_title:'Bases Ayuntamiento', home_th_sub:'AY 4 – AY 18 · Aldea Principal',
+    home_bh_title:'Bases Constructor', home_bh_sub:'CC 4 – CC 10 · Aldea Constructor',
+    home_layouts:'diseños',
+    list_th_title:'🏰 Bases <span>Ayuntamiento</span>',
+    list_bh_title:'🔨 Bases <span>Constructor</span>',
+    filter_all_types:'🏷 Todos',
+    type_war:'⚔️ Guerra', type_farm:'🌾 Granja', type_trophy:'🏆 Trofeos',
+    type_hybrid:'🔥 Híbrido', type_progress:'⬆️ Progreso',
+    detail_share:'↗ Compartir base',
+    detail_copy:'🏰 Copiar en CoC',
+    stat_uses:'Usos', stat_favs:'Favoritos', stat_th:'Ayuntamiento',
+    similar_title:'Bases similares',
+    village_home:'🏰 Aldea Principal', village_builder:'🔨 Aldea Constructor',
+    search_placeholder:'Buscar bases...',
+    filter_village:'Tipo de aldea', filter_level:'Nivel', filter_type:'Tipo de base',
+    filter_all:'Todos', filter_home_v:'🏰 Aldea Principal', filter_builder_v:'🔨 Aldea Constructor',
+    empty_title:'No se encontraron bases', empty_sub:'Prueba otro filtro.',
+    favs_title:'Mis Favoritos',
+    favs_empty_title:'Sin favoritos aún',
+    favs_empty_sub:'Toca ❤️ en cualquier base para guardarla.',
+    comm_title:'👥 Comunidad',
+    comm_tab_all:'Todas las bases', comm_tab_mine:'Mis subidas',
+    comm_empty_title:'Sin bases aún',
+    comm_empty_sub:'¡Sé el primero en subir una base!',
+    pending_label:'⏳ En revisión',
+    upload_title:'⬆️ Subir base',
+    upload_photo_label:'📷 Captura de base *',
+    upload_photo_text:'Seleccionar o soltar foto',
+    upload_photo_sub:'JPG, PNG · Máx 5MB',
+    upload_name_label:'🏷 Nombre de base *',
+    upload_name_ph:'ej: AY9 Anti-3 Estrellas Guerra',
+    upload_village_label:'🏘 Tipo de aldea *',
+    upload_level_label:'⭐ Nivel *',
+    upload_type_label:'⚔️ Tipo de base *',
+    upload_coc_label:'🔗 Enlace Clash of Clans *',
+    upload_coc_ph:'https://link.clashofclans.com/...',
+    upload_coc_hint:'CoC → Base → Compartir → Copiar enlace',
+    upload_nick_label:'👤 Apodo (opcional)',
+    upload_nick_ph:'ej: ClashMaster99',
+    upload_btn:'⬆️ Subir para revisión',
+    upload_uploading:'⏳ Subiendo...',
+    upload_moderation:'Las subidas se revisan antes de publicarse.',
+    upload_success_title:'¡Subido!',
+    upload_success_sub:'Tu base está en revisión.',
+    upload_new_btn:'⬆️ Subir otra base',
+    toast_fav_add:'❤️ ¡Añadido a favoritos!', toast_fav_remove:'Eliminado de favoritos',
+    toast_copied:'🔗 ¡Enlace copiado!', toast_coc_open:'🏰 Abriendo CoC…',
+    toast_coc_missing:'⚠️ Enlace CoC no disponible',
+    toast_img_big:'⚠️ Archivo mayor de 5MB!',
+    toast_no_img:'⚠️ Selecciona una foto!',
+    toast_no_title:'⚠️ Introduce un nombre!',
+    toast_no_coc:'⚠️ Introduce el enlace CoC!',
+    loading_bases:'Cargando bases', loading_home:'Cargando inicio',
+    loading_search:'Cargando búsqueda', loading_favs:'Cargando favoritos',
+    loading_community:'Cargando comunidad', loading_upload:'Cargando subida',
+    loading_category:'Abriendo categoría', loading_filtering:'Filtrando',
+    loading_detail:'Cargando base', loading_back:'Volviendo',
+    share_title:'🔗 Compartir base',
+    share_copy:'Copiar', share_whatsapp:'WhatsApp',
+    share_discord:'Discord', share_more:'Más',
+    section_choose_cat:'Elige tu categoría',
+  },
+  pt: {
+    nav_home:'Início', nav_browse:'Explorar', nav_community:'Comunidade',
+    nav_upload:'Enviar', nav_favs:'Favoritos',
+    home_cat_title:'Escolher categoria',
+    home_th_title:'Bases Prefeitura', home_th_sub:'PP 4 – PP 18 · Vila Principal',
+    home_bh_title:'Bases Construtor', home_bh_sub:'MC 4 – MC 10 · Vila Construtor',
+    home_layouts:'layouts',
+    list_th_title:'🏰 Bases <span>Prefeitura</span>',
+    list_bh_title:'🔨 Bases <span>Construtor</span>',
+    filter_all_types:'🏷 Todos',
+    type_war:'⚔️ Guerra', type_farm:'🌾 Fazenda', type_trophy:'🏆 Troféus',
+    type_hybrid:'🔥 Híbrido', type_progress:'⬆️ Progresso',
+    detail_share:'↗ Compartilhar base',
+    detail_copy:'🏰 Copiar no CoC',
+    stat_uses:'Usos', stat_favs:'Favoritos', stat_th:'Prefeitura',
+    similar_title:'Bases similares',
+    village_home:'🏰 Vila Principal', village_builder:'🔨 Vila Construtor',
+    search_placeholder:'Buscar bases...',
+    filter_village:'Tipo de vila', filter_level:'Nível', filter_type:'Tipo de base',
+    filter_all:'Todos', filter_home_v:'🏰 Vila Principal', filter_builder_v:'🔨 Vila Construtor',
+    empty_title:'Nenhuma base encontrada', empty_sub:'Tente outro filtro.',
+    favs_title:'Meus Favoritos',
+    favs_empty_title:'Sem favoritos ainda',
+    favs_empty_sub:'Toque em ❤️ para salvar uma base.',
+    comm_title:'👥 Comunidade',
+    comm_tab_all:'Todas as bases', comm_tab_mine:'Meus envios',
+    comm_empty_title:'Sem bases ainda',
+    comm_empty_sub:'Seja o primeiro a enviar uma base!',
+    pending_label:'⏳ Em análise',
+    upload_title:'⬆️ Enviar base',
+    upload_photo_label:'📷 Captura da base *',
+    upload_photo_text:'Selecionar ou soltar foto',
+    upload_photo_sub:'JPG, PNG · Máx 5MB',
+    upload_name_label:'🏷 Nome da base *',
+    upload_name_ph:'ex: PP9 Anti-3 Estrelas Guerra',
+    upload_village_label:'🏘 Tipo de vila *',
+    upload_level_label:'⭐ Nível *',
+    upload_type_label:'⚔️ Tipo de base *',
+    upload_coc_label:'🔗 Link Clash of Clans *',
+    upload_coc_ph:'https://link.clashofclans.com/...',
+    upload_coc_hint:'CoC → Base → Compartilhar → Copiar link',
+    upload_nick_label:'👤 Apelido (opcional)',
+    upload_nick_ph:'ex: ClashMaster99',
+    upload_btn:'⬆️ Enviar para análise',
+    upload_uploading:'⏳ Enviando...',
+    upload_moderation:'Envios são analisados antes de serem publicados.',
+    upload_success_title:'Enviado!',
+    upload_success_sub:'Sua base está em análise.',
+    upload_new_btn:'⬆️ Enviar outra base',
+    toast_fav_add:'❤️ Adicionado aos favoritos!', toast_fav_remove:'Removido dos favoritos',
+    toast_copied:'🔗 Link copiado!', toast_coc_open:'🏰 Abrindo CoC…',
+    toast_coc_missing:'⚠️ Link CoC não disponível',
+    toast_img_big:'⚠️ Arquivo maior que 5MB!',
+    toast_no_img:'⚠️ Selecione uma foto!',
+    toast_no_title:'⚠️ Digite um nome de base!',
+    toast_no_coc:'⚠️ Digite o link CoC!',
+    loading_bases:'Carregando bases', loading_home:'Carregando início',
+    loading_search:'Carregando busca', loading_favs:'Carregando favoritos',
+    loading_community:'Carregando comunidade', loading_upload:'Carregando envio',
+    loading_category:'Abrindo categoria', loading_filtering:'Filtrando',
+    loading_detail:'Carregando base', loading_back:'Voltando',
+    share_title:'🔗 Compartilhar base',
+    share_copy:'Copiar', share_whatsapp:'WhatsApp',
+    share_discord:'Discord', share_more:'Mais',
+    section_choose_cat:'Escolha sua categoria',
+  },
+  ar: {
+    nav_home:'الرئيسية', nav_browse:'استعرض', nav_community:'المجتمع',
+    nav_upload:'رفع', nav_favs:'المفضلة',
+    home_cat_title:'اختر الفئة',
+    home_th_title:'قواعد قاعة المدينة', home_th_sub:'QM 4 – QM 18 · القرية الرئيسية',
+    home_bh_title:'قواعد البناء', home_bh_sub:'MB 4 – MB 10 · قرية البناء',
+    home_layouts:'تصميم',
+    list_th_title:'🏰 قواعد <span>المدينة</span>',
+    list_bh_title:'🔨 قواعد <span>البناء</span>',
+    filter_all_types:'🏷 الكل',
+    type_war:'⚔️ حرب', type_farm:'🌾 زراعة', type_trophy:'🏆 كأس',
+    type_hybrid:'🔥 مختلط', type_progress:'⬆️ تقدم',
+    detail_share:'↗ مشاركة القاعدة',
+    detail_copy:'🏰 نسخ إلى CoC',
+    stat_uses:'الاستخدامات', stat_favs:'المفضلة', stat_th:'قاعة المدينة',
+    similar_title:'قواعد مشابهة',
+    village_home:'🏰 القرية الرئيسية', village_builder:'🔨 قرية البناء',
+    search_placeholder:'ابحث عن قاعدة...',
+    filter_village:'نوع القرية', filter_level:'المستوى', filter_type:'نوع القاعدة',
+    filter_all:'الكل', filter_home_v:'🏰 القرية الرئيسية', filter_builder_v:'🔨 قرية البناء',
+    empty_title:'لا توجد قواعد', empty_sub:'جرب فلتراً مختلفاً.',
+    favs_title:'مفضلتي',
+    favs_empty_title:'لا توجد مفضلات بعد',
+    favs_empty_sub:'اضغط ❤️ على أي قاعدة لحفظها.',
+    comm_title:'👥 المجتمع',
+    comm_tab_all:'كل القواعد', comm_tab_mine:'رفوعاتي',
+    comm_empty_title:'لا توجد قواعد بعد',
+    comm_empty_sub:'كن أول من يرفع قاعدة!',
+    pending_label:'⏳ قيد المراجعة',
+    upload_title:'⬆️ رفع قاعدة',
+    upload_photo_label:'📷 صورة القاعدة *',
+    upload_photo_text:'اختر أو اسحب صورة',
+    upload_photo_sub:'JPG, PNG · حد أقصى 5MB',
+    upload_name_label:'🏷 اسم القاعدة *',
+    upload_name_ph:'مثال: QM9 مضادة 3 نجوم حرب',
+    upload_village_label:'🏘 نوع القرية *',
+    upload_level_label:'⭐ المستوى *',
+    upload_type_label:'⚔️ نوع القاعدة *',
+    upload_coc_label:'🔗 رابط Clash of Clans *',
+    upload_coc_ph:'https://link.clashofclans.com/...',
+    upload_coc_hint:'CoC → القاعدة → مشاركة → نسخ الرابط',
+    upload_nick_label:'👤 اللقب (اختياري)',
+    upload_nick_ph:'مثال: ClashMaster99',
+    upload_btn:'⬆️ رفع للمراجعة',
+    upload_uploading:'⏳ جارٍ الرفع...',
+    upload_moderation:'تتم مراجعة الرفوعات قبل النشر.',
+    upload_success_title:'تم الرفع!',
+    upload_success_sub:'قاعدتك قيد المراجعة.',
+    upload_new_btn:'⬆️ رفع قاعدة أخرى',
+    toast_fav_add:'❤️ أضيف للمفضلة!', toast_fav_remove:'أزيل من المفضلة',
+    toast_copied:'🔗 نسخ الرابط!', toast_coc_open:'🏰 فتح CoC…',
+    toast_coc_missing:'⚠️ رابط CoC غير متاح',
+    toast_img_big:'⚠️ الملف أكبر من 5MB!',
+    toast_no_img:'⚠️ اختر صورة!',
+    toast_no_title:'⚠️ أدخل اسم القاعدة!',
+    toast_no_coc:'⚠️ أدخل رابط CoC!',
+    loading_bases:'تحميل القواعد', loading_home:'تحميل الرئيسية',
+    loading_search:'تحميل البحث', loading_favs:'تحميل المفضلة',
+    loading_community:'تحميل المجتمع', loading_upload:'تحميل الرفع',
+    loading_category:'فتح الفئة', loading_filtering:'تصفية',
+    loading_detail:'تحميل القاعدة', loading_back:'رجوع',
+    share_title:'🔗 مشاركة القاعدة',
+    share_copy:'نسخ', share_whatsapp:'واتساب',
+    share_discord:'ديسكورد', share_more:'المزيد',
+    section_choose_cat:'اختر فئتك',
+  },
+};
+
+/* ── Language helper ── */
+let currentLang = 'en';
+
+function t(key) {
+  return (TRANSLATIONS[currentLang] || TRANSLATIONS['en'])[key]
+      || TRANSLATIONS['en'][key]
+      || key;
+}
+
+function detectLang() {
+  const saved = localStorage.getItem('cv_lang');
+  if (saved && TRANSLATIONS[saved]) return saved;
+  const browser = (navigator.language || navigator.userLanguage || 'en').slice(0,2).toLowerCase();
+  if (TRANSLATIONS[browser]) return browser;
+  return 'en';
+}
+
+const LANG_FLAGS = { tr:'🇹🇷', en:'🇬🇧', de:'🇩🇪', fr:'🇫🇷', es:'🇪🇸', pt:'🇧🇷', ar:'🇸🇦' };
+const LANG_LABELS = { tr:'TR', en:'EN', de:'DE', fr:'FR', es:'ES', pt:'PT', ar:'AR' };
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('cv_lang', lang);
+  document.getElementById('lang-btn').textContent = LANG_LABELS[lang] || lang.toUpperCase();
+  // Highlight active
+  document.querySelectorAll('.lang-opt').forEach(el => {
+    el.classList.toggle('active', el.id === 'lang-opt-' + lang);
+  });
+  document.getElementById('lang-menu').style.display = 'none';
+  applyTranslations();
+}
+
+function toggleLangMenu() {
+  const m = document.getElementById('lang-menu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+
+// Close lang menu when tapping outside
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('lang-menu');
+  const btn  = document.getElementById('lang-btn');
+  if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
+
+function applyTranslations() {
+  // Navbar labels (all navbars)
+  document.querySelectorAll('.nav-label').forEach(el => {
+    const txt = el.textContent.trim();
+    // Match by current content or data attribute
+    if (el.dataset.key) { el.textContent = t(el.dataset.key); return; }
+  });
+
+  // Use data-i18n attributes on elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (el.placeholder !== undefined && el.tagName === 'INPUT') {
+      el.placeholder = t(key);
+    } else {
+      el.innerHTML = t(key);
+    }
+  });
+
+  // Update type dropdown in list screen
+  const typeBtnLabel = document.getElementById('type-btn-label');
+  if (typeBtnLabel) {
+    const curType = listTypeFilter || 'all';
+    const typeKey = curType === 'all' ? 'filter_all_types' : 'type_' + curType;
+    typeBtnLabel.textContent = t(typeKey);
+  }
+
+  // Rebuild type dropdown items
+  const typeDropdown = document.getElementById('type-dropdown');
+  if (typeDropdown) {
+    const types = [
+      ['all', 'filter_all_types'],
+      ['war', 'type_war'], ['farm', 'type_farm'], ['trophy', 'type_trophy'],
+      ['hybrid', 'type_hybrid'], ['progress', 'type_progress']
+    ];
+    typeDropdown.querySelector('div').innerHTML = types.map(([val, key]) => {
+      const sel = val === listTypeFilter ? 'selected' : '';
+      return `<div class="dd-item ${sel}" data-ddtype="type" data-val="${val}"
+        onclick="selectType('${val}','${t(key)}')">${t(key)}</div>`;
+    }).join('');
+  }
+
+  // Upload screen dynamic texts
+  const uploadLevelEl = document.getElementById('upload-level');
+  if (uploadLevelEl) updateUploadLevels();
+
+  // Update upload village select options
+  const uploadVillageEl = document.getElementById('upload-village');
+  if (uploadVillageEl) {
+    uploadVillageEl.options[0].text = t('village_home').replace('🏰 ','🏰 ');
+    uploadVillageEl.options[1].text = t('village_builder').replace('🔨 ','🔨 ');
+  }
+
+  // Update upload type select options
+  const uploadTypeEl = document.getElementById('upload-type');
+  if (uploadTypeEl) {
+    const typeVals = ['war','farm','trophy','hybrid','progress'];
+    typeVals.forEach((v,i) => {
+      if (uploadTypeEl.options[i]) uploadTypeEl.options[i].text = t('type_' + v);
+    });
+  }
+
+  // Update category counts label
+  const homeCount    = allBases.filter(b => b.village === 'home').length;
+  const builderCount = allBases.filter(b => b.village === 'builder').length;
+  const countHomeEl    = document.getElementById('count-home');
+  const countBuilderEl = document.getElementById('count-builder');
+  if (countHomeEl && homeCount > 0)       countHomeEl.textContent    = homeCount + ' ' + t('home_layouts');
+  if (countBuilderEl && builderCount > 0) countBuilderEl.textContent = builderCount + ' ' + t('home_layouts');
+
+  // RTL for Arabic
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+}
+
+
+/* ═══════════════════════════════════════════
+   HAPTIC FEEDBACK (Vibration API)
+═══════════════════════════════════════════ */
+const haptic = {
+  light:   () => navigator.vibrate && navigator.vibrate(8),
+  medium:  () => navigator.vibrate && navigator.vibrate(22),
+  heavy:   () => navigator.vibrate && navigator.vibrate(50),
+  success: () => navigator.vibrate && navigator.vibrate([12, 60, 20]),
+  error:   () => navigator.vibrate && navigator.vibrate([30, 40, 30]),
+  heart:   () => navigator.vibrate && navigator.vibrate([18, 50, 12]),
+};
+
 /* ═══════════════════════════════════════════
    LOADING OVERLAY
 ═══════════════════════════════════════════ */
@@ -1078,6 +1709,10 @@ const TYPE_LABELS = {
   war:'⚔️ War', farm:'🌾 Farming', trophy:'🏆 Trophy',
   hybrid:'🔥 Hybrid', progress:'⬆️ Progress'
 };
+function getTypeLabel(type) {
+  const key = 'type_' + type;
+  return t(key) || TYPE_LABELS[type] || type || '—';
+}
 
 function fmtNum(n) {
   if (!n) return '0';
@@ -1094,7 +1729,7 @@ function thLabel(base) {
    DATA LOADING
 ═══════════════════════════════════════════ */
 async function loadAllBases() {
-  showLoading('Baseler yükleniyor');
+  showLoading(t('loading_bases'));
   try {
     // Fetch all admin-approved bases (source=admin OR source is null, is_active=true)
     const data = await sbGet('layouts?select=*&is_active=eq.true&order=created_at.desc');
@@ -1123,7 +1758,7 @@ function cardHtml(base) {
   const fav      = isFav(base.id);
   const tl       = thLabel(base);
   const typeTag  = TYPES[base.type] || '';
-  const typeL    = TYPE_LABELS[base.type] || base.type || '—';
+  const typeL    = getTypeLabel(base.type);
   return `
   <div class="base-card" onclick="openDetail(${base.id})">
     <div class="card-thumb" style="position:relative;">
@@ -1181,15 +1816,15 @@ function renderGrid(bases, gridEl, emptyEl) {
 /* ═══════════════════════════════════════════
    NAVIGATION
 ═══════════════════════════════════════════ */
-function goScreen(id) {
+function goScreen(id) { haptic.light();
   // 1) Önce loading ekranını göster
   const SCREEN_LABELS = {
-    'screen-home':      'Ana sayfa yükleniyor',
-    'screen-list':      'Baseler yükleniyor',
-    'screen-search':    'Arama yükleniyor',
-    'screen-favs':      'Favoriler yükleniyor',
-    'screen-community': 'Community yükleniyor',
-    'screen-upload':    'Yükleme sayfası açılıyor',
+    'screen-home':      t('loading_home'),
+    'screen-list':      t('loading_bases'),
+    'screen-search':    t('loading_search'),
+    'screen-favs':      t('loading_favs'),
+    'screen-community': t('loading_community'),
+    'screen-upload':    t('loading_upload'),
   };
   showLoading(SCREEN_LABELS[id] || 'Yükleniyor');
 
@@ -1221,7 +1856,7 @@ function goScreen(id) {
 }
 
 function goBack() {
-  showLoading('Geri dönülüyor');
+  showLoading(t('loading_back'));
   requestAnimationFrame(() => requestAnimationFrame(() => {
     const id = prevScreen || 'screen-home';
     const leaving = document.querySelector('.screen.active')?.id;
@@ -1258,9 +1893,9 @@ window.addEventListener('popstate', function(e) {
 /* ═══════════════════════════════════════════
    CATEGORY OPEN
 ═══════════════════════════════════════════ */
-function openCategory(village) {
+function openCategory(village) { haptic.medium();
   // Loading'i hemen göster, sonra işlemi yap
-  showLoading('Kategoriye giriliyor');
+  showLoading(t('loading_category'));
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -1337,7 +1972,7 @@ function selectLevel(val, label) {
   document.querySelectorAll('#level-dropdown-list .dd-item').forEach(el => {
     el.classList.toggle('selected', el.dataset.val === val);
   });
-  showLoading('Filtreleniyor');
+  showLoading(t('loading_filtering'));
   requestAnimationFrame(() => requestAnimationFrame(() => {
     renderListScreen();
     hideLoading(true);
@@ -1352,7 +1987,7 @@ function selectType(val, label) {
   document.querySelectorAll('#type-dropdown .dd-item').forEach(el => {
     el.classList.toggle('selected', el.dataset.val === val);
   });
-  showLoading('Filtreleniyor');
+  showLoading(t('loading_filtering'));
   requestAnimationFrame(() => requestAnimationFrame(() => {
     renderListScreen();
     hideLoading(true);
@@ -1413,8 +2048,8 @@ function applyFilters() {
 /* ═══════════════════════════════════════════
    DETAIL SCREEN
 ═══════════════════════════════════════════ */
-async function openDetail(id) {
-  showLoading('Base yükleniyor');
+async function openDetail(id) { haptic.light();
+  showLoading(t('loading_detail'));
 
   // Tarayıcıya loading'i çizmesi için 2 frame ver
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -1461,11 +2096,17 @@ async function openDetail(id) {
 
   // Tags
   const typeTag  = TYPES[currentBase.type] || '';
-  const typeLabel = TYPE_LABELS[currentBase.type] || currentBase.type || '—';
+  const typeLabel = getTypeLabel(currentBase.type);
+  const villageLabel = currentBase.village === 'builder' ? t('village_builder') : t('village_home');
   document.getElementById('detail-tags').innerHTML = `
     <div class="type-tag ${typeTag}">${typeLabel}</div>
-    <div class="detail-tag chip-gold">${currentBase.village==='builder'?'🔨 Builder Base':'🏰 Home Village'}</div>
+    <div class="detail-tag chip-gold">${villageLabel}</div>
     <div class="detail-tag chip-blue">${tl}</div>`;
+
+  // Translate stat labels
+  document.querySelector('#stat-uses + .lbl').textContent = t('stat_uses');
+  document.querySelector('#stat-favs + .lbl').textContent = t('stat_favs');
+  document.querySelector('#stat-th + .lbl').textContent   = t('stat_th');
 
   document.getElementById('fav-btn').textContent = isFav(id) ? '❤️' : '🤍';
 
@@ -1503,7 +2144,7 @@ async function toggleFav(id, el) {
   if (wasLiked) {
     favorites = favorites.filter(f => f !== id);
     if (el) { el.textContent = '🤍'; el.classList.remove('active'); }
-    showToast('Removed from favorites');
+    haptic.light(); showToast(t('toast_fav_remove'));
     // Fetch current favs from DB then decrement
     try {
       const fresh = await sbGet(`layouts?id=eq.${id}&select=favs`);
@@ -1518,7 +2159,7 @@ async function toggleFav(id, el) {
   } else {
     favorites.push(id);
     if (el) { el.textContent = '❤️'; el.classList.add('active'); }
-    showToast('❤️ Added to favorites!');
+    haptic.heart(); showToast(t('toast_fav_add'));
     // Fetch current favs from DB then increment
     try {
       const fresh = await sbGet(`layouts?id=eq.${id}&select=favs`);
@@ -1564,9 +2205,9 @@ function copyToClash() {
   // NOTE: No interstitial here — opens CoC immediately
   if (currentBase.coc_link) {
     window.open(currentBase.coc_link, '_blank');
-    showToast('🏰 Opening Clash of Clans…');
+    haptic.medium(); showToast(t('toast_coc_open'));
   } else {
-    showToast('⚠️ CoC link not available');
+    haptic.error(); showToast(t('toast_coc_missing'));
   }
 }
 
@@ -1584,7 +2225,7 @@ function closeShare(e) {
 }
 function copyShareLink() {
   navigator.clipboard.writeText(document.getElementById('share-url-text').textContent).catch(() => {});
-  showToast('🔗 Link copied!');
+  haptic.success(); showToast(t('toast_copied'));
   document.getElementById('share-modal').classList.remove('open');
 }
 function shareWhatsApp() {
@@ -1597,7 +2238,7 @@ function nativeShare() {
     navigator.share({ title:'ClashVault Base', url: txt });
   } else {
     navigator.clipboard.writeText(txt).catch(() => {});
-    showToast('🔗 Link copied!');
+    haptic.success(); showToast('🔗 Link copied!');
   }
   document.getElementById('share-modal').classList.remove('open');
 }
@@ -1659,7 +2300,7 @@ async function uploadImageToStorage(file) {
 function handleImageSelect(e) {
   const file = e.target.files[0];
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { showToast('⚠️ Dosya 5MB den büyük!'); return; }
+  if (file.size > 5 * 1024 * 1024) { haptic.error(); showToast(t('toast_img_big')); return; }
   uploadImageFile = file;
 
   const reader = new FileReader();
@@ -1702,14 +2343,14 @@ async function submitUpload() {
   const nickname = document.getElementById('upload-nickname').value.trim();
 
   // Validation
-  if (!uploadImageFile) { showToast('⚠️ Fotoğraf seç!'); return; }
-  if (!title)           { showToast('⚠️ Base adı gir!'); return; }
-  if (!cocLink)         { showToast('⚠️ CoC linki gir!'); return; }
+  if (!uploadImageFile) { haptic.error(); showToast(t('toast_no_img')); return; }
+  if (!title)           { haptic.error(); showToast(t('toast_no_title')); return; }
+  if (!cocLink)         { haptic.error(); showToast(t('toast_no_coc')); return; }
 
   const btn = document.getElementById('upload-submit-btn');
   btn.disabled = true;
-  btn.textContent = '⏳ Yükleniyor...';
-  showLoading('Yükleniyor');
+  btn.textContent = t('upload_uploading');
+  showLoading(t('loading_bases'));
 
   try {
     // 1) Upload image
@@ -1743,11 +2384,11 @@ async function submitUpload() {
     // Success
     hideLoading(true);
     document.getElementById('upload-form').style.display    = 'none';
-    document.getElementById('upload-success').classList.add('show');
+    haptic.success(); setTimeout(() => haptic.success(), 120); document.getElementById('upload-success').classList.add('show');
 
   } catch(e) {
     console.error(e);
-    showToast('❌ Hata: ' + e.message);
+    haptic.error(); showToast('❌ Hata: ' + e.message);
     btn.disabled = false;
     btn.textContent = '⬆️ Yükle & İncelemeye Gönder';
     hideLoading(true);
@@ -1761,7 +2402,7 @@ function resetUploadForm() {
   document.getElementById('upload-coc-link').value = '';
   document.getElementById('upload-nickname').value = '';
   document.getElementById('upload-submit-btn').disabled = false;
-  document.getElementById('upload-submit-btn').textContent = '⬆️ Yükle & İncelemeye Gönder';
+  document.getElementById('upload-submit-btn').textContent = t('upload_btn');
   removeImage();
   updateUploadLevels();
 }
@@ -1833,7 +2474,7 @@ function renderCommunityScreen() {
 /* ═══════════════════════════════════════════
    LIGHTBOX
 ═══════════════════════════════════════════ */
-function openLightbox(src) {
+function openLightbox(src) { haptic.light();
   const lb = document.getElementById('lightbox');
   const img = document.getElementById('lightbox-img');
   img.src = src;
@@ -1853,6 +2494,14 @@ window.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(
    INIT
 ═══════════════════════════════════════════ */
 async function init() {
+  // Detect and apply language first
+  currentLang = detectLang();
+  document.getElementById('lang-btn').textContent = LANG_LABELS[currentLang] || currentLang.toUpperCase();
+  document.querySelectorAll('.lang-opt').forEach(el => {
+    el.classList.toggle('active', el.id === 'lang-opt-' + currentLang);
+  });
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
   // Push an initial history entry so back button doesn't exit immediately
   history.replaceState({ screen: 'screen-home' }, '', '');
   history.pushState({ screen: 'screen-home' }, '', '');
@@ -1863,11 +2512,14 @@ async function init() {
   await loadAllBases();
   loadCommunityBases().catch(e => console.warn("Community load skipped:", e));
 
+  // Apply translations (now that data is loaded for counts)
+  applyTranslations();
+
   // Update category counts
   const homeCount    = allBases.filter(b => b.village === 'home').length;
   const builderCount = allBases.filter(b => b.village === 'builder').length;
-  document.getElementById('count-home').textContent    = `${homeCount} layouts`;
-  document.getElementById('count-builder').textContent = `${builderCount} layouts`;
+  document.getElementById('count-home').textContent    = `${homeCount} ${t('home_layouts')}`;
+  document.getElementById('count-builder').textContent = `${builderCount} ${t('home_layouts')}`;
 
   // Push home banner ad
   pushAd('home-banner');
