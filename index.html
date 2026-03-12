@@ -973,7 +973,7 @@ function renderGrid(bases, gridEl, emptyEl) {
    NAVIGATION
 ═══════════════════════════════════════════ */
 function goScreen(id) {
-  // Loading overlay — ilk iş, her şeyden önce
+  // 1) Önce loading ekranını göster
   const SCREEN_LABELS = {
     'screen-home':   'Ana sayfa yükleniyor',
     'screen-list':   'Baseler yükleniyor',
@@ -982,26 +982,29 @@ function goScreen(id) {
   };
   showLoading(SCREEN_LABELS[id] || 'Yükleniyor');
 
-  const leaving = document.querySelector('.screen.active')?.id;
-  if (id !== 'screen-detail') prevScreen = id;
+  // 2) Tarayıcıya loading ekranını çizmesi için 2 frame ver, sonra işlemi yap
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const leaving = document.querySelector('.screen.active')?.id;
+      if (id !== 'screen-detail') prevScreen = id;
 
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
 
-  // Push history state so Android back button works
-  if (id !== 'screen-home') {
-    history.pushState({ screen: id }, '', '');
-  }
+      if (id !== 'screen-home') {
+        history.pushState({ screen: id }, '', '');
+      }
 
-  // Count transition (skip home, skip detail — detail handled in openDetail)
-  if (id !== 'screen-home' && id !== 'screen-detail' && leaving !== id) {
-    tickTransition();
-  }
+      if (id !== 'screen-home' && id !== 'screen-detail' && leaving !== id) {
+        tickTransition();
+      }
 
-  if (id === 'screen-search') { applyFilters(); hideLoading(); }
-  else if (id === 'screen-favs')   { renderFavs();   hideLoading(); }
-  else if (id === 'screen-list')   { renderListScreen(); hideLoading(); }
-  else { hideLoading(); }
+      if (id === 'screen-search') { applyFilters(); hideLoading(); }
+      else if (id === 'screen-favs')   { renderFavs();   hideLoading(); }
+      else if (id === 'screen-list')   { renderListScreen(); hideLoading(); }
+      else { hideLoading(); }
+    });
+  });
 }
 
 function goBack() { goScreen(prevScreen); }
@@ -1029,24 +1032,28 @@ window.addEventListener('popstate', function(e) {
    CATEGORY OPEN
 ═══════════════════════════════════════════ */
 function openCategory(village) {
+  // Loading'i hemen göster, sonra işlemi yap
   showLoading('Kategoriye giriliyor');
-  listVillage     = village;
-  listLevelFilter = 'all';
-  listTypeFilter  = 'all';
-  buildListPills();
 
-  // Reset type chip
-  document.querySelectorAll('[data-lgrp="type"]').forEach(c => c.classList.remove('active'));
-  const allChip = document.querySelector('[data-lgrp="type"][data-lval="all"]');
-  if (allChip) allChip.classList.add('active');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      listVillage     = village;
+      listLevelFilter = 'all';
+      listTypeFilter  = 'all';
+      buildListPills();
 
-  // Update header title
-  document.getElementById('list-screen-title').innerHTML =
-    village === 'builder'
-      ? '🔨 Builder <span>Bases</span>'
-      : '🏰 Town Hall <span>Bases</span>';
+      document.querySelectorAll('[data-lgrp="type"]').forEach(c => c.classList.remove('active'));
+      const allChip = document.querySelector('[data-lgrp="type"][data-lval="all"]');
+      if (allChip) allChip.classList.add('active');
 
-  goScreen('screen-list');
+      document.getElementById('list-screen-title').innerHTML =
+        village === 'builder'
+          ? '🔨 Builder <span>Bases</span>'
+          : '🏰 Town Hall <span>Bases</span>';
+
+      goScreen('screen-list');
+    });
+  });
 }
 
 /* ─ Level pills for list screen ─ */
@@ -1138,6 +1145,9 @@ function applyFilters() {
 ═══════════════════════════════════════════ */
 async function openDetail(id) {
   showLoading('Base yükleniyor');
+
+  // Tarayıcıya loading'i çizmesi için 2 frame ver
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
   currentBase = allBases.find(b => b.id === id);
   if (!currentBase) { hideLoading(); return; }
