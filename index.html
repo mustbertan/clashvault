@@ -461,33 +461,33 @@ body::before {
      SCREEN — CATEGORY LIST  (TH or Builder)
 ═══════════════════════════════════════════ -->
 <div id="screen-list" class="screen" style="flex-direction:column;">
-  <div class="topbar">
-    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
-      <div class="back-btn" onclick="goScreen('screen-home')" style="flex-shrink:0;">←</div>
-      <div class="topbar-logo" id="list-screen-title" style="font-size:.55rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Bases</div>
-    </div>
-  </div>
-
-  <!-- Level pills (generated dynamically) -->
-  <div class="filter-scroll" id="list-level-pills"></div>
-
-  <!-- Type filter — always visible -->
-  <div id="list-filter-panel">
-    <div class="filter-group" style="padding-top:0;">
-      <div class="filter-group-title">Tür</div>
-      <div class="filter-chips">
-        <div class="filter-chip active" data-lgrp="type" data-lval="all"      onclick="listChip(this)">Tümü</div>
-        <div class="filter-chip"        data-lgrp="type" data-lval="war"      onclick="listChip(this)">⚔️ War</div>
-        <div class="filter-chip"        data-lgrp="type" data-lval="farm"     onclick="listChip(this)">🌾 Farm</div>
-        <div class="filter-chip"        data-lgrp="type" data-lval="trophy"   onclick="listChip(this)">🏆 Trophy</div>
-        <div class="filter-chip"        data-lgrp="type" data-lval="hybrid"   onclick="listChip(this)">🔥 Hybrid</div>
-        <div class="filter-chip"        data-lgrp="type" data-lval="progress" onclick="listChip(this)">⬆️ Progress</div>
+  <div id="list-hideable-header" class="hideable-header">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+        <div class="back-btn" onclick="goScreen('screen-home')" style="flex-shrink:0;">←</div>
+        <div class="topbar-logo" id="list-screen-title" style="font-size:.55rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Bases</div>
       </div>
     </div>
-    <div class="divider"></div>
+
+    <div class="filter-scroll" id="list-level-pills"></div>
+
+    <div id="list-filter-panel">
+      <div class="filter-group" style="padding-top:0;">
+        <div class="filter-group-title">Tür</div>
+        <div class="filter-chips">
+          <div class="filter-chip active" data-lgrp="type" data-lval="all" onclick="listChip(this)">Tümü</div>
+          <div class="filter-chip" data-lgrp="type" data-lval="war" onclick="listChip(this)">⚔️ War</div>
+          <div class="filter-chip" data-lgrp="type" data-lval="farm" onclick="listChip(this)">🌾 Farm</div>
+          <div class="filter-chip" data-lgrp="type" data-lval="trophy" onclick="listChip(this)">🏆 Trophy</div>
+          <div class="filter-chip" data-lgrp="type" data-lval="hybrid" onclick="listChip(this)">🔥 Hybrid</div>
+          <div class="filter-chip" data-lgrp="type" data-lval="progress" onclick="listChip(this)">⬆️ Progress</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+    </div>
   </div>
 
-  <div class="scroll-content">
+  <div class="scroll-content" id="list-scroll-content">
     <!-- Top-of-list banner ad -->
     <div class="ad-inline" id="ad-list-top">
       <div class="ad-label">Advertisement</div>
