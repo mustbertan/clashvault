@@ -28,7 +28,7 @@
   --shadow-gold:0 0 20px rgba(245,166,35,0.3); --radius:16px;
 }
 /* ─── GLOBAL FONT SCALE ─── */
-html { font-size: clamp(56px, 4vw + 48px, 72px); }
+html { font-size: clamp(18px, 4.8vw, 22px); }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
 html, body {
   height: 100%;
@@ -253,15 +253,7 @@ body::before {
 .similar-section { padding:0 .45rem .22rem; }
 .similar-title { font-family:'Cinzel Decorative',serif; font-size:.36rem; color:var(--gold-light); margin-bottom:.33rem; display:flex; align-items:center; gap:.22rem; }
 .similar-title::before { content:''; display:block; width:3px; height:.38rem; background:var(--gold); border-radius:2px; }
-.similar-scroll { display:flex; gap:.28rem; overflow-x:auto; scrollbar-width:none; padding-bottom:.1rem; }
-.similar-scroll::-webkit-scrollbar { display:none; }
-.similar-card { flex-shrink:0; width:3rem; background:var(--brown-card); border-radius:.38rem; border:1.5px solid var(--brown-border); overflow:hidden; cursor:pointer; }
-.similar-thumb { width:100%; aspect-ratio:1/1; background:#1e3a2f; overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; }
-.similar-thumb img { width:100%; height:100%; object-fit:cover; }
-.similar-thumb .no-img { font-size:.77rem; opacity:.3; }
-.similar-info { padding:.2rem .22rem .25rem; }
-.similar-name { font-size:.3rem; font-weight:800; color:var(--cream); margin-bottom:.08rem; }
-.similar-badge { font-size:.25rem; font-weight:900; color:var(--gold); }
+.similar-grid { display:grid; grid-template-columns:1fr; gap:.33rem; }
 
 /* ─────────────────────────────────────────
    SEARCH SCREEN
@@ -461,26 +453,29 @@ body::before {
      SCREEN — CATEGORY LIST  (TH or Builder)
 ═══════════════════════════════════════════ -->
 <div id="screen-list" class="screen" style="flex-direction:column;">
-  <div id="list-hideable-header" class="hideable-header">
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
-        <div class="back-btn" onclick="goScreen('screen-home')" style="flex-shrink:0;">←</div>
-        <div class="topbar-logo" id="list-screen-title" style="font-size:.55rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Bases</div>
-      </div>
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+      <div class="back-btn" onclick="goScreen('screen-home')" style="flex-shrink:0;">←</div>
+      <div class="topbar-logo" id="list-screen-title" style="font-size:.55rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Bases</div>
     </div>
+  </div>
 
+  <!-- Collapsible filter header — hides on scroll down, shows on scroll up -->
+  <div id="list-filter-header" style="overflow:hidden; transition: max-height .3s ease, opacity .25s ease; max-height:600px; opacity:1; flex-shrink:0;">
+    <!-- Level pills (generated dynamically) -->
     <div class="filter-scroll" id="list-level-pills"></div>
 
+    <!-- Type filter -->
     <div id="list-filter-panel">
       <div class="filter-group" style="padding-top:0;">
         <div class="filter-group-title">Tür</div>
         <div class="filter-chips">
-          <div class="filter-chip active" data-lgrp="type" data-lval="all" onclick="listChip(this)">Tümü</div>
-          <div class="filter-chip" data-lgrp="type" data-lval="war" onclick="listChip(this)">⚔️ War</div>
-          <div class="filter-chip" data-lgrp="type" data-lval="farm" onclick="listChip(this)">🌾 Farm</div>
-          <div class="filter-chip" data-lgrp="type" data-lval="trophy" onclick="listChip(this)">🏆 Trophy</div>
-          <div class="filter-chip" data-lgrp="type" data-lval="hybrid" onclick="listChip(this)">🔥 Hybrid</div>
-          <div class="filter-chip" data-lgrp="type" data-lval="progress" onclick="listChip(this)">⬆️ Progress</div>
+          <div class="filter-chip active" data-lgrp="type" data-lval="all"      onclick="listChip(this)">Tümü</div>
+          <div class="filter-chip"        data-lgrp="type" data-lval="war"      onclick="listChip(this)">⚔️ War</div>
+          <div class="filter-chip"        data-lgrp="type" data-lval="farm"     onclick="listChip(this)">🌾 Farm</div>
+          <div class="filter-chip"        data-lgrp="type" data-lval="trophy"   onclick="listChip(this)">🏆 Trophy</div>
+          <div class="filter-chip"        data-lgrp="type" data-lval="hybrid"   onclick="listChip(this)">🔥 Hybrid</div>
+          <div class="filter-chip"        data-lgrp="type" data-lval="progress" onclick="listChip(this)">⬆️ Progress</div>
         </div>
       </div>
       <div class="divider"></div>
@@ -642,7 +637,7 @@ body::before {
     </div>
     <div class="similar-section">
       <div class="similar-title">Similar Bases</div>
-      <div class="similar-scroll" id="similar-list"></div>
+      <div class="similar-grid" id="similar-list"></div>
     </div>
     <div style="height:20px;"></div>
   </div>
@@ -1036,7 +1031,11 @@ function listPillClick(el, val) {
   document.querySelectorAll('#list-level-pills .pill').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   listLevelFilter = val;
-  renderListScreen();
+  showLoading('Filtreleniyor');
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    renderListScreen();
+    hideLoading(true);
+  }));
 }
 
 function toggleListFilter() {
@@ -1049,7 +1048,11 @@ function listChip(el) {
   document.querySelectorAll(`[data-lgrp="${grp}"]`).forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   listTypeFilter = el.dataset.lval;
-  renderListScreen();
+  showLoading('Filtreleniyor');
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    renderListScreen();
+    hideLoading(true);
+  }));
 }
 
 function renderListScreen() {
@@ -1157,21 +1160,8 @@ async function openDetail(id) {
     (String(b.th_level) === String(currentBase.th_level) || b.type === currentBase.type)
   ).slice(0, 8);
 
-  document.getElementById('similar-list').innerHTML = similar.map(b => {
-    const btl = thLabel(b);
-    return `
-    <div class="similar-card" onclick="openDetail(${b.id})">
-      <div class="similar-thumb" style="position:relative;">
-        ${b.image_url
-          ? `<img src="${b.image_url}" alt="${b.title}" loading="lazy">`
-          : `<div class="no-img" style="display:flex;position:absolute;inset:0;align-items:center;justify-content:center;font-size:28px;opacity:0.25;">🏰</div>`}
-      </div>
-      <div class="similar-info">
-        <div class="similar-name">${b.title.length>16?b.title.slice(0,15)+'…':b.title}</div>
-        <div class="similar-badge">${btl} · ${(TYPE_LABELS[b.type]||b.type||'').split(' ')[0]}</div>
-      </div>
-    </div>`;
-  }).join('');
+  // Render similar bases as full-width vertical cards (same as list screen)
+  document.getElementById('similar-list').innerHTML = similar.map(b => cardHtml(b)).join('');
 
   // Navigate to detail (manual — not via goScreen to avoid interstitial on card tap)
   const leaving = document.querySelector('.screen.active')?.id;
@@ -1300,6 +1290,43 @@ async function init() {
 
   // Push home banner ad
   pushAd('home-banner');
+
+  // ── Scroll-to-hide filter bar for list screen ──
+  (function() {
+    const scrollEl = document.getElementById('list-scroll-content');
+    const header   = document.getElementById('list-filter-header');
+    if (!scrollEl || !header) return;
+
+    let lastScrollY  = 0;
+    let headerHeight = header.scrollHeight;
+    let hidden       = false;
+    let ticking      = false;
+
+    scrollEl.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const currentY = scrollEl.scrollTop;
+        const delta    = currentY - lastScrollY;
+
+        if (delta > 6 && !hidden && currentY > 30) {
+          // Scrolling DOWN — hide filter bar
+          headerHeight = header.scrollHeight;
+          header.style.maxHeight = '0px';
+          header.style.opacity   = '0';
+          hidden = true;
+        } else if (delta < -6 && hidden) {
+          // Scrolling UP — show filter bar
+          header.style.maxHeight = headerHeight + 'px';
+          header.style.opacity   = '1';
+          hidden = false;
+        }
+
+        lastScrollY = currentY;
+        ticking = false;
+      });
+    }, { passive: true });
+  })();
 }
 
 init();
