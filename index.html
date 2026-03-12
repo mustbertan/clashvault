@@ -27,15 +27,19 @@
   --text-main:#FFF3DC; --text-muted:#B8926A;
   --shadow-gold:0 0 20px rgba(245,166,35,0.3); --radius:16px;
 }
-/* ─── GLOBAL FONT SCALE ─── */
-html { font-size: 16px; }
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+/* ─── GLOBAL FONT SCALE — responsive vw based ─── */
+html { font-size: clamp(16px, 4.2vw, 20px); }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
 html, body {
   height: 100%;
   width: 100%;
   overflow: hidden;
   margin: 0;
   padding: 0;
+  touch-action: none;
+  -ms-touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 body {
   font-family:'Nunito',sans-serif; background:var(--brown-dark); color:var(--text-main);
@@ -879,6 +883,11 @@ function goScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 
+  // Push history state so Android back button works
+  if (id !== 'screen-home') {
+    history.pushState({ screen: id }, '', '');
+  }
+
   // Count transition (skip home, skip detail — detail handled in openDetail)
   if (id !== 'screen-home' && id !== 'screen-detail' && leaving !== id) {
     tickTransition();
@@ -890,6 +899,25 @@ function goScreen(id) {
 }
 
 function goBack() { goScreen(prevScreen); }
+
+// Android hardware back button — intercept via popstate
+window.addEventListener('popstate', function(e) {
+  const active = document.querySelector('.screen.active')?.id;
+  if (!active || active === 'screen-home') {
+    // Already on home — let the app minimize (do nothing, system handles it)
+    return;
+  }
+  // Push a new state so we don't accidentally exit
+  history.pushState({ screen: 'screen-home' }, '', '');
+  // Navigate back
+  if (active === 'screen-detail') {
+    goScreen(prevScreen || 'screen-home');
+  } else if (active === 'screen-list') {
+    goScreen('screen-home');
+  } else {
+    goScreen('screen-home');
+  }
+});
 
 /* ═══════════════════════════════════════════
    CATEGORY OPEN
@@ -1164,6 +1192,9 @@ function showToast(msg) {
    INIT
 ═══════════════════════════════════════════ */
 async function init() {
+  // Push an initial history entry so back button doesn't exit immediately
+  history.replaceState({ screen: 'screen-home' }, '', '');
+  history.pushState({ screen: 'screen-home' }, '', '');
   // Show loading placeholder in home counts
   document.getElementById('count-home').textContent    = '…';
   document.getElementById('count-builder').textContent = '…';
