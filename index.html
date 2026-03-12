@@ -770,18 +770,28 @@ body::before {
 /* ═══════════════════════════════════════════
    LOADING OVERLAY
 ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   LOADING OVERLAY
+═══════════════════════════════════════════ */
 let loadingTimer = null;
+let loadingShownAt = 0;
+const LOADING_MIN_MS = 2000; // minimum 2 saniye göster
+
 function showLoading(msg) {
   clearTimeout(loadingTimer);
   const el = document.getElementById('loading-msg-text');
   if (el) el.textContent = msg || 'Yükleniyor';
   document.getElementById('loading-overlay').classList.add('show');
+  loadingShownAt = Date.now();
 }
+
 function hideLoading() {
-  // Small delay so it doesn't flash too fast
+  const elapsed = Date.now() - loadingShownAt;
+  const remaining = Math.max(0, LOADING_MIN_MS - elapsed);
+  clearTimeout(loadingTimer);
   loadingTimer = setTimeout(() => {
     document.getElementById('loading-overlay').classList.remove('show');
-  }, 200);
+  }, remaining);
 }
 
 /* ═══════════════════════════════════════════
@@ -963,6 +973,15 @@ function renderGrid(bases, gridEl, emptyEl) {
    NAVIGATION
 ═══════════════════════════════════════════ */
 function goScreen(id) {
+  // Loading overlay — ilk iş, her şeyden önce
+  const SCREEN_LABELS = {
+    'screen-home':   'Ana sayfa yükleniyor',
+    'screen-list':   'Baseler yükleniyor',
+    'screen-search': 'Arama yükleniyor',
+    'screen-favs':   'Favoriler yükleniyor',
+  };
+  showLoading(SCREEN_LABELS[id] || 'Yükleniyor');
+
   const leaving = document.querySelector('.screen.active')?.id;
   if (id !== 'screen-detail') prevScreen = id;
 
@@ -980,8 +999,9 @@ function goScreen(id) {
   }
 
   if (id === 'screen-search') { applyFilters(); hideLoading(); }
-  if (id === 'screen-favs')   { renderFavs();   hideLoading(); }
-  if (id === 'screen-list')   { renderListScreen(); hideLoading(); }
+  else if (id === 'screen-favs')   { renderFavs();   hideLoading(); }
+  else if (id === 'screen-list')   { renderListScreen(); hideLoading(); }
+  else { hideLoading(); }
 }
 
 function goBack() { goScreen(prevScreen); }
