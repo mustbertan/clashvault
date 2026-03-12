@@ -2098,7 +2098,7 @@ function cardHtml(base, opts={}) {
       <div class="card-stats">
         <div class="stat-chip">👁 ${fmtNum(base.uses)}</div>
         <div class="stat-chip">❤️ ${fmtNum(base.favs)}</div>
-        <div class="stat-chip">🏷 ${typeL.split(' ')[0]||'—'}</div>
+        <div class="stat-chip">${typeL}</div>
       </div>
       ${showUploader ? `<div class="card-uploader"><span class="card-uploader-icon">👤</span>${escHtml(base.uploader_name)}</div>` : ''}
     </div>
@@ -3242,12 +3242,23 @@ function renderCommunityScreen() {
     if (!bases.length) {
       empty.style.display = 'flex'; grid.innerHTML = ''; return;
     }
+
+    // Global sıralama haritası (tüm community bazlar arasındaki rank)
+    const mineRanks = new Map();
+    [...communityBases]
+      .sort((a, b) => commScore(b) - commScore(a))
+      .forEach((b, i) => mineRanks.set(b.id, i + 1));
+
+    // My uploads: skor sıralamasına göre yüksekten düşüğe sırala
+    bases.sort((a, b) => commScore(b) - commScore(a));
+
     empty.style.display = 'none';
     grid.innerHTML = bases.map(b => {
       const isPending = b.is_active === false || b.status === 'pending';
-      const card = cardHtml(b, { showUploader: false });
+      const globalRank = mineRanks.get(b.id);
+      let card = cardHtml(b, { showUploader: false, rank: globalRank });
       if (isPending) {
-        return card.replace('<div class="base-card"',
+        card = card.replace('<div class="base-card"',
           '<div class="base-card" style="opacity:.7;border-color:rgba(245,166,35,.4);"'
         ).replace('<div class="card-type">',
           '<div class="card-type" style="color:var(--gold);">⏳ İncelemede · </div><div class="card-type" style="display:none;">');
