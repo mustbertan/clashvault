@@ -13,8 +13,7 @@
 <title>ClashVault — CoC Base Layouts</title>
 <link rel="manifest" href="/manifest.json">
 
-<!-- Google AdMob SDK — Production App ID -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-app-pub-2616663545761815~4468805848" crossorigin="anonymous"></script>
+<!-- AdMob JS SDK kaldırıldı — reklamlar artık native Android katmanından yönetiliyor -->
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -350,32 +349,7 @@ body::before {
 .toast { position:fixed; bottom:2.5rem; left:50%; transform:translateX(-50%) translateY(.55rem); background:var(--brown-card2); border:1.5px solid var(--gold-dark); color:var(--gold-light); font-size:.36rem; font-weight:700; padding:.28rem .55rem; border-radius:.55rem; opacity:0; transition:all .3s; z-index:999; pointer-events:none; white-space:nowrap; box-shadow:0 4px 20px rgba(0,0,0,.4); }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* ─────────────────────────────────────────
-   INTERSTITIAL OVERLAY — full screen native
-───────────────────────────────────────── */
-.ad-interstitial-overlay {
-  position:fixed; inset:0; background:#000; z-index:500;
-  display:flex; flex-direction:column;
-  opacity:0; pointer-events:none; transition:opacity .3s;
-}
-.ad-interstitial-overlay.open { opacity:1; pointer-events:all; }
-.ad-interstitial-topbar {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:env(safe-area-inset-top,14px) 18px 12px;
-  padding-top:max(env(safe-area-inset-top),14px);
-  background:rgba(26,15,0,.97);
-  border-bottom:1px solid var(--brown-border); flex-shrink:0;
-}
-.ad-interstitial-label {
-  font-size:11px; font-weight:800; color:var(--text-muted);
-  letter-spacing:1px; text-transform:uppercase;
-}
-.ad-interstitial-body {
-  flex:1; display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  background:#050200;
-}
-.ad-interstitial-body ins { display:block; width:100% !important; height:100% !important; }
+/* Interstitial overlay CSS kaldırıldı — native Android katmanı kullanılıyor */
 
 /* ─────────────────────────────────────────
    SHARE MODAL
@@ -650,16 +624,8 @@ body::before {
 
   <div class="scroll-content">
 
-    <!-- HOME BANNER AD -->
-    <div class="ad-inline" id="ad-home-banner">
-      <div class="ad-label">Advertisement</div>
-      <ins class="adsbygoogle"
-           style="display:block;width:100%;height:100px;"
-           data-ad-client="ca-app-pub-3940256099942544"
-           data-ad-slot="6300978111"
-           data-ad-format="banner"
-           data-full-width-responsive="true"></ins>
-    </div>
+    <!-- HOME BANNER AD — Native modda boş, banner native katmanda gösteriliyor -->
+    <div class="ad-inline" id="ad-home-banner" style="display:none;"></div>
 
     <!-- SECTION LABEL -->
     <div class="section-head" style="margin-top:4px;">
@@ -785,16 +751,8 @@ body::before {
   </div>
 
   <div class="scroll-content" id="list-scroll-content">
-    <!-- Top-of-list banner ad -->
-    <div class="ad-inline" id="ad-list-top">
-      <div class="ad-label">Advertisement</div>
-      <ins class="adsbygoogle"
-           style="display:block;width:100%;height:100px;"
-           data-ad-client="ca-app-pub-3940256099942544"
-           data-ad-slot="6300978111"
-           data-ad-format="banner"
-           data-full-width-responsive="true"></ins>
-    </div>
+    <!-- Top-of-list banner ad — Native modda boş, banner native katmanda gösteriliyor -->
+    <div class="ad-inline" id="ad-list-top" style="display:none;"></div>
 
     <div id="list-empty" class="empty-state" style="display:none;">
       <div class="empty-icon">🏰</div>
@@ -966,16 +924,8 @@ body::before {
       <div class="stat-box"><span class="val" id="stat-th">—</span><span class="lbl">Town Hall</span></div>
     </div>
 
-    <!-- AD between preview and action buttons — high value placement -->
-    <div class="ad-inline" style="margin:0 16px 12px;" id="ad-detail">
-      <div class="ad-label">Advertisement</div>
-      <ins class="adsbygoogle"
-           style="display:block;width:100%;height:120px;"
-           data-ad-client="ca-app-pub-3940256099942544"
-           data-ad-slot="6300978111"
-           data-ad-format="banner"
-           data-full-width-responsive="true"></ins>
-    </div>
+    <!-- AD between preview and action buttons — Native modda boş, banner native katmanda gösteriliyor -->
+    <div class="ad-inline" style="margin:0 16px 12px;display:none;" id="ad-detail"></div>
 
     <div class="action-btns">
       <button class="btn-share" data-i18n="detail_share" onclick="openShare(currentBase)" style="flex:1;">↗ Share This Base</button>
@@ -1175,22 +1125,7 @@ body::before {
 </div>
 </div><!-- /#app -->
 
-<!-- ══════════════════════════════════════════
-     INTERSTITIAL AD OVERLAY — full screen
-═══════════════════════════════════════════ -->
-<div class="ad-interstitial-overlay" id="interstitial-overlay">
-  <div class="ad-interstitial-topbar">
-    <span class="ad-interstitial-label">Advertisement</span>
-  </div>
-  <div class="ad-interstitial-body">
-    <ins class="adsbygoogle"
-         style="display:block;width:100vw;height:100%;"
-         data-ad-client="ca-app-pub-3940256099942544"
-         data-ad-slot="1033173712"
-         data-ad-format="interstitial"
-         data-full-width-responsive="true"></ins>
-  </div>
-</div>
+<!-- Interstitial overlay HTML kaldırıldı — interstitial artık native Android katmanından gösteriliyor -->
 
 <!-- SHARE MODAL -->
 <div class="modal-overlay" id="share-modal" onclick="closeShare(event)">
@@ -2004,30 +1939,40 @@ let listTypeFilter  = 'all';
 let favorites = JSON.parse(localStorage.getItem('cv_favs') || '[]');
 
 /* ═══════════════════════════════════════════
-   AD STATE
+   AD STATE — Native Bridge
 ═══════════════════════════════════════════ */
 let transitionCount = 0;
 let adPushed = {};
 
+// Native Android uygulamasında mı çalışıyor?
+const isNativeApp = () => typeof window.AndroidAdBridge !== 'undefined';
+
 function pushAd(key) {
   if (adPushed[key]) return;
   adPushed[key] = true;
-  try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+  if (isNativeApp()) {
+    // Native: banner zaten Android katmanında altta sabit gösteriliyor
+    window.AndroidAdBridge.showBanner();
+  }
+  // Web fallback yok — uygulama sadece native olarak dağıtılıyor
 }
 
-// Show interstitial every 2 screen transitions (not on Copy-to-Clash)
+// Her ekran geçişinde çağrılır; native taraf sayacı tutar ve her 5'te bir interstitial gösterir
 function tickTransition() {
   transitionCount++;
-  if (transitionCount % 2 === 0) showInterstitial();
+  if (isNativeApp()) {
+    window.AndroidAdBridge.onScreenChange();
+  }
 }
 
 function showInterstitial() {
-  const ov = document.getElementById('interstitial-overlay');
-  pushAd('interstitial');
-  ov.classList.add('open');
+  if (isNativeApp()) {
+    window.AndroidAdBridge.showInterstitial();
+  }
 }
+
 function closeInterstitial() {
-  document.getElementById('interstitial-overlay').classList.remove('open');
+  // Native interstitial kullanıcı tarafından kapatılır, JS'den kapatmaya gerek yok
 }
 
 /* ═══════════════════════════════════════════
@@ -2118,7 +2063,7 @@ function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Render bases into a grid element, inserting a feed ad every 6 cards
+// Render bases into a grid element, inserting a feed ad notification every 6 cards
 function renderGrid(bases, gridEl, emptyEl) {
   if (!bases.length) {
     if (emptyEl) emptyEl.style.display = 'flex';
@@ -2131,24 +2076,15 @@ function renderGrid(bases, gridEl, emptyEl) {
   bases.forEach((b, i) => {
     // Feed ad slot every 6 cards (after index 5, 11, 17 …)
     if (i > 0 && i % 6 === 0) {
-      html += `<div class="feed-ad">
-        <div class="ad-label">Advertisement</div>
-        <ins class="adsbygoogle"
-             style="display:block;width:100%;height:120px;"
-             data-ad-client="ca-app-pub-3940256099942544"
-             data-ad-slot="6300978111"
-             data-ad-format="banner"
-             data-full-width-responsive="true"></ins>
-      </div>`;
+      // Native: banner zaten altta sabit gösteriliyor, sadece native'e bildir
+      html += `<div style="height:4px;"></div>`;
+      if (isNativeApp()) {
+        window.AndroidAdBridge.requestFeedAd(i);
+      }
     }
     html += cardHtml(b);
   });
   gridEl.innerHTML = html;
-
-  // Push all newly injected feed ads
-  gridEl.querySelectorAll('ins.adsbygoogle:not([data-ad-status])').forEach(() => {
-    try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-  });
 }
 
 /* ═══════════════════════════════════════════
