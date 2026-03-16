@@ -1,8 +1,15 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.clashvault.app",
-        "sha256_cert_fingerprints": ["F9:39:62:69:D9:FB:81:36:56:DF:E8:FB:14:DE:B0:87:B0:64:B8:77:0F:8B:C1:43:9A:A3:8E:3C:EF:20:AA:B3"]
-      }
-    }]
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.clashvault.app",
+      "sha256_cert_fingerprints": [
+        "F9:39:62:69:D9:FB:81:36:56:DF:E8:FB:14:DE:B0:87:B0:64:B8:77:0F:8B:C1:43:9A:A3:8E:3C:EF:20:AA:B3",
+        "3C:86:EC:06:40:3D:E2:22:71:3B:32:8F:4F:9D:C6:7A:6E:F6:F9:40:10:00:DE:C0:02:94:F2:B5:28:42:55:83"
+      ]
+    }
+  }
+]
