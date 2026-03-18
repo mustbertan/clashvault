@@ -2689,10 +2689,9 @@ function openCropModal(file) {
       cropState.naturalW = img.naturalWidth;
       cropState.naturalH = img.naturalHeight;
       cropState.pendingFile = file;
-      // Show modal first so wrap has real dimensions
       document.getElementById('crop-modal').classList.add('show');
-      // Then init canvas in next frame so layout is stable
-      requestAnimationFrame(() => requestAnimationFrame(() => initCropCanvas()));
+      // Banner yüklü olsa bile layout stabilize olması için daha uzun bekle
+      setTimeout(() => initCropCanvas(), 120);
     };
     img.src = ev.target.result;
   };
