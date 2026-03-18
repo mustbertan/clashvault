@@ -29,7 +29,7 @@
   --shadow-gold:0 0 20px rgba(245,166,35,0.3); --radius:16px;
 }
 /* ─── GLOBAL FONT SCALE ─── */
-html { font-size: clamp(28px, 7.5vw, 40px); }
+html { font-size: clamp(22.5px, 6vw, 31.5px); }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
 html, body {
   height: 100%;
@@ -1047,7 +1047,7 @@ body::before {
       <div class="form-group">
         <div class="form-label" data-i18n="upload_photo_label">📷 Base Screenshot *</div>
         <div class="img-upload-area" id="img-upload-area">
-          <input type="file" id="upload-file-input" accept="image/jpeg,image/png,image/webp" onchange="handleImageSelect(event)">
+          <input type="file" id="upload-file-input" accept="image/*" onchange="handleImageSelect(event)">
           <div class="img-upload-icon">🖼️</div>
           <div class="img-upload-text" data-i18n="upload_photo_text">Select or drop photo</div>
           <div class="img-upload-sub" data-i18n="upload_photo_sub">JPG, PNG · Max 5MB</div>
@@ -1109,7 +1109,7 @@ body::before {
       </div>
 
       <button class="btn-upload-submit" data-i18n="upload_btn" id="upload-submit-btn" onclick="submitUpload()">
-        ⬆️ Watch Ad to Upload
+        ⬆️ Upload for Review
       </button>
       <div style="font-size:.33rem;color:var(--text-muted);text-align:center;padding-bottom:.22rem;" data-i18n="upload_moderation">
         Uploads are reviewed before going live.
@@ -1250,7 +1250,7 @@ const TRANSLATIONS = {
     upload_coc_hint:'CoC → Base → Paylaş → Bağlantıyı Kopyala',
     upload_nick_label:'👤 Takma Adın (opsiyonel)',
     upload_nick_ph:'örn: ClashMaster99',
-    upload_btn:'⬆️ Yükle & İncelemeye Gönder',
+    upload_btn:'⬆️ Reklam İzle & Yükle',
     upload_uploading:'⏳ Yükleniyor...',
     upload_moderation:'Yüklenen baseler moderasyon sonrası yayınlanır.',
     upload_success_title:'Yüklendi!',
@@ -1323,7 +1323,7 @@ const TRANSLATIONS = {
     upload_coc_hint:'CoC → Base → Share → Copy Link',
     upload_nick_label:'👤 Nickname (optional)',
     upload_nick_ph:'e.g. ClashMaster99',
-    upload_btn:'⬆️ Watch Ad to Upload',
+    upload_btn:'⬆️ Upload for Review',
     upload_uploading:'⏳ Uploading...',
     upload_moderation:'Uploads are reviewed before going live.',
     upload_success_title:'Uploaded!',
@@ -1392,7 +1392,7 @@ const TRANSLATIONS = {
     upload_coc_hint:'CoC → Basis → Teilen → Link kopieren',
     upload_nick_label:'👤 Spitzname (optional)',
     upload_nick_ph:'z.B. ClashMaster99',
-    upload_btn:'⬆️ Hochladen & Prüfen',
+    upload_btn:'⬆️ Werbung ansehen & hochladen',
     upload_uploading:'⏳ Wird hochgeladen...',
     upload_moderation:'Uploads werden vor Veröffentlichung geprüft.',
     upload_success_title:'Hochgeladen!',
@@ -1461,7 +1461,7 @@ const TRANSLATIONS = {
     upload_coc_hint:'CoC → Base → Partager → Copier le lien',
     upload_nick_label:'👤 Pseudo (optionnel)',
     upload_nick_ph:'ex: ClashMaster99',
-    upload_btn:'⬆️ Uploader pour vérification',
+    upload_btn:'⬆️ Voir une pub pour uploader',
     upload_uploading:'⏳ Envoi en cours...',
     upload_moderation:'Les uploads sont vérifiés avant publication.',
     upload_success_title:'Uploadé!',
@@ -1530,7 +1530,7 @@ const TRANSLATIONS = {
     upload_coc_hint:'CoC → Base → Compartir → Copiar enlace',
     upload_nick_label:'👤 Apodo (opcional)',
     upload_nick_ph:'ej: ClashMaster99',
-    upload_btn:'⬆️ Subir para revisión',
+    upload_btn:'⬆️ Ver anuncio para subir',
     upload_uploading:'⏳ Subiendo...',
     upload_moderation:'Las subidas se revisan antes de publicarse.',
     upload_success_title:'¡Subido!',
@@ -1599,7 +1599,7 @@ const TRANSLATIONS = {
     upload_coc_hint:'CoC → Base → Compartilhar → Copiar link',
     upload_nick_label:'👤 Apelido (opcional)',
     upload_nick_ph:'ex: ClashMaster99',
-    upload_btn:'⬆️ Enviar para análise',
+    upload_btn:'⬆️ Ver anúncio para enviar',
     upload_uploading:'⏳ Enviando...',
     upload_moderation:'Envios são analisados antes de serem publicados.',
     upload_success_title:'Enviado!',
@@ -1668,7 +1668,7 @@ const TRANSLATIONS = {
     upload_coc_hint:'CoC → القاعدة → مشاركة → نسخ الرابط',
     upload_nick_label:'👤 اللقب (اختياري)',
     upload_nick_ph:'مثال: ClashMaster99',
-    upload_btn:'⬆️ رفع للمراجعة',
+    upload_btn:'⬆️ شاهد إعلاناً للرفع',
     upload_uploading:'⏳ جارٍ الرفع...',
     upload_moderation:'تتم مراجعة الرفوعات قبل النشر.',
     upload_success_title:'تم الرفع!',
@@ -1706,19 +1706,9 @@ function t(key) {
 }
 
 function detectLang() {
-  // 1) Kullanıcı daha önce manuel seçtiyse onu kullan
   const saved = localStorage.getItem('cv_lang');
   if (saved && TRANSLATIONS[saved]) return saved;
-
-  // 2) Telefon/tarayıcı dilini kontrol et
-  const browserLang = (navigator.language || navigator.userLanguage || 'en')
-    .substring(0, 2)
-    .toLowerCase();
-  
-  if (TRANSLATIONS[browserLang]) return browserLang;
-  
-  // 3) Hiçbiri yoksa İngilizce
-  return 'en';
+  return 'en'; // varsayılan dil: İngilizce
 }
 
 const LANG_FLAGS = { tr:'🇹🇷', en:'🇬🇧', de:'🇩🇪', fr:'🇫🇷', es:'🇪🇸', pt:'🇧🇷', ar:'🇸🇦' };
@@ -1964,7 +1954,7 @@ function pushAd(key) {
   // Banner native Android katmanında zaten gösteriliyor
 }
   // Web fallback yok — uygulama sadece native olarak dağıtılıyor
-
+}
 
 // Her ekran geçişinde çağrılır; native taraf sayacı tutar ve her 5'te bir interstitial gösterir
 function tickTransition() {
@@ -2115,7 +2105,6 @@ function goScreen(id) { haptic.light();
     requestAnimationFrame(() => {
       const leaving = document.querySelector('.screen.active')?.id;
       if (id !== 'screen-detail') prevScreen = id;
-       if (leaving !== 'screen-detail') tickTransition();
 
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
@@ -2124,9 +2113,9 @@ function goScreen(id) { haptic.light();
         history.pushState({ screen: id }, '', '');
       }
 
-      if (leaving !== id) {
-  tickTransition();
-}
+      if (id !== 'screen-home' && id !== 'screen-detail' && leaving !== id) {
+        tickTransition();
+      }
 
       if (id === 'screen-search')    { applyFilters();           hideLoading(true); }
       else if (id === 'screen-favs')      { renderFavs();            hideLoading(true); }
@@ -2143,7 +2132,6 @@ function goBack() {
   requestAnimationFrame(() => requestAnimationFrame(() => {
     const id = prevScreen || 'screen-home';
     const leaving = document.querySelector('.screen.active')?.id;
-     if (leaving !== id) tickTransition();
     prevScreen = 'screen-home';
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -2699,9 +2687,10 @@ function openCropModal(file) {
       cropState.naturalW = img.naturalWidth;
       cropState.naturalH = img.naturalHeight;
       cropState.pendingFile = file;
+      // Show modal first so wrap has real dimensions
       document.getElementById('crop-modal').classList.add('show');
-      // Banner yüklü olsa bile layout stabilize olması için daha uzun bekle
-      setTimeout(() => initCropCanvas(), 120);
+      // Then init canvas in next frame so layout is stable
+      requestAnimationFrame(() => requestAnimationFrame(() => initCropCanvas()));
     };
     img.src = ev.target.result;
   };
@@ -2709,17 +2698,23 @@ function openCropModal(file) {
 }
 
 function initCropCanvas() {
+  const wrap   = document.getElementById('crop-canvas-wrap');
   const canvas = document.getElementById('crop-canvas');
 
-  const availW = window.screen.width;
-  const availH = window.screen.height - 300;
+  // Wrap size: full screen minus topbar(~2.4rem) + hint(~1.1rem) + buttons(~2.8rem)
+  // Use actual available space — wait one frame so layout is stable
+  const availW = wrap.clientWidth  || window.innerWidth;
+  const availH = wrap.clientHeight || (window.innerHeight * 0.62);
 
+  // Scale image to fill available space while keeping aspect ratio
   const imgRatio = cropState.naturalW / cropState.naturalH;
   let cW, cH;
   if (availW / availH > imgRatio) {
+    // Height-limited
     cH = availH;
     cW = Math.round(cH * imgRatio);
   } else {
+    // Width-limited
     cW = availW;
     cH = Math.round(cW / imgRatio);
   }
@@ -2728,8 +2723,9 @@ function initCropCanvas() {
   canvas.height = cH;
   cropState.canvasW = cW;
   cropState.canvasH = cH;
-  cropState.scale   = cropState.naturalW / cW;
+  cropState.scale   = cropState.naturalW / cW; // canvas px → natural px
 
+  // Initial crop: largest 3:2 rect that fits, centered
   let initW = cW;
   let initH = Math.round(initW / CROP_RATIO);
   if (initH > cH) {
@@ -3032,14 +3028,6 @@ function updateUploadLevels() {
 
 /* ── Submit ── */
 async function submitUpload() {
-   if (typeof window.AndroidApp !== 'undefined') {
-    const watchBtn = document.getElementById('android-upload-watch-btn');
-    if (watchBtn) {
-      // Reklam butonunu programatik tıkla
-      watchBtn.click();
-      return;
-    }
-      }
   const title    = document.getElementById('upload-title').value.trim();
   const village  = document.getElementById('upload-village').value;
   const level    = document.getElementById('upload-level').value;
