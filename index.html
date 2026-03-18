@@ -2716,26 +2716,7 @@ function initCropCanvas() {
     cH = Math.round(cW / imgRatio);
   }
 
-  canvas.width  = cW;
-  canvas.height = cH;
-  cropState.canvasW = cW;
-  cropState.canvasH = cH;
-  cropState.scale   = cropState.naturalW / cW;
 
-  let initW = cW;
-  let initH = Math.round(initW / CROP_RATIO);
-  if (initH > cH) {
-    initH = cH;
-    initW = Math.round(initH * CROP_RATIO);
-  }
-  cropState.cx = Math.round((cW - initW) / 2);
-  cropState.cy = Math.round((cH - initH) / 2);
-  cropState.cw = initW;
-  cropState.ch = initH;
-
-  drawCrop();
-  attachCropEvents(canvas);
-}
 
   canvas.width  = cW;
   canvas.height = cH;
