@@ -2105,6 +2105,7 @@ function goScreen(id) { haptic.light();
     requestAnimationFrame(() => {
       const leaving = document.querySelector('.screen.active')?.id;
       if (id !== 'screen-detail') prevScreen = id;
+       if (leaving !== 'screen-detail') tickTransition();
 
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
@@ -2132,6 +2133,7 @@ function goBack() {
   requestAnimationFrame(() => requestAnimationFrame(() => {
     const id = prevScreen || 'screen-home';
     const leaving = document.querySelector('.screen.active')?.id;
+     if (leaving !== id) tickTransition();
     prevScreen = 'screen-home';
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
