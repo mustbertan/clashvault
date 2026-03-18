@@ -1966,13 +1966,13 @@ function tickTransition() {
 }
 
 function showInterstitial() {
-  if (isNativeApp()) {
-    window.AndroidAdBridge.showInterstitial();
+  if (typeof window.AndroidApp !== 'undefined') {
+    window.AndroidApp.showInterstitial();
   }
 }
 
 function closeInterstitial() {
-  // Native interstitial kullanıcı tarafından kapatılır, JS'den kapatmaya gerek yok
+  // Native interstitial kullanıcı tarafından kapatılır
 }
 
 /* ═══════════════════════════════════════════
