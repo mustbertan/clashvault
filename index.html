@@ -1706,9 +1706,19 @@ function t(key) {
 }
 
 function detectLang() {
+  // 1) Kullanıcı daha önce manuel seçtiyse onu kullan
   const saved = localStorage.getItem('cv_lang');
   if (saved && TRANSLATIONS[saved]) return saved;
-  return 'en'; // varsayılan dil: İngilizce
+
+  // 2) Telefon/tarayıcı dilini kontrol et
+  const browserLang = (navigator.language || navigator.userLanguage || 'en')
+    .substring(0, 2)
+    .toLowerCase();
+  
+  if (TRANSLATIONS[browserLang]) return browserLang;
+  
+  // 3) Hiçbiri yoksa İngilizce
+  return 'en';
 }
 
 const LANG_FLAGS = { tr:'🇹🇷', en:'🇬🇧', de:'🇩🇪', fr:'🇫🇷', es:'🇪🇸', pt:'🇧🇷', ar:'🇸🇦' };
