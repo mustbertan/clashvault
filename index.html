@@ -2078,9 +2078,7 @@ function renderGrid(bases, gridEl, emptyEl) {
     if (i > 0 && i % 6 === 0) {
       // Native: banner zaten altta sabit gösteriliyor, sadece native'e bildir
       html += `<div style="height:4px;"></div>`;
-      if (isNativeApp()) {
-        window.AndroidAdBridge.requestFeedAd(i);
-      }
+      // Feed ad native katmanda yönetiliyor
     }
     html += cardHtml(b);
   });
