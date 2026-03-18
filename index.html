@@ -1047,7 +1047,7 @@ body::before {
       <div class="form-group">
         <div class="form-label" data-i18n="upload_photo_label">📷 Base Screenshot *</div>
         <div class="img-upload-area" id="img-upload-area">
-          <input type="file" id="upload-file-input" accept="image/*" onchange="handleImageSelect(event)">
+          <input type="file" id="upload-file-input" accept="image/jpeg,image/png,image/webp" onchange="handleImageSelect(event)">
           <div class="img-upload-icon">🖼️</div>
           <div class="img-upload-text" data-i18n="upload_photo_text">Select or drop photo</div>
           <div class="img-upload-sub" data-i18n="upload_photo_sub">JPG, PNG · Max 5MB</div>
@@ -2699,12 +2699,10 @@ function openCropModal(file) {
 }
 
 function initCropCanvas() {
-  const wrap   = document.getElementById('crop-canvas-wrap');
   const canvas = document.getElementById('crop-canvas');
 
-  // Banner yüksekliği (~60px) + topbar (~40px) + hint (~20px) + butonlar (~80px) = ~200px
-  const availW = window.innerWidth;
-  const availH = window.innerHeight - 200;
+  const availW = window.screen.width;
+  const availH = window.screen.height - 300;
 
   const imgRatio = cropState.naturalW / cropState.naturalH;
   let cW, cH;
@@ -2715,6 +2713,27 @@ function initCropCanvas() {
     cW = availW;
     cH = Math.round(cW / imgRatio);
   }
+
+  canvas.width  = cW;
+  canvas.height = cH;
+  cropState.canvasW = cW;
+  cropState.canvasH = cH;
+  cropState.scale   = cropState.naturalW / cW;
+
+  let initW = cW;
+  let initH = Math.round(initW / CROP_RATIO);
+  if (initH > cH) {
+    initH = cH;
+    initW = Math.round(initH * CROP_RATIO);
+  }
+  cropState.cx = Math.round((cW - initW) / 2);
+  cropState.cy = Math.round((cH - initH) / 2);
+  cropState.cw = initW;
+  cropState.ch = initH;
+
+  drawCrop();
+  attachCropEvents(canvas);
+}
 
 
 
