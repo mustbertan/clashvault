@@ -1047,7 +1047,7 @@ body::before {
       <div class="form-group">
         <div class="form-label" data-i18n="upload_photo_label">📷 Base Screenshot *</div>
         <div class="img-upload-area" id="img-upload-area">
-          <input type="file" id="upload-file-input" accept="image/*" onchange="handleImageSelect(event)">
+          <input type="file" id="upload-file-input" accept="image/jpeg,image/png,image/webp" onchange="handleImageSelect(event)">
           <div class="img-upload-icon">🖼️</div>
           <div class="img-upload-text" data-i18n="upload_photo_text">Select or drop photo</div>
           <div class="img-upload-sub" data-i18n="upload_photo_sub">JPG, PNG · Max 5MB</div>
@@ -1323,7 +1323,7 @@ const TRANSLATIONS = {
     upload_coc_hint:'CoC → Base → Share → Copy Link',
     upload_nick_label:'👤 Nickname (optional)',
     upload_nick_ph:'e.g. ClashMaster99',
-    upload_btn:'⬆️ Upload for Review',
+    upload_btn:'⬆️ Watch Ad to Upload',
     upload_uploading:'⏳ Uploading...',
     upload_moderation:'Uploads are reviewed before going live.',
     upload_success_title:'Uploaded!',
@@ -1708,7 +1708,9 @@ function t(key) {
 function detectLang() {
   const saved = localStorage.getItem('cv_lang');
   if (saved && TRANSLATIONS[saved]) return saved;
-  return 'en'; // varsayılan dil: İngilizce
+  const browserLang = (navigator.language || navigator.userLanguage || 'en').substring(0, 2).toLowerCase();
+  if (TRANSLATIONS[browserLang]) return browserLang;
+  return 'en';
 }
 
 const LANG_FLAGS = { tr:'🇹🇷', en:'🇬🇧', de:'🇩🇪', fr:'🇫🇷', es:'🇪🇸', pt:'🇧🇷', ar:'🇸🇦' };
@@ -1952,8 +1954,6 @@ function pushAd(key) {
   if (adPushed[key]) return;
   adPushed[key] = true;
   // Banner native Android katmanında zaten gösteriliyor
-}
-  // Web fallback yok — uygulama sadece native olarak dağıtılıyor
 }
 
 // Her ekran geçişinde çağrılır; native taraf sayacı tutar ve her 5'te bir interstitial gösterir
