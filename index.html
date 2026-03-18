@@ -2113,9 +2113,9 @@ function goScreen(id) { haptic.light();
         history.pushState({ screen: id }, '', '');
       }
 
-      if (id !== 'screen-home' && id !== 'screen-detail' && leaving !== id) {
-        tickTransition();
-      }
+      if (leaving !== id) {
+  tickTransition();
+}
 
       if (id === 'screen-search')    { applyFilters();           hideLoading(true); }
       else if (id === 'screen-favs')      { renderFavs();            hideLoading(true); }
