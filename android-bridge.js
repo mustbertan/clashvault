@@ -228,6 +228,19 @@
             '</button>' +
 
             // Alt not
+            // Geri butonu
+            '<button onclick="window.goScreen(\'screen-home\')" style="' +
+                'margin-top:.1rem;' +
+                'padding:.38rem .9rem;' +
+                'background:transparent;' +
+                'color:#B8926A;font-weight:700;font-size:.42rem;' +
+                'font-family:\'Nunito\',sans-serif;' +
+                'border:1.5px solid rgba(107,63,18,.5);border-radius:.44rem;cursor:pointer;' +
+            '">' +
+                '← Geri Dön' +
+            '</button>' +
+
+            // Alt not
             '<div style="font-size:.33rem;color:#6B3F12;margin-top:.1rem;">' +
                 'Reklamı izlemeden bu sekmeye erişilemez.' +
             '</div>';
