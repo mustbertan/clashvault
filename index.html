@@ -2690,7 +2690,8 @@ function openCropModal(file) {
       cropState.naturalH = img.naturalHeight;
       cropState.pendingFile = file;
       document.getElementById('crop-modal').classList.add('show');
-      setTimeout(() => initCropCanvas(), 400);
+      // Banner yüklü olsa bile layout stabilize olması için daha uzun bekle
+      setTimeout(() => initCropCanvas(), 120);
     };
     img.src = ev.target.result;
   };
@@ -2705,7 +2706,6 @@ function initCropCanvas() {
 
   const imgRatio = cropState.naturalW / cropState.naturalH;
   let cW, cH;
-
   if (availW / availH > imgRatio) {
     cH = availH;
     cW = Math.round(cH * imgRatio);
@@ -2714,38 +2714,12 @@ function initCropCanvas() {
     cH = Math.round(cW / imgRatio);
   }
 
-  canvas.width = cW;
-  canvas.height = cH;
-  cropState.canvasW = cW;
-  cropState.canvasH = cH;
-  cropState.scale = cropState.naturalW / cW;
-
-  let initW = cW;
-  let initH = Math.round(initW / CROP_RATIO);
-
-  if (initH > cH) {
-    initH = cH;
-    initW = Math.round(initH * CROP_RATIO);
-  }
-
-  cropState.cx = Math.round((cW - initW) / 2);
-  cropState.cy = Math.round((cH - initH) / 2);
-  cropState.cw = initW;
-  cropState.ch = initH;
-
-  drawCrop();
-  attachCropEvents(canvas);
-}
-
-
-
   canvas.width  = cW;
   canvas.height = cH;
   cropState.canvasW = cW;
   cropState.canvasH = cH;
-  cropState.scale   = cropState.naturalW / cW; // canvas px → natural px
+  cropState.scale   = cropState.naturalW / cW;
 
-  // Initial crop: largest 3:2 rect that fits, centered
   let initW = cW;
   let initH = Math.round(initW / CROP_RATIO);
   if (initH > cH) {
