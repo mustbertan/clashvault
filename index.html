@@ -29,7 +29,7 @@
   --shadow-gold:0 0 20px rgba(245,166,35,0.3); --radius:16px;
 }
 /* ─── GLOBAL FONT SCALE ─── */
-html { font-size: clamp(15px, 4vw, 21px); }
+html { font-size: clamp(22.5px, 6vw, 31.5px); }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
 html, body {
   height: 100%;
@@ -1946,7 +1946,7 @@ let transitionCount = 0;
 let adPushed = {};
 
 // Native Android uygulamasında mı çalışıyor?
-const isNativeApp = () => typeof window.AndroidAdBridge !== 'undefined';
+const isNativeApp = () => typeof window.AndroidApp !== 'undefined';
 
 function pushAd(key) {
   if (adPushed[key]) return;
@@ -1961,9 +1961,10 @@ function pushAd(key) {
 // Her ekran geçişinde çağrılır; native taraf sayacı tutar ve her 5'te bir interstitial gösterir
 function tickTransition() {
   transitionCount++;
-  if (isNativeApp()) {
-    window.AndroidAdBridge.onScreenChange();
+  if (typeof window.AndroidApp !== 'undefined') {
+    window.AndroidApp.tickTransition();
   }
+
 }
 
 function showInterstitial() {
