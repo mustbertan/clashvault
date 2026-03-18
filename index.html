@@ -2702,23 +2702,40 @@ function initCropCanvas() {
   const wrap   = document.getElementById('crop-canvas-wrap');
   const canvas = document.getElementById('crop-canvas');
 
-  // Wrap size: full screen minus topbar(~2.4rem) + hint(~1.1rem) + buttons(~2.8rem)
-  // Use actual available space — wait one frame so layout is stable
-  const availW = wrap.clientWidth  || window.innerWidth;
-  const availH = wrap.clientHeight || (window.innerHeight * 0.62);
+  // Banner yüksekliği (~60px) + topbar (~40px) + hint (~20px) + butonlar (~80px) = ~200px
+  const availW = window.innerWidth;
+  const availH = window.innerHeight - 200;
 
-  // Scale image to fill available space while keeping aspect ratio
   const imgRatio = cropState.naturalW / cropState.naturalH;
   let cW, cH;
   if (availW / availH > imgRatio) {
-    // Height-limited
     cH = availH;
     cW = Math.round(cH * imgRatio);
   } else {
-    // Width-limited
     cW = availW;
     cH = Math.round(cW / imgRatio);
   }
+
+  canvas.width  = cW;
+  canvas.height = cH;
+  cropState.canvasW = cW;
+  cropState.canvasH = cH;
+  cropState.scale   = cropState.naturalW / cW;
+
+  let initW = cW;
+  let initH = Math.round(initW / CROP_RATIO);
+  if (initH > cH) {
+    initH = cH;
+    initW = Math.round(initH * CROP_RATIO);
+  }
+  cropState.cx = Math.round((cW - initW) / 2);
+  cropState.cy = Math.round((cH - initH) / 2);
+  cropState.cw = initW;
+  cropState.ch = initH;
+
+  drawCrop();
+  attachCropEvents(canvas);
+}
 
   canvas.width  = cW;
   canvas.height = cH;
