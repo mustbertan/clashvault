@@ -1951,10 +1951,8 @@ const isNativeApp = () => typeof window.AndroidApp !== 'undefined';
 function pushAd(key) {
   if (adPushed[key]) return;
   adPushed[key] = true;
-  if (isNativeApp()) {
-    // Native: banner zaten Android katmanında altta sabit gösteriliyor
-    window.AndroidAdBridge.showBanner();
-  }
+  // Banner native Android katmanında zaten gösteriliyor
+}
   // Web fallback yok — uygulama sadece native olarak dağıtılıyor
 }
 
