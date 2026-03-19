@@ -781,12 +781,12 @@ body::before {
     <div class="topbar-logo">Clash<span>Vault</span></div>
     <div class="topbar-actions"><div class="icon-btn" onclick="goScreen('screen-home')">✕</div></div>
   </div>
+  <div id="search-collapsible" style="overflow:hidden;transition:max-height .3s ease,opacity .3s ease;max-height:20rem;opacity:1;">
   <div class="search-bar">
     <div class="search-input-wrap">
       <span class="search-icon">🔍</span>
       <input type="text" placeholder="Search bases..." data-i18n="search_placeholder" id="search-input" oninput="applyFilters()">
     </div>
-    <!-- filter toggle removed - filters always visible -->
   </div>
 
   <!-- SORT BAR -->
@@ -884,8 +884,9 @@ body::before {
 
     </div>
   </div>
+  </div><!-- /#search-collapsible -->
 
-  <div class="scroll-content">
+  <div class="scroll-content" id="search-scroll-content" onscroll="handleSearchScroll(this)">
     <div id="search-loading" class="loading-wrap" style="display:none;">
       <div class="spinner"></div><div class="loading-text">Loading bases...</div>
     </div>
@@ -1279,6 +1280,16 @@ const TRANSLATIONS = {
     sort_newest:'✨ En Yeni', sort_popular:'🔥 En Popüler',
     sort_favs:'❤️ En Çok Beğenilen', sort_az:'🔤 A–Z',
     section_choose_cat:'Kategori Seçin',
+    // Community lock
+    comm_lock_title:'🔒 COMMUNITY KİLİTLİ',
+    comm_lock_desc:'Topluluk içeriklerini görmek ve kendi base\'ini paylaşmak için <b>kısa bir ödüllü reklam</b> izlemen gerekiyor.',
+    comm_lock_once:'Reklamı bir kez izledikten sonra <b>Community kalıcı olarak açılır</b> — bir daha reklam sorulmaz.',
+    comm_lock_duration:'Yaklaşık <b>~30 saniye</b> sürecek bir video reklam izleyeceksin.',
+    comm_lock_btn:'🎬 Reklam İzle ve Aç',
+    comm_lock_back:'← Geri Dön',
+    comm_lock_footer:'Reklamı izlemeden bu sekmeye erişilemez.',
+    // Upload lock
+    upload_lock_btn:'🎬 Reklam İzle ve Yükle',
   },
   en: {
     nav_home:'Home', nav_browse:'Browse', nav_community:'Community',
@@ -1348,6 +1359,16 @@ const TRANSLATIONS = {
     sort_newest:'✨ Newest', sort_popular:'🔥 Most Used',
     sort_favs:'❤️ Most Liked', sort_az:'🔤 A–Z',
     section_choose_cat:'Choose Your Category',
+    // Community lock
+    comm_lock_title:'🔒 COMMUNITY LOCKED',
+    comm_lock_desc:'To view community content and share your own base, you need to watch a <b>short rewarded ad</b>.',
+    comm_lock_once:'Watch the ad once and <b>Community unlocks permanently</b> — no more ads required.',
+    comm_lock_duration:'You will watch a video ad of about <b>~30 seconds</b>.',
+    comm_lock_btn:'🎬 Watch Ad to Unlock',
+    comm_lock_back:'← Go Back',
+    comm_lock_footer:'You cannot access this tab without watching the ad.',
+    // Upload lock
+    upload_lock_btn:'🎬 Watch Ad to Upload',
   },
   de: {
     nav_home:'Start', nav_browse:'Suchen', nav_community:'Community',
@@ -1417,6 +1438,16 @@ const TRANSLATIONS = {
     sort_newest:'✨ Neueste', sort_popular:'🔥 Meistgenutzt',
     sort_favs:'❤️ Meistgeliked', sort_az:'🔤 A–Z',
     section_choose_cat:'Kategorie wählen',
+    // Community lock
+    comm_lock_title:'🔒 COMMUNITY GESPERRT',
+    comm_lock_desc:'Um Community-Inhalte zu sehen und deine Basis zu teilen, musst du eine <b>kurze Belohnungswerbung</b> ansehen.',
+    comm_lock_once:'Schaue die Werbung einmal an und <b>Community wird dauerhaft entsperrt</b>.',
+    comm_lock_duration:'Du wirst eine Videowerbung von ca. <b>~30 Sekunden</b> sehen.',
+    comm_lock_btn:'🎬 Werbung ansehen & entsperren',
+    comm_lock_back:'← Zurück',
+    comm_lock_footer:'Ohne Werbung kann nicht auf diesen Tab zugegriffen werden.',
+    // Upload lock
+    upload_lock_btn:'🎬 Werbung ansehen & hochladen',
   },
   fr: {
     nav_home:'Accueil', nav_browse:'Explorer', nav_community:'Communauté',
@@ -1486,6 +1517,16 @@ const TRANSLATIONS = {
     sort_newest:'✨ Plus récent', sort_popular:'🔥 Plus utilisé',
     sort_favs:'❤️ Plus aimé', sort_az:'🔤 A–Z',
     section_choose_cat:'Choisir une catégorie',
+    // Community lock
+    comm_lock_title:'🔒 COMMUNAUTÉ VERROUILLÉE',
+    comm_lock_desc:'Pour voir le contenu communautaire et partager votre base, regardez une <b>courte publicité récompensée</b>.',
+    comm_lock_once:'Regardez la pub une fois et <b>Community se déverrouille définitivement</b>.',
+    comm_lock_duration:'Vous regarderez une vidéo publicitaire d\'environ <b>~30 secondes</b>.',
+    comm_lock_btn:'🎬 Voir la pub pour débloquer',
+    comm_lock_back:'← Retour',
+    comm_lock_footer:'Vous ne pouvez pas accéder à cet onglet sans regarder la pub.',
+    // Upload lock
+    upload_lock_btn:'🎬 Voir une pub pour uploader',
   },
   es: {
     nav_home:'Inicio', nav_browse:'Explorar', nav_community:'Comunidad',
@@ -1555,6 +1596,16 @@ const TRANSLATIONS = {
     sort_newest:'✨ Más reciente', sort_popular:'🔥 Más usado',
     sort_favs:'❤️ Más gustado', sort_az:'🔤 A–Z',
     section_choose_cat:'Elige tu categoría',
+    // Community lock
+    comm_lock_title:'🔒 COMUNIDAD BLOQUEADA',
+    comm_lock_desc:'Para ver contenido comunitario y compartir tu base, mira un <b>anuncio de recompensa corto</b>.',
+    comm_lock_once:'Mira el anuncio una vez y <b>Community se desbloquea permanentemente</b>.',
+    comm_lock_duration:'Verás un anuncio de video de aproximadamente <b>~30 segundos</b>.',
+    comm_lock_btn:'🎬 Ver anuncio para desbloquear',
+    comm_lock_back:'← Volver',
+    comm_lock_footer:'No puedes acceder a esta pestaña sin ver el anuncio.',
+    // Upload lock
+    upload_lock_btn:'🎬 Ver anuncio para subir',
   },
   pt: {
     nav_home:'Início', nav_browse:'Explorar', nav_community:'Comunidade',
@@ -1624,6 +1675,16 @@ const TRANSLATIONS = {
     sort_newest:'✨ Mais recente', sort_popular:'🔥 Mais usado',
     sort_favs:'❤️ Mais curtido', sort_az:'🔤 A–Z',
     section_choose_cat:'Escolha sua categoria',
+    // Community lock
+    comm_lock_title:'🔒 COMUNIDADE BLOQUEADA',
+    comm_lock_desc:'Para ver conteúdo da comunidade e compartilhar sua base, assista a um <b>anúncio de recompensa curto</b>.',
+    comm_lock_once:'Assista ao anúncio uma vez e <b>Community desbloqueia permanentemente</b>.',
+    comm_lock_duration:'Você assistirá a um anúncio em vídeo de aproximadamente <b>~30 segundos</b>.',
+    comm_lock_btn:'🎬 Ver anúncio para desbloquear',
+    comm_lock_back:'← Voltar',
+    comm_lock_footer:'Você não pode acessar esta aba sem ver o anúncio.',
+    // Upload lock
+    upload_lock_btn:'🎬 Ver anúncio para enviar',
   },
   ar: {
     nav_home:'الرئيسية', nav_browse:'استعرض', nav_community:'المجتمع',
@@ -1693,6 +1754,16 @@ const TRANSLATIONS = {
     sort_newest:'✨ الأحدث', sort_popular:'🔥 الأكثر استخداماً',
     sort_favs:'❤️ الأكثر إعجاباً', sort_az:'🔤 أ–ي',
     section_choose_cat:'اختر فئتك',
+    // Community lock
+    comm_lock_title:'🔒 المجتمع مقفل',
+    comm_lock_desc:'لمشاهدة محتوى المجتمع ومشاركة قاعدتك، شاهد <b>إعلانًا مكافأة قصيرًا</b>.',
+    comm_lock_once:'شاهد الإعلان مرة واحدة و<b>يفتح المجتمع بشكل دائم</b>.',
+    comm_lock_duration:'ستشاهد إعلانًا مرئيًا لمدة <b>~30 ثانية</b> تقريبًا.',
+    comm_lock_btn:'🎬 شاهد إعلاناً للفتح',
+    comm_lock_back:'→ رجوع',
+    comm_lock_footer:'لا يمكنك الوصول إلى هذا التبويب بدون مشاهدة الإعلان.',
+    // Upload lock
+    upload_lock_btn:'🎬 شاهد إعلاناً للرفع',
   },
 };
 
@@ -1833,8 +1904,8 @@ function applyTranslations() {
   const builderCount = allBases.filter(b => b.village === 'builder').length;
   const countHomeEl    = document.getElementById('count-home');
   const countBuilderEl = document.getElementById('count-builder');
-  if (countHomeEl && homeCount > 0)       countHomeEl.textContent    = homeCount + ' ' + t('home_layouts');
-  if (countBuilderEl && builderCount > 0) countBuilderEl.textContent = builderCount + ' ' + t('home_layouts');
+  if (countHomeEl)    countHomeEl.textContent    = homeCount    + ' ' + t('home_layouts');
+  if (countBuilderEl) countBuilderEl.textContent = builderCount + ' ' + t('home_layouts');
 
   // RTL for Arabic
   document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
@@ -2396,6 +2467,24 @@ function toggleChip(el) {
   el.classList.add('active');
   activeFilters[group] = el.dataset.val;
   applyFilters();
+}
+
+let searchScrollDir = 0;
+let searchLastScroll = 0;
+function handleSearchScroll(el) {
+  const current = el.scrollTop;
+  const collapsible = document.getElementById('search-collapsible');
+  if (!collapsible) return;
+  if (current > searchLastScroll && current > 40) {
+    // Aşağı kaydırma — gizle
+    collapsible.style.maxHeight = '0';
+    collapsible.style.opacity = '0';
+  } else if (current < searchLastScroll - 10 || current < 20) {
+    // Yukarı kaydırma — göster
+    collapsible.style.maxHeight = '20rem';
+    collapsible.style.opacity = '1';
+  }
+  searchLastScroll = current;
 }
 
 function applyFilters() {
@@ -3296,6 +3385,18 @@ async function init() {
 
   // Reveal app (prevents flash of unstyled content)
   document.body.style.opacity = '1';
+
+  // Bridge'e çeviri metinlerini aktar — android-bridge.js kullanır
+  window.CV_STRINGS = {
+    comm_lock_title:    t('comm_lock_title'),
+    comm_lock_desc:     t('comm_lock_desc'),
+    comm_lock_once:     t('comm_lock_once'),
+    comm_lock_duration: t('comm_lock_duration'),
+    comm_lock_btn:      t('comm_lock_btn'),
+    comm_lock_back:     t('comm_lock_back'),
+    comm_lock_footer:   t('comm_lock_footer'),
+    upload_lock_btn:    t('upload_lock_btn'),
+  };
 }
 
 init();
