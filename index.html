@@ -126,19 +126,19 @@ body::before {
 .cards-grid { display:grid; grid-template-columns:1fr; gap:.33rem; padding:0 .45rem; margin-bottom:.55rem; }
 .base-card { background:var(--brown-card); border-radius:var(--radius); border:1.5px solid var(--brown-border); overflow:hidden; cursor:pointer; transition:all .25s; position:relative; content-visibility:auto; contain-intrinsic-size:300px; }
 .base-card:hover { transform:translateY(-3px); border-color:var(--gold-dark); box-shadow:0 8px 25px rgba(0,0,0,.4),var(--shadow-gold); }
-.card-thumb { width:100%; aspect-ratio:16/9; background:linear-gradient(135deg,#2D1A00,#1a1040); position:relative; overflow:hidden; contain:content; }
-.card-thumb img { width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .3s ease; will-change:opacity; }
+.card-thumb { width:100%; aspect-ratio:16/9; background:linear-gradient(135deg,#2D1A00,#1a1040); position:relative; overflow:hidden; }
+.card-thumb img { width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .25s ease; }
 .card-thumb img.loaded { opacity:1; }
-/* ── OPTİMİZE EDİLMİŞ SKELETON ── */
-.card-thumb.skeleton { position:relative; }
+/* ── Skeleton: GPU-accelerated, ana thread bloke etmez ── */
 .card-thumb.skeleton::after {
-  content:''; position:absolute; inset:0;
+  content:''; position:absolute; inset:0; z-index:1;
   transform:translateX(-100%);
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.06) 50%,transparent 100%);
   animation:shimmer 1.4s infinite;
   will-change:transform;
+  pointer-events:none;
 }
-@keyframes shimmer { to { transform:translateX(100%); } }
+@keyframes shimmer { to { transform:translateX(200%); } }
 .card-badge { position:absolute; top:.33rem; left:.33rem; background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:var(--brown-dark); font-size:.42rem; font-weight:900; padding:.17rem .36rem; border-radius:.28rem; z-index:2; }
 .card-fav { position:absolute; top:.33rem; right:.33rem; width:1.17rem; height:1.17rem; background:rgba(26,15,0,.8); border-radius:.28rem; display:flex; align-items:center; justify-content:center; font-size:.6rem; z-index:2; cursor:pointer; border:1px solid rgba(107,63,18,.5); transition:all .2s; }
 .card-fav.active { background:rgba(230,57,70,.2); border-color:rgba(230,57,70,.4); }
@@ -217,11 +217,7 @@ body::before {
 .similar-title { font-family:'Cinzel Decorative',serif; font-size:.36rem; color:var(--gold-light); margin-bottom:.33rem; display:flex; align-items:center; gap:.22rem; }
 .similar-title::before { content:''; display:block; width:3px; height:.38rem; background:var(--gold); border-radius:2px; }
 .similar-grid { display:grid; grid-template-columns:1fr; gap:.33rem; }
-.dd-item {
-  padding:.33rem .55rem; font-family:'Nunito',sans-serif;
-  font-size:.42rem; font-weight:700; color:var(--cream);
-  cursor:pointer; transition:background .15s;
-}
+.dd-item { padding:.33rem .55rem; font-family:'Nunito',sans-serif; font-size:.42rem; font-weight:700; color:var(--cream); cursor:pointer; transition:background .15s; }
 .dd-item:hover, .dd-item.selected { background:rgba(245,166,35,.18); color:var(--gold); }
 .search-bar { display:flex; gap:.28rem; padding:0 .45rem .44rem; flex-shrink:0; }
 .search-input-wrap { flex:1; display:flex; align-items:center; background:var(--brown-card); border:1.5px solid var(--brown-border); border-radius:.38rem; padding:0 .44rem; gap:.33rem; }
@@ -277,21 +273,11 @@ body::before {
 .upload-form { padding:0 .45rem .55rem; display:flex; flex-direction:column; gap:.38rem; }
 .form-group { display:flex; flex-direction:column; gap:.17rem; }
 .form-label { font-size:.38rem; font-weight:800; color:var(--text-muted); letter-spacing:.5px; text-transform:uppercase; }
-.form-input {
-  background:var(--brown-card); border:1.5px solid var(--brown-border);
-  border-radius:.38rem; padding:.44rem .5rem;
-  color:var(--cream); font-family:'Nunito',sans-serif; font-size:.47rem; font-weight:600;
-  outline:none; width:100%; transition:border-color .2s;
-}
+.form-input { background:var(--brown-card); border:1.5px solid var(--brown-border); border-radius:.38rem; padding:.44rem .5rem; color:var(--cream); font-family:'Nunito',sans-serif; font-size:.47rem; font-weight:600; outline:none; width:100%; transition:border-color .2s; }
 .form-input:focus { border-color:var(--gold-dark); }
 .form-input option { background:var(--brown-card2); }
 .form-select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23F5A623' d='M1 1l5 5 5-5'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .5rem center; padding-right:1.2rem; }
-.img-upload-area {
-  border:2px dashed var(--brown-border); border-radius:.44rem;
-  background:var(--brown-card); min-height:5.5rem;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:.22rem; cursor:pointer; transition:all .25s; position:relative; overflow:hidden;
-}
+.img-upload-area { border:2px dashed var(--brown-border); border-radius:.44rem; background:var(--brown-card); min-height:5.5rem; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.22rem; cursor:pointer; transition:all .25s; position:relative; overflow:hidden; }
 .img-upload-area:hover, .img-upload-area.dragover { border-color:var(--gold-dark); background:var(--brown-card2); }
 .img-upload-area input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
 .img-upload-icon { font-size:1.1rem; }
@@ -301,19 +287,9 @@ body::before {
 .img-preview-wrap img { width:100%; border-radius:.38rem; display:block; aspect-ratio:3/2; object-fit:cover; }
 .img-preview-crop-badge { position:absolute; bottom:.22rem; left:.22rem; background:rgba(245,166,35,.85); color:#1a0c00; font-size:.28rem; font-weight:800; padding:.06rem .22rem; border-radius:.2rem; letter-spacing:.5px; }
 .img-preview-remove { position:absolute; top:.22rem; right:.22rem; background:rgba(230,57,70,.85); border:none; border-radius:.22rem; color:#fff; font-size:.5rem; width:1rem; height:1rem; display:flex; align-items:center; justify-content:center; cursor:pointer; }
-.btn-upload-submit {
-  background:linear-gradient(135deg,var(--gold-dark),var(--gold));
-  color:var(--brown-dark); font-weight:900; font-size:.55rem;
-  padding:.55rem; border-radius:.44rem; border:none; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; gap:.28rem;
-  box-shadow:0 4px 15px rgba(245,166,35,.4); transition:all .2s; width:100%;
-  font-family:'Nunito',sans-serif;
-}
+.btn-upload-submit { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:var(--brown-dark); font-weight:900; font-size:.55rem; padding:.55rem; border-radius:.44rem; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.28rem; box-shadow:0 4px 15px rgba(245,166,35,.4); transition:all .2s; width:100%; font-family:'Nunito',sans-serif; }
 .btn-upload-submit:disabled { opacity:.5; cursor:not-allowed; }
-.upload-success {
-  display:none; flex-direction:column; align-items:center; justify-content:center;
-  padding:1.1rem .66rem; text-align:center; gap:.44rem;
-}
+.upload-success { display:none; flex-direction:column; align-items:center; justify-content:center; padding:1.1rem .66rem; text-align:center; gap:.44rem; }
 .upload-success.show { display:flex; }
 .upload-success-icon { font-size:2.2rem; }
 .upload-success-title { font-family:'Cinzel Decorative',serif; font-size:.55rem; color:var(--green); }
@@ -323,110 +299,41 @@ body::before {
 .comm-tab.active { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); border-color:var(--gold); color:var(--brown-dark); }
 .progress-bar-wrap { background:var(--brown-card); border-radius:.33rem; overflow:hidden; height:.33rem; }
 .progress-bar { height:100%; background:linear-gradient(90deg,var(--gold-dark),var(--gold)); border-radius:.33rem; transition:width .3s ease; width:0%; }
-.lang-opt {
-  padding:.33rem .55rem; font-family:'Nunito',sans-serif;
-  font-size:.42rem; font-weight:700; color:var(--cream);
-  cursor:pointer; transition:background .15s;
-}
+.lang-opt { padding:.33rem .55rem; font-family:'Nunito',sans-serif; font-size:.42rem; font-weight:700; color:var(--cream); cursor:pointer; transition:background .15s; }
 .lang-opt:hover { background:rgba(245,166,35,.18); color:var(--gold); }
 .lang-opt.active { color:var(--gold); background:rgba(245,166,35,.12); }
-.sort-bar {
-  display:flex; gap:.22rem; padding:.11rem .45rem .33rem;
-  overflow-x:auto; flex-shrink:0;
-  scrollbar-width:none; -webkit-overflow-scrolling:touch;
-}
+.sort-bar { display:flex; gap:.22rem; padding:.11rem .45rem .33rem; overflow-x:auto; flex-shrink:0; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
 .sort-bar::-webkit-scrollbar { display:none; }
-.sort-pill {
-  flex-shrink:0; display:flex; align-items:center; gap:.18rem;
-  padding:.2rem .44rem; border-radius:2rem;
-  border:1.5px solid var(--brown-border);
-  background:var(--brown-card); color:var(--text-muted);
-  font-family:'Nunito',sans-serif; font-size:.37rem; font-weight:700;
-  cursor:pointer; transition:all .18s; white-space:nowrap; user-select:none;
-}
+.sort-pill { flex-shrink:0; display:flex; align-items:center; gap:.18rem; padding:.2rem .44rem; border-radius:2rem; border:1.5px solid var(--brown-border); background:var(--brown-card); color:var(--text-muted); font-family:'Nunito',sans-serif; font-size:.37rem; font-weight:700; cursor:pointer; transition:all .18s; white-space:nowrap; user-select:none; }
 .sort-pill.active { background:var(--gold-dark); border-color:var(--gold); color:var(--brown-deep); }
 .sort-pill .sort-icon { font-size:.42rem; }
 .sort-result-count { padding:.05rem .45rem .2rem; font-size:.35rem; color:var(--text-muted); flex-shrink:0; }
-#crop-modal {
-  position:fixed; inset:0; z-index:900;
-  background:#0d0a06; display:none; flex-direction:column;
-  align-items:stretch; padding:0; overflow:hidden;
-}
+#crop-modal { position:fixed; inset:0; z-index:900; background:#0d0a06; display:none; flex-direction:column; align-items:stretch; padding:0; overflow:hidden; }
 #crop-modal.show { display:flex; }
-#crop-topbar {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:.44rem .55rem .33rem; flex-shrink:0;
-  border-bottom:1px solid rgba(245,166,35,.18);
-}
+#crop-topbar { display:flex; align-items:center; justify-content:space-between; padding:.44rem .55rem .33rem; flex-shrink:0; border-bottom:1px solid rgba(245,166,35,.18); }
 #crop-topbar-title { font-family:'Cinzel Decorative',serif; font-size:.46rem; color:var(--gold-light); }
-.crop-ratio-badge {
-  background:rgba(245,166,35,.18); border:1px solid rgba(245,166,35,.4);
-  border-radius:.33rem; padding:.11rem .38rem;
-  font-size:.32rem; font-weight:800; color:var(--gold); letter-spacing:.5px;
-}
+.crop-ratio-badge { background:rgba(245,166,35,.18); border:1px solid rgba(245,166,35,.4); border-radius:.33rem; padding:.11rem .38rem; font-size:.32rem; font-weight:800; color:var(--gold); letter-spacing:.5px; }
 #crop-hint { font-size:.35rem; color:var(--text-muted); text-align:center; padding:.28rem .55rem .11rem; flex-shrink:0; }
-#crop-canvas-wrap {
-  flex:1; position:relative; display:flex; align-items:center; justify-content:center;
-  background:#0d0a06; overflow:hidden; touch-action:none; min-height:0;
-}
+#crop-canvas-wrap { flex:1; position:relative; display:flex; align-items:center; justify-content:center; background:#0d0a06; overflow:hidden; touch-action:none; min-height:0; }
 #crop-canvas { display:block; max-width:100%; max-height:100%; object-fit:contain; cursor:crosshair; }
-.crop-btn-row {
-  display:flex; gap:.33rem; padding:.44rem .55rem .55rem; flex-shrink:0;
-  border-top:1px solid rgba(245,166,35,.18);
-}
+.crop-btn-row { display:flex; gap:.33rem; padding:.44rem .55rem .55rem; flex-shrink:0; border-top:1px solid rgba(245,166,35,.18); }
 .crop-btn { flex:1; padding:.5rem 0; border-radius:.55rem; font-family:'Nunito',sans-serif; font-size:.44rem; font-weight:800; cursor:pointer; border:none; letter-spacing:.2px; }
 .crop-btn-cancel  { background:var(--brown-card2); color:var(--text-muted); border:1.5px solid var(--brown-border); }
 .crop-btn-confirm { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:var(--brown-deep); }
-.card-uploader {
-  display:flex; align-items:center; gap:.14rem;
-  font-size:.33rem; font-weight:700; color:var(--gold);
-  margin-top:.17rem; letter-spacing:.2px;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
+.card-uploader { display:flex; align-items:center; gap:.14rem; font-size:.33rem; font-weight:700; color:var(--gold); margin-top:.17rem; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .card-uploader-icon { font-size:.3rem; opacity:.8; }
-.comm-filter-bar {
-  display:flex; gap:.22rem; padding:.11rem .45rem .28rem;
-  overflow-x:auto; flex-shrink:0;
-  scrollbar-width:none; -webkit-overflow-scrolling:touch;
-}
+.comm-filter-bar { display:flex; gap:.22rem; padding:.11rem .45rem .28rem; overflow-x:auto; flex-shrink:0; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
 .comm-filter-bar::-webkit-scrollbar { display:none; }
-.comm-sort-pill {
-  flex-shrink:0; display:flex; align-items:center; gap:.15rem;
-  padding:.2rem .38rem; border-radius:2rem;
-  border:1.5px solid var(--brown-border);
-  background:var(--brown-card); color:var(--text-muted);
-  font-family:'Nunito',sans-serif; font-size:.35rem; font-weight:700;
-  cursor:pointer; white-space:nowrap; user-select:none; transition:all .18s;
-}
+.comm-sort-pill { flex-shrink:0; display:flex; align-items:center; gap:.15rem; padding:.2rem .38rem; border-radius:2rem; border:1.5px solid var(--brown-border); background:var(--brown-card); color:var(--text-muted); font-family:'Nunito',sans-serif; font-size:.35rem; font-weight:700; cursor:pointer; white-space:nowrap; user-select:none; transition:all .18s; }
 .comm-sort-pill.active { background:var(--gold-dark); border-color:var(--gold); color:var(--brown-deep); }
-.comm-type-row {
-  display:flex; gap:.17rem; padding:.05rem .45rem .22rem;
-  overflow-x:auto; flex-shrink:0; scrollbar-width:none;
-}
+.comm-type-row { display:flex; gap:.17rem; padding:.05rem .45rem .22rem; overflow-x:auto; flex-shrink:0; scrollbar-width:none; }
 .comm-type-row::-webkit-scrollbar { display:none; }
-.comm-type-chip {
-  flex-shrink:0; padding:.17rem .33rem; border-radius:2rem;
-  border:1.5px solid var(--brown-border);
-  background:var(--brown-card); color:var(--text-muted);
-  font-family:'Nunito',sans-serif; font-size:.32rem; font-weight:700;
-  cursor:pointer; white-space:nowrap; user-select:none; transition:all .18s;
-}
+.comm-type-chip { flex-shrink:0; padding:.17rem .33rem; border-radius:2rem; border:1.5px solid var(--brown-border); background:var(--brown-card); color:var(--text-muted); font-family:'Nunito',sans-serif; font-size:.32rem; font-weight:700; cursor:pointer; white-space:nowrap; user-select:none; transition:all .18s; }
 .comm-type-chip.active { background:rgba(245,166,35,.18); border-color:var(--gold-dark); color:var(--gold); }
 .comm-village-row { display:flex; gap:.17rem; padding:.0rem .45rem .17rem; flex-shrink:0; }
-.comm-village-chip {
-  flex:1; padding:.18rem .22rem; border-radius:.44rem;
-  border:1.5px solid var(--brown-border);
-  background:var(--brown-card); color:var(--text-muted);
-  font-family:'Nunito',sans-serif; font-size:.33rem; font-weight:700;
-  cursor:pointer; text-align:center; user-select:none; transition:all .18s;
-}
+.comm-village-chip { flex:1; padding:.18rem .22rem; border-radius:.44rem; border:1.5px solid var(--brown-border); background:var(--brown-card); color:var(--text-muted); font-family:'Nunito',sans-serif; font-size:.33rem; font-weight:700; cursor:pointer; text-align:center; user-select:none; transition:all .18s; }
 .comm-village-chip.active { background:rgba(245,166,35,.18); border-color:var(--gold-dark); color:var(--gold); }
-.card-rank-badge {
-  display:inline-flex; align-items:center; gap:.15rem;
-  background:rgba(245,166,35,.12); border:1.5px solid var(--gold);
-  border-radius:.28rem; padding:.12rem .33rem;
-  font-size:.5rem; font-weight:900; color:var(--gold); letter-spacing:.5px;
-}
+.card-rank-badge { display:inline-flex; align-items:center; gap:.15rem; background:rgba(245,166,35,.12); border:1.5px solid var(--gold); border-radius:.28rem; padding:.12rem .33rem; font-size:.5rem; font-weight:900; color:var(--gold); letter-spacing:.5px; }
 .card-rank-badge .rank-icon { font-size:.5rem; }
 </style>
    <script src="android-bridge.js"></script>
@@ -516,30 +423,18 @@ body::before {
   </div>
   <div id="list-filter-bar" style="display:flex;gap:.28rem;padding:.28rem .45rem .33rem;flex-shrink:0;position:relative;z-index:100;">
     <div style="position:relative;flex:1;">
-      <button id="level-btn" onclick="toggleDropdown('level-dropdown','level-btn')"
-        style="width:100%;padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);
-               background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;
-               font-size:.42rem;font-weight:800;cursor:pointer;display:flex;align-items:center;
-               justify-content:space-between;gap:.22rem;">
+      <button id="level-btn" onclick="toggleDropdown('level-dropdown','level-btn')" style="width:100%;padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;font-size:.42rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:.22rem;">
         <span id="level-btn-label">🏰 TH 9</span><span style="color:var(--gold);font-size:.5rem;">▾</span>
       </button>
-      <div id="level-dropdown" style="display:none;position:absolute;top:calc(100% + .22rem);left:0;right:0;
-           background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;
-           overflow:hidden;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.6);">
+      <div id="level-dropdown" style="display:none;position:absolute;top:calc(100% + .22rem);left:0;right:0;background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;overflow:hidden;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.6);">
         <div id="level-dropdown-list" style="max-height:8rem;overflow-y:auto;"></div>
       </div>
     </div>
     <div style="position:relative;flex:1;">
-      <button id="type-btn" onclick="toggleDropdown('type-dropdown','type-btn')"
-        style="width:100%;padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);
-               background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;
-               font-size:.42rem;font-weight:800;cursor:pointer;display:flex;align-items:center;
-               justify-content:space-between;gap:.22rem;">
+      <button id="type-btn" onclick="toggleDropdown('type-dropdown','type-btn')" style="width:100%;padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;font-size:.42rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:.22rem;">
         <span id="type-btn-label">🏷 Tümü</span><span style="color:var(--gold);font-size:.5rem;">▾</span>
       </button>
-      <div id="type-dropdown" style="display:none;position:absolute;top:calc(100% + .22rem);left:0;right:0;
-           background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;
-           overflow:hidden;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.6);">
+      <div id="type-dropdown" style="display:none;position:absolute;top:calc(100% + .22rem);left:0;right:0;background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;overflow:hidden;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.6);">
         <div style="padding:.17rem 0;">
           <div class="dd-item" data-ddtype="type" data-val="all"      onclick="selectType('all'     ,'🏷 Tümü'     )">🏷 Tümü</div>
           <div class="dd-item" data-ddtype="type" data-val="war"      onclick="selectType('war'     ,'⚔️ War'      )">⚔️ War</div>
@@ -592,28 +487,13 @@ body::before {
   <div class="sort-result-count" id="sort-result-count"></div>
   <div id="filter-panel" style="padding:.11rem .45rem .33rem;flex-shrink:0;">
     <div style="display:flex;gap:.22rem;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
-      <button id="browse-village-btn" onclick="openFilterSheet('village')"
-        style="flex-shrink:0;display:flex;align-items:center;gap:.17rem;
-               padding:.22rem .44rem;border-radius:2rem;
-               border:1.5px solid var(--brown-border);background:var(--brown-card);
-               color:var(--text-muted);font-family:'Nunito',sans-serif;
-               font-size:.37rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;">
+      <button id="browse-village-btn" onclick="openFilterSheet('village')" style="flex-shrink:0;display:flex;align-items:center;gap:.17rem;padding:.22rem .44rem;border-radius:2rem;border:1.5px solid var(--brown-border);background:var(--brown-card);color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:.37rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;">
         <span id="browse-village-label">🏰 Home</span><span style="color:var(--gold);font-size:.38rem;">▾</span>
       </button>
-      <button id="browse-level-btn" onclick="openFilterSheet('level')"
-        style="flex-shrink:0;display:flex;align-items:center;gap:.17rem;
-               padding:.22rem .44rem;border-radius:2rem;
-               border:1.5px solid var(--brown-border);background:var(--brown-card);
-               color:var(--text-muted);font-family:'Nunito',sans-serif;
-               font-size:.37rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;">
+      <button id="browse-level-btn" onclick="openFilterSheet('level')" style="flex-shrink:0;display:flex;align-items:center;gap:.17rem;padding:.22rem .44rem;border-radius:2rem;border:1.5px solid var(--brown-border);background:var(--brown-card);color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:.37rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;">
         <span id="browse-level-label">🏰 TH 9</span><span style="color:var(--gold);font-size:.38rem;">▾</span>
       </button>
-      <button id="browse-type-btn" onclick="openFilterSheet('type')"
-        style="flex-shrink:0;display:flex;align-items:center;gap:.17rem;
-               padding:.22rem .44rem;border-radius:2rem;
-               border:1.5px solid var(--brown-border);background:var(--brown-card);
-               color:var(--text-muted);font-family:'Nunito',sans-serif;
-               font-size:.37rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;">
+      <button id="browse-type-btn" onclick="openFilterSheet('type')" style="flex-shrink:0;display:flex;align-items:center;gap:.17rem;padding:.22rem .44rem;border-radius:2rem;border:1.5px solid var(--brown-border);background:var(--brown-card);color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:.37rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;">
         <span id="browse-type-label">⚔️ War</span><span style="color:var(--gold);font-size:.38rem;">▾</span>
       </button>
     </div>
@@ -798,12 +678,8 @@ body::before {
         <div class="form-label" data-i18n="upload_nick_label">👤 Nickname (optional)</div>
         <input class="form-input" type="text" id="upload-nickname" placeholder="e.g. ClashMaster99" data-i18n="upload_nick_ph" maxlength="40">
       </div>
-      <button class="btn-upload-submit" data-i18n="upload_btn" id="upload-submit-btn" onclick="submitUpload()">
-        ⬆️ Upload for Review
-      </button>
-      <div style="font-size:.33rem;color:var(--text-muted);text-align:center;padding-bottom:.22rem;" data-i18n="upload_moderation">
-        Uploads are reviewed before going live.
-      </div>
+      <button class="btn-upload-submit" data-i18n="upload_btn" id="upload-submit-btn" onclick="submitUpload()">⬆️ Upload for Review</button>
+      <div style="font-size:.33rem;color:var(--text-muted);text-align:center;padding-bottom:.22rem;" data-i18n="upload_moderation">Uploads are reviewed before going live.</div>
     </div>
   </div>
   <nav class="navbar">
@@ -830,11 +706,7 @@ body::before {
   </div>
 </div>
 
-<div id="lang-menu" style="
-  display:none; position:fixed; top:3.2rem; right:.45rem; z-index:600;
-  background:var(--brown-card2); border:1.5px solid var(--gold-dark);
-  border-radius:.44rem; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.6);
-  min-width:5rem;">
+<div id="lang-menu" style="display:none; position:fixed; top:3.2rem; right:.45rem; z-index:600; background:var(--brown-card2); border:1.5px solid var(--gold-dark); border-radius:.44rem; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.6); min-width:5rem;">
   <div style="padding:.22rem .44rem; font-size:.33rem; font-weight:800; color:var(--text-muted); letter-spacing:.8px; text-transform:uppercase; border-bottom:1px solid var(--brown-border);">🌐 Language</div>
   <div id="lang-opt-tr" class="lang-opt" onclick="setLang('tr')">🇹🇷 Türkçe</div>
   <div id="lang-opt-en" class="lang-opt" onclick="setLang('en')">🇬🇧 English</div>
@@ -851,26 +723,15 @@ body::before {
     <div class="crop-ratio-badge">3 : 2</div>
   </div>
   <div id="crop-hint">Köşelerden boyutlandır · Sürükleyerek taşı</div>
-  <div id="crop-canvas-wrap">
-    <canvas id="crop-canvas"></canvas>
-  </div>
+  <div id="crop-canvas-wrap"><canvas id="crop-canvas"></canvas></div>
   <div class="crop-btn-row">
     <button class="crop-btn crop-btn-cancel"  onclick="cancelCrop()">✕ İptal</button>
     <button class="crop-btn crop-btn-confirm" onclick="confirmCrop()">✓ Kırp & Kullan</button>
   </div>
 </div>
 
-<div id="filter-sheet-overlay" onclick="closeFilterSheet()" style="
-  display:none;position:fixed;inset:0;z-index:700;
-  background:rgba(0,0,0,.6);backdrop-filter:blur(3px);
-  align-items:flex-end;justify-content:center;">
-  <div id="filter-sheet" style="
-    width:100%;background:var(--brown-mid);
-    border-top-left-radius:.8rem;border-top-right-radius:.8rem;
-    border-top:2px solid var(--brown-border);
-    padding:.55rem .55rem 1.1rem;
-    transform:translateY(100%);
-    transition:transform .3s cubic-bezier(.34,1.56,.64,1);">
+<div id="filter-sheet-overlay" onclick="closeFilterSheet()" style="display:none;position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);align-items:flex-end;justify-content:center;">
+  <div id="filter-sheet" style="width:100%;background:var(--brown-mid);border-top-left-radius:.8rem;border-top-right-radius:.8rem;border-top:2px solid var(--brown-border);padding:.55rem .55rem 1.1rem;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.56,.64,1);">
     <div style="width:1rem;height:4px;background:var(--brown-border);border-radius:2px;margin:0 auto .5rem;"></div>
     <div id="filter-sheet-title" style="font-family:'Cinzel Decorative',serif;font-size:.44rem;color:var(--gold-light);margin-bottom:.44rem;text-align:center;"></div>
     <div id="filter-sheet-items" style="display:flex;flex-wrap:wrap;gap:.28rem;justify-content:center;max-height:55vh;overflow-y:auto;padding:.1rem .05rem;"></div>
@@ -883,9 +744,7 @@ body::before {
 </div>
 
 <div class="loading-overlay" id="loading-overlay">
-  <div class="loading-ring">
-    <div class="loading-ring-icon">⚔️</div>
-  </div>
+  <div class="loading-ring"><div class="loading-ring-icon">⚔️</div></div>
   <div class="loading-msg">
     <span id="loading-msg-text">Yükleniyor</span><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>
   </div>
@@ -895,739 +754,92 @@ body::before {
 
 <script>
 /* ═══════════════════════════════════════════
-   i18n — TRANSLATION SYSTEM
+   i18n
 ═══════════════════════════════════════════ */
 const TRANSLATIONS = {
-  tr: {
-    nav_home:'Ana Sayfa', nav_browse:'Keşfet', nav_community:'Topluluk',
-    nav_upload:'Yükle', nav_favs:'Favoriler',
-    home_cat_title:'Kategori Seçin',
-    home_th_title:'Belediye Binası Düzenleri', home_th_sub:'TH 4 – TH 18 · Ana Köy',
-    home_bh_title:'İnşaatçı Köyü Düzenleri', home_bh_sub:'BH 4 – BH 10 · İnşaatçı Köyü',
-    home_layouts:'düzen',
-    list_th_title:'🏰 Belediye <span>Binası</span>',
-    list_bh_title:'🔨 İnşaatçı <span>Köyü</span>',
-    filter_all_types:'🏷 Tümü',
-    type_war:'⚔️ Savaş', type_farm:'🌾 Çiftlik', type_trophy:'🏆 Kupa',
-    type_hybrid:'🔥 Karma', type_progress:'⬆️ İlerleme', type_fun:'🎉 Eğlence',
-    detail_share:'↗ Bu Düzeni Paylaş',
-    detail_copy:'🏰 Clash of Clans\'a Kopyala',
-    stat_uses:'Kullanım', stat_favs:'Favori', stat_th:'Bina Seviyesi',
-    similar_title:'Benzer Kaleler',
-    village_home:'🏰 Ana Köy', village_builder:'🔨 İnşaatçı Köyü',
-    search_placeholder:'Base ara...',
-    filter_village:'Köy Tipi', filter_level:'Seviye', filter_type:'Tür',
-    filter_all:'Tümü', filter_home_v:'🏰 Ana Köy', filter_builder_v:'🔨 İnşaatçı Köyü',
-    empty_title:'Base Bulunamadı', empty_sub:'Farklı bir filtre deneyin.',
-    favs_title:'Favorilerim',
-    favs_empty_title:'Henüz Favori Yok',
-    favs_empty_sub:'Kaydetmek için herhangi bir basede kalp simgesine bas.',
-    comm_title:'👥 Topluluk',
-    comm_tab_all:'Tüm Baseler', comm_tab_mine:'Benim Yüklediklerim',
-    comm_empty_title:'Henüz Base Yok', comm_empty_sub:'İlk community baseni yükle!',
-    pending_label:'⏳ İncelemede',
-    upload_title:'⬆️ Base Yükle',
-    upload_photo_label:'📷 Base Fotoğrafı *',
-    upload_photo_text:'Fotoğraf seç veya bırak',
-    upload_photo_sub:'JPG, PNG · Max 5MB',
-    upload_name_label:'🏷 Base Adı *',
-    upload_name_ph:'örn: TH9 Anti-3 Star Savaş Kalesi',
-    upload_village_label:'🏘 Köy Tipi *',
-    upload_level_label:'⭐ Seviye *',
-    upload_type_label:'⚔️ Base Türü *',
-    upload_coc_label:'🔗 Clash of Clans Linki *',
-    upload_coc_ph:'https://link.clashofclans.com/...',
-    upload_coc_hint:'CoC → Base → Paylaş → Bağlantıyı Kopyala',
-    upload_nick_label:'👤 Takma Adın (opsiyonel)',
-    upload_nick_ph:'örn: ClashMaster99',
-    upload_btn:'⬆️ Reklam İzle & Yükle',
-    upload_uploading:'⏳ Yükleniyor...',
-    upload_moderation:'Yüklenen baseler moderasyon sonrası yayınlanır.',
-    upload_success_title:'Yüklendi!',
-    upload_success_sub:'Base incelemeye alındı. Community görünecek.',
-    upload_new_btn:'⬆️ Yeni Base Yükle',
-    toast_fav_add:'❤️ Favorilere eklendi!', toast_fav_remove:'Favorilerden kaldırıldı',
-    toast_copied:'🔗 Link kopyalandı!', toast_coc_open:'🏰 CoC açılıyor...',
-    toast_coc_missing:'⚠️ CoC linki bulunamadı',
-    toast_img_big:'⚠️ Dosya 5MB den büyük!',
-    toast_no_img:'⚠️ Fotoğraf seç!',
-    toast_no_title:'⚠️ Base adı gir!',
-    toast_no_coc:'⚠️ CoC linki gir!',
-    loading_bases:'Baseler yükleniyor', loading_home:'Ana sayfa yükleniyor',
-    loading_search:'Arama yükleniyor', loading_favs:'Favoriler yükleniyor',
-    loading_community:'Topluluk yükleniyor', loading_upload:'Yükleme sayfası',
-    loading_category:'Kategoriye giriliyor', loading_filtering:'Filtreleniyor',
-    loading_detail:'Base yükleniyor', loading_back:'Geri dönülüyor',
-    share_title:'🔗 Bu Düzeni Paylaş',
-    share_copy:'Kopyala', share_whatsapp:'WhatsApp', share_discord:'Discord', share_more:'Daha Fazla',
-    sort_newest:'✨ En Yeni', sort_popular:'🔥 En Popüler',
-    sort_favs:'❤️ En Çok Beğenilen', sort_az:'🔤 A–Z',
-    section_choose_cat:'Kategori Seçin',
-    comm_lock_title:'🔒 COMMUNITY KİLİTLİ',
-    comm_lock_desc:'Topluluk içeriklerini görmek ve kendi base\'ini paylaşmak için <b>kısa bir ödüllü reklam</b> izlemen gerekiyor.',
-    comm_lock_once:'Reklamı bir kez izledikten sonra <b>Community kalıcı olarak açılır</b>.',
-    comm_lock_duration:'Yaklaşık <b>~30 saniye</b> sürecek bir video reklam izleyeceksin.',
-    comm_lock_btn:'🎬 Reklam İzle ve Aç',
-    comm_lock_back:'← Geri Dön',
-    comm_lock_footer:'Reklamı izlemeden bu sekmeye erişilemez.',
-    upload_lock_btn:'🎬 Reklam İzle ve Yükle',
-  },
-  en: {
-    nav_home:'Home', nav_browse:'Browse', nav_community:'Community',
-    nav_upload:'Upload', nav_favs:'Favorites',
-    home_cat_title:'Choose Category',
-    home_th_title:'Town Hall Bases', home_th_sub:'TH 4 – TH 18 · Home Village',
-    home_bh_title:'Builder Base Layouts', home_bh_sub:'BH 4 – BH 10 · Builder Village',
-    home_layouts:'layouts',
-    list_th_title:'🏰 Town Hall <span>Bases</span>',
-    list_bh_title:'🔨 Builder <span>Bases</span>',
-    filter_all_types:'🏷 All Types',
-    type_war:'⚔️ War', type_farm:'🌾 Farm', type_trophy:'🏆 Trophy',
-    type_hybrid:'🔥 Hybrid', type_progress:'⬆️ Progress', type_fun:'🎉 Fun',
-    detail_share:'↗ Share This Base',
-    detail_copy:'🏰 Copy to Clash of Clans',
-    stat_uses:'Uses', stat_favs:'Favorites', stat_th:'Town Hall',
-    similar_title:'Similar Bases',
-    village_home:'🏰 Home Village', village_builder:'🔨 Builder Base',
-    search_placeholder:'Search bases...',
-    filter_village:'Village Type', filter_level:'Level', filter_type:'Base Type',
-    filter_all:'All', filter_home_v:'🏰 Home Village', filter_builder_v:'🔨 Builder Base',
-    empty_title:'No Bases Found', empty_sub:'Try a different filter.',
-    favs_title:'My Favorites',
-    favs_empty_title:'No Favorites Yet',
-    favs_empty_sub:'Tap ❤️ on any base to save it here.',
-    comm_title:'👥 Community',
-    comm_tab_all:'All Bases', comm_tab_mine:'My Uploads',
-    comm_empty_title:'No Bases Yet', comm_empty_sub:'Be the first to upload a community base!',
-    pending_label:'⏳ Pending Review',
-    upload_title:'⬆️ Upload Base',
-    upload_photo_label:'📷 Base Screenshot *',
-    upload_photo_text:'Select or drop photo',
-    upload_photo_sub:'JPG, PNG · Max 5MB',
-    upload_name_label:'🏷 Base Name *',
-    upload_name_ph:'e.g. TH9 Anti-3 Star War Base',
-    upload_village_label:'🏘 Village Type *',
-    upload_level_label:'⭐ Level *',
-    upload_type_label:'⚔️ Base Type *',
-    upload_coc_label:'🔗 Clash of Clans Link *',
-    upload_coc_ph:'https://link.clashofclans.com/...',
-    upload_coc_hint:'CoC → Base → Share → Copy Link',
-    upload_nick_label:'👤 Nickname (optional)',
-    upload_nick_ph:'e.g. ClashMaster99',
-    upload_btn:'⬆️ Watch Ad to Upload',
-    upload_uploading:'⏳ Uploading...',
-    upload_moderation:'Uploads are reviewed before going live.',
-    upload_success_title:'Uploaded!',
-    upload_success_sub:'Your base is under review. It will appear in Community once approved.',
-    upload_new_btn:'⬆️ Upload Another Base',
-    toast_fav_add:'❤️ Added to favorites!', toast_fav_remove:'Removed from favorites',
-    toast_copied:'🔗 Link copied!', toast_coc_open:'🏰 Opening Clash of Clans…',
-    toast_coc_missing:'⚠️ CoC link not available',
-    toast_img_big:'⚠️ File exceeds 5MB!',
-    toast_no_img:'⚠️ Please select a photo!',
-    toast_no_title:'⚠️ Please enter a base name!',
-    toast_no_coc:'⚠️ Please enter CoC link!',
-    loading_bases:'Loading bases', loading_home:'Loading home',
-    loading_search:'Loading search', loading_favs:'Loading favorites',
-    loading_community:'Loading community', loading_upload:'Loading upload',
-    loading_category:'Opening category', loading_filtering:'Filtering',
-    loading_detail:'Loading base', loading_back:'Going back',
-    share_title:'🔗 Share This Base',
-    share_copy:'Copy Link', share_whatsapp:'WhatsApp', share_discord:'Discord', share_more:'More',
-    sort_newest:'✨ Newest', sort_popular:'🔥 Most Used',
-    sort_favs:'❤️ Most Liked', sort_az:'🔤 A–Z',
-    section_choose_cat:'Choose Your Category',
-    comm_lock_title:'🔒 COMMUNITY LOCKED',
-    comm_lock_desc:'To view community content and share your own base, watch a <b>short rewarded ad</b>.',
-    comm_lock_once:'Watch the ad once and <b>Community unlocks permanently</b>.',
-    comm_lock_duration:'You will watch a video ad of about <b>~30 seconds</b>.',
-    comm_lock_btn:'🎬 Watch Ad to Unlock',
-    comm_lock_back:'← Go Back',
-    comm_lock_footer:'You cannot access this tab without watching the ad.',
-    upload_lock_btn:'🎬 Watch Ad to Upload',
-  },
-  de: {
-    nav_home:'Start', nav_browse:'Suchen', nav_community:'Community',
-    nav_upload:'Hochladen', nav_favs:'Favoriten',
-    home_cat_title:'Kategorie wählen',
-    home_th_title:'Rathaus-Basen', home_th_sub:'TH 4 – TH 18 · Heimatdorf',
-    home_bh_title:'Baumeister-Basen', home_bh_sub:'BH 4 – BH 10 · Baumeisterdorf',
-    home_layouts:'Layouts',
-    list_th_title:'🏰 Rathaus-<span>Basen</span>',
-    list_bh_title:'🔨 Baumeister-<span>Basen</span>',
-    filter_all_types:'🏷 Alle',
-    type_war:'⚔️ Krieg', type_farm:'🌾 Farm', type_trophy:'🏆 Pokal',
-    type_hybrid:'🔥 Hybrid', type_progress:'⬆️ Fortschritt', type_fun:'🎉 Spaß',
-    detail_share:'↗ Basis teilen', detail_copy:'🏰 In CoC kopieren',
-    stat_uses:'Nutzungen', stat_favs:'Favoriten', stat_th:'Rathaus',
-    similar_title:'Ähnliche Basen',
-    village_home:'🏰 Heimatdorf', village_builder:'🔨 Baumeisterdorf',
-    search_placeholder:'Basis suchen...',
-    filter_village:'Dorftyp', filter_level:'Level', filter_type:'Basistyp',
-    filter_all:'Alle', filter_home_v:'🏰 Heimatdorf', filter_builder_v:'🔨 Baumeisterdorf',
-    empty_title:'Keine Basen gefunden', empty_sub:'Anderen Filter versuchen.',
-    favs_title:'Meine Favoriten', favs_empty_title:'Noch keine Favoriten',
-    favs_empty_sub:'Tippe ❤️ um eine Basis zu speichern.',
-    comm_title:'👥 Community', comm_tab_all:'Alle Basen', comm_tab_mine:'Meine Uploads',
-    comm_empty_title:'Noch keine Basen', comm_empty_sub:'Lade die erste Community-Basis hoch!',
-    pending_label:'⏳ In Prüfung',
-    upload_title:'⬆️ Basis hochladen',
-    upload_photo_label:'📷 Basis-Screenshot *', upload_photo_text:'Foto auswählen oder ablegen',
-    upload_photo_sub:'JPG, PNG · Max 5MB', upload_name_label:'🏷 Basisname *',
-    upload_name_ph:'z.B. TH9 Anti-3 Stern Kriegsbasis', upload_village_label:'🏘 Dorftyp *',
-    upload_level_label:'⭐ Level *', upload_type_label:'⚔️ Basistyp *',
-    upload_coc_label:'🔗 Clash of Clans Link *', upload_coc_ph:'https://link.clashofclans.com/...',
-    upload_coc_hint:'CoC → Basis → Teilen → Link kopieren',
-    upload_nick_label:'👤 Spitzname (optional)', upload_nick_ph:'z.B. ClashMaster99',
-    upload_btn:'⬆️ Werbung ansehen & hochladen', upload_uploading:'⏳ Wird hochgeladen...',
-    upload_moderation:'Uploads werden vor Veröffentlichung geprüft.',
-    upload_success_title:'Hochgeladen!',
-    upload_success_sub:'Deine Basis wird geprüft. Sie erscheint nach Genehmigung in der Community.',
-    upload_new_btn:'⬆️ Weitere Basis hochladen',
-    toast_fav_add:'❤️ Zu Favoriten hinzugefügt!', toast_fav_remove:'Aus Favoriten entfernt',
-    toast_copied:'🔗 Link kopiert!', toast_coc_open:'🏰 CoC wird geöffnet…',
-    toast_coc_missing:'⚠️ CoC-Link nicht verfügbar', toast_img_big:'⚠️ Datei überschreitet 5MB!',
-    toast_no_img:'⚠️ Bitte Foto auswählen!', toast_no_title:'⚠️ Bitte Basisname eingeben!',
-    toast_no_coc:'⚠️ Bitte CoC-Link eingeben!',
-    loading_bases:'Basen laden', loading_home:'Startseite laden',
-    loading_search:'Suche laden', loading_favs:'Favoriten laden',
-    loading_community:'Community laden', loading_upload:'Upload laden',
-    loading_category:'Kategorie öffnen', loading_filtering:'Filtern',
-    loading_detail:'Basis laden', loading_back:'Zurück',
-    share_title:'🔗 Basis teilen', share_copy:'Link kopieren',
-    share_whatsapp:'WhatsApp', share_discord:'Discord', share_more:'Mehr',
-    sort_newest:'✨ Neueste', sort_popular:'🔥 Meistgenutzt',
-    sort_favs:'❤️ Meistgeliked', sort_az:'🔤 A–Z',
-    section_choose_cat:'Kategorie wählen',
-    comm_lock_title:'🔒 COMMUNITY GESPERRT',
-    comm_lock_desc:'Um Community-Inhalte zu sehen, musst du eine <b>kurze Belohnungswerbung</b> ansehen.',
-    comm_lock_once:'Schaue die Werbung einmal an und <b>Community wird dauerhaft entsperrt</b>.',
-    comm_lock_duration:'Du wirst eine Videowerbung von ca. <b>~30 Sekunden</b> sehen.',
-    comm_lock_btn:'🎬 Werbung ansehen & entsperren',
-    comm_lock_back:'← Zurück',
-    comm_lock_footer:'Ohne Werbung kann nicht auf diesen Tab zugegriffen werden.',
-    upload_lock_btn:'🎬 Werbung ansehen & hochladen',
-  },
-  fr: {
-    nav_home:'Accueil', nav_browse:'Explorer', nav_community:'Communauté',
-    nav_upload:'Uploader', nav_favs:'Favoris',
-    home_cat_title:'Choisir une catégorie',
-    home_th_title:'Bases Hôtel de Ville', home_th_sub:'HV 4 – HV 18 · Village Principal',
-    home_bh_title:'Bases Maître Bâtisseur', home_bh_sub:'MB 4 – MB 10 · Village Bâtisseur',
-    home_layouts:'layouts',
-    list_th_title:'🏰 Bases <span>HdV</span>', list_bh_title:'🔨 Bases <span>Bâtisseur</span>',
-    filter_all_types:'🏷 Tous',
-    type_war:'⚔️ Guerre', type_farm:'🌾 Farm', type_trophy:'🏆 Trophées',
-    type_hybrid:'🔥 Hybride', type_progress:'⬆️ Progression', type_fun:'🎉 Amusement',
-    detail_share:'↗ Partager cette base', detail_copy:'🏰 Copier dans CoC',
-    stat_uses:'Utilisations', stat_favs:'Favoris', stat_th:'Hôtel de Ville',
-    similar_title:'Bases similaires',
-    village_home:'🏰 Village Principal', village_builder:'🔨 Village Bâtisseur',
-    search_placeholder:'Rechercher des bases...',
-    filter_village:'Type de village', filter_level:'Niveau', filter_type:'Type de base',
-    filter_all:'Tous', filter_home_v:'🏰 Village Principal', filter_builder_v:'🔨 Village Bâtisseur',
-    empty_title:'Aucune base trouvée', empty_sub:'Essayez un autre filtre.',
-    favs_title:'Mes Favoris', favs_empty_title:'Pas encore de favoris',
-    favs_empty_sub:'Appuyez sur ❤️ pour sauvegarder une base.',
-    comm_title:'👥 Communauté', comm_tab_all:'Toutes les bases', comm_tab_mine:'Mes uploads',
-    comm_empty_title:'Pas encore de bases', comm_empty_sub:'Soyez le premier à uploader!',
-    pending_label:'⏳ En cours de vérification',
-    upload_title:'⬆️ Uploader une base',
-    upload_photo_label:'📷 Capture ecran *', upload_photo_text:'Sélectionner ou déposer',
-    upload_photo_sub:'JPG, PNG · Max 5Mo', upload_name_label:'🏷 Nom de la base *',
-    upload_name_ph:'ex: HV9 Anti-3 Étoiles Guerre', upload_village_label:'🏘 Type de village *',
-    upload_level_label:'⭐ Niveau *', upload_type_label:'⚔️ Type de base *',
-    upload_coc_label:'🔗 Lien Clash of Clans *', upload_coc_ph:'https://link.clashofclans.com/...',
-    upload_coc_hint:'CoC → Base → Partager → Copier le lien',
-    upload_nick_label:'👤 Pseudo (optionnel)', upload_nick_ph:'ex: ClashMaster99',
-    upload_btn:'⬆️ Voir une pub pour uploader', upload_uploading:'⏳ Envoi en cours...',
-    upload_moderation:'Les uploads sont vérifiés avant publication.',
-    upload_success_title:'Uploadé!', upload_success_sub:'Votre base est en cours de verification.',
-    upload_new_btn:'⬆️ Uploader une autre base',
-    toast_fav_add:'❤️ Ajouté aux favoris!', toast_fav_remove:'Retiré des favoris',
-    toast_copied:'🔗 Lien copié!', toast_coc_open:'🏰 Ouverture de CoC…',
-    toast_coc_missing:'⚠️ Lien CoC non disponible', toast_img_big:'⚠️ Fichier trop grand (max 5Mo)!',
-    toast_no_img:'⚠️ Veuillez sélectionner une photo!', toast_no_title:'⚠️ Veuillez saisir un nom!',
-    toast_no_coc:'⚠️ Veuillez saisir le lien CoC!',
-    loading_bases:'Chargement des bases', loading_home:'Chargement accueil',
-    loading_search:'Chargement recherche', loading_favs:'Chargement favoris',
-    loading_community:'Chargement communauté', loading_upload:'Chargement upload',
-    loading_category:'Ouverture catégorie', loading_filtering:'Filtrage',
-    loading_detail:'Chargement base', loading_back:'Retour',
-    share_title:'🔗 Partager cette base', share_copy:'Copier',
-    share_whatsapp:'WhatsApp', share_discord:'Discord', share_more:'Plus',
-    sort_newest:'✨ Plus récent', sort_popular:'🔥 Plus utilisé',
-    sort_favs:'❤️ Plus aimé', sort_az:'🔤 A–Z',
-    section_choose_cat:'Choisir une catégorie',
-    comm_lock_title:'🔒 COMMUNAUTÉ VERROUILLÉE',
-    comm_lock_desc:'Pour voir le contenu communautaire, regardez une <b>courte publicité récompensée</b>.',
-    comm_lock_once:'Regardez la pub une fois et <b>Community se déverrouille définitivement</b>.',
-    comm_lock_duration:'Vous regarderez une vidéo publicitaire d\'environ <b>~30 secondes</b>.',
-    comm_lock_btn:'🎬 Voir la pub pour débloquer',
-    comm_lock_back:'← Retour',
-    comm_lock_footer:'Vous ne pouvez pas accéder à cet onglet sans regarder la pub.',
-    upload_lock_btn:'🎬 Voir une pub pour uploader',
-  },
-  es: {
-    nav_home:'Inicio', nav_browse:'Explorar', nav_community:'Comunidad',
-    nav_upload:'Subir', nav_favs:'Favoritos',
-    home_cat_title:'Elegir categoría',
-    home_th_title:'Bases Ayuntamiento', home_th_sub:'AY 4 – AY 18 · Aldea Principal',
-    home_bh_title:'Bases Constructor', home_bh_sub:'CC 4 – CC 10 · Aldea Constructor',
-    home_layouts:'diseños',
-    list_th_title:'🏰 Bases <span>Ayuntamiento</span>', list_bh_title:'🔨 Bases <span>Constructor</span>',
-    filter_all_types:'🏷 Todos',
-    type_war:'⚔️ Guerra', type_farm:'🌾 Granja', type_trophy:'🏆 Trofeos',
-    type_hybrid:'🔥 Híbrido', type_progress:'⬆️ Progreso', type_fun:'🎉 Diversión',
-    detail_share:'↗ Compartir base', detail_copy:'🏰 Copiar en CoC',
-    stat_uses:'Usos', stat_favs:'Favoritos', stat_th:'Ayuntamiento',
-    similar_title:'Bases similares',
-    village_home:'🏰 Aldea Principal', village_builder:'🔨 Aldea Constructor',
-    search_placeholder:'Buscar bases...',
-    filter_village:'Tipo de aldea', filter_level:'Nivel', filter_type:'Tipo de base',
-    filter_all:'Todos', filter_home_v:'🏰 Aldea Principal', filter_builder_v:'🔨 Aldea Constructor',
-    empty_title:'No se encontraron bases', empty_sub:'Prueba otro filtro.',
-    favs_title:'Mis Favoritos', favs_empty_title:'Sin favoritos aún',
-    favs_empty_sub:'Toca ❤️ en cualquier base para guardarla.',
-    comm_title:'👥 Comunidad', comm_tab_all:'Todas las bases', comm_tab_mine:'Mis subidas',
-    comm_empty_title:'Sin bases aún', comm_empty_sub:'¡Sé el primero en subir una base!',
-    pending_label:'⏳ En revisión',
-    upload_title:'⬆️ Subir base',
-    upload_photo_label:'📷 Captura de base *', upload_photo_text:'Seleccionar o soltar foto',
-    upload_photo_sub:'JPG, PNG · Máx 5MB', upload_name_label:'🏷 Nombre de base *',
-    upload_name_ph:'ej: AY9 Anti-3 Estrellas Guerra', upload_village_label:'🏘 Tipo de aldea *',
-    upload_level_label:'⭐ Nivel *', upload_type_label:'⚔️ Tipo de base *',
-    upload_coc_label:'🔗 Enlace Clash of Clans *', upload_coc_ph:'https://link.clashofclans.com/...',
-    upload_coc_hint:'CoC → Base → Compartir → Copiar enlace',
-    upload_nick_label:'👤 Apodo (opcional)', upload_nick_ph:'ej: ClashMaster99',
-    upload_btn:'⬆️ Ver anuncio para subir', upload_uploading:'⏳ Subiendo...',
-    upload_moderation:'Las subidas se revisan antes de publicarse.',
-    upload_success_title:'¡Subido!', upload_success_sub:'Tu base está en revisión.',
-    upload_new_btn:'⬆️ Subir otra base',
-    toast_fav_add:'❤️ ¡Añadido a favoritos!', toast_fav_remove:'Eliminado de favoritos',
-    toast_copied:'🔗 ¡Enlace copiado!', toast_coc_open:'🏰 Abriendo CoC…',
-    toast_coc_missing:'⚠️ Enlace CoC no disponible', toast_img_big:'⚠️ Archivo mayor de 5MB!',
-    toast_no_img:'⚠️ Selecciona una foto!', toast_no_title:'⚠️ Introduce un nombre!',
-    toast_no_coc:'⚠️ Introduce el enlace CoC!',
-    loading_bases:'Cargando bases', loading_home:'Cargando inicio',
-    loading_search:'Cargando búsqueda', loading_favs:'Cargando favoritos',
-    loading_community:'Cargando comunidad', loading_upload:'Cargando subida',
-    loading_category:'Abriendo categoría', loading_filtering:'Filtrando',
-    loading_detail:'Cargando base', loading_back:'Volviendo',
-    share_title:'🔗 Compartir base', share_copy:'Copiar',
-    share_whatsapp:'WhatsApp', share_discord:'Discord', share_more:'Más',
-    sort_newest:'✨ Más reciente', sort_popular:'🔥 Más usado',
-    sort_favs:'❤️ Más gustado', sort_az:'🔤 A–Z',
-    section_choose_cat:'Elige tu categoría',
-    comm_lock_title:'🔒 COMUNIDAD BLOQUEADA',
-    comm_lock_desc:'Para ver contenido comunitario, mira un <b>anuncio de recompensa corto</b>.',
-    comm_lock_once:'Mira el anuncio una vez y <b>Community se desbloquea permanentemente</b>.',
-    comm_lock_duration:'Verás un anuncio de video de aproximadamente <b>~30 segundos</b>.',
-    comm_lock_btn:'🎬 Ver anuncio para desbloquear',
-    comm_lock_back:'← Volver',
-    comm_lock_footer:'No puedes acceder a esta pestaña sin ver el anuncio.',
-    upload_lock_btn:'🎬 Ver anuncio para subir',
-  },
-  pt: {
-    nav_home:'Início', nav_browse:'Explorar', nav_community:'Comunidade',
-    nav_upload:'Enviar', nav_favs:'Favoritos',
-    home_cat_title:'Escolher categoria',
-    home_th_title:'Bases Prefeitura', home_th_sub:'PP 4 – PP 18 · Vila Principal',
-    home_bh_title:'Bases Construtor', home_bh_sub:'MC 4 – MC 10 · Vila Construtor',
-    home_layouts:'layouts',
-    list_th_title:'🏰 Bases <span>Prefeitura</span>', list_bh_title:'🔨 Bases <span>Construtor</span>',
-    filter_all_types:'🏷 Todos',
-    type_war:'⚔️ Guerra', type_farm:'🌾 Fazenda', type_trophy:'🏆 Troféus',
-    type_hybrid:'🔥 Híbrido', type_progress:'⬆️ Progresso', type_fun:'🎉 Diversão',
-    detail_share:'↗ Compartilhar base', detail_copy:'🏰 Copiar no CoC',
-    stat_uses:'Usos', stat_favs:'Favoritos', stat_th:'Prefeitura',
-    similar_title:'Bases similares',
-    village_home:'🏰 Vila Principal', village_builder:'🔨 Vila Construtor',
-    search_placeholder:'Buscar bases...',
-    filter_village:'Tipo de vila', filter_level:'Nível', filter_type:'Tipo de base',
-    filter_all:'Todos', filter_home_v:'🏰 Vila Principal', filter_builder_v:'🔨 Vila Construtor',
-    empty_title:'Nenhuma base encontrada', empty_sub:'Tente outro filtro.',
-    favs_title:'Meus Favoritos', favs_empty_title:'Sem favoritos ainda',
-    favs_empty_sub:'Toque em ❤️ para salvar uma base.',
-    comm_title:'👥 Comunidade', comm_tab_all:'Todas as bases', comm_tab_mine:'Meus envios',
-    comm_empty_title:'Sem bases ainda', comm_empty_sub:'Seja o primeiro a enviar uma base!',
-    pending_label:'⏳ Em análise',
-    upload_title:'⬆️ Enviar base',
-    upload_photo_label:'📷 Captura da base *', upload_photo_text:'Selecionar ou soltar foto',
-    upload_photo_sub:'JPG, PNG · Máx 5MB', upload_name_label:'🏷 Nome da base *',
-    upload_name_ph:'ex: PP9 Anti-3 Estrelas Guerra', upload_village_label:'🏘 Tipo de vila *',
-    upload_level_label:'⭐ Nível *', upload_type_label:'⚔️ Tipo de base *',
-    upload_coc_label:'🔗 Link Clash of Clans *', upload_coc_ph:'https://link.clashofclans.com/...',
-    upload_coc_hint:'CoC → Base → Compartilhar → Copiar link',
-    upload_nick_label:'👤 Apelido (opcional)', upload_nick_ph:'ex: ClashMaster99',
-    upload_btn:'⬆️ Ver anúncio para enviar', upload_uploading:'⏳ Enviando...',
-    upload_moderation:'Envios são analisados antes de serem publicados.',
-    upload_success_title:'Enviado!', upload_success_sub:'Sua base está em análise.',
-    upload_new_btn:'⬆️ Enviar outra base',
-    toast_fav_add:'❤️ Adicionado aos favoritos!', toast_fav_remove:'Removido dos favoritos',
-    toast_copied:'🔗 Link copiado!', toast_coc_open:'🏰 Abrindo CoC…',
-    toast_coc_missing:'⚠️ Link CoC não disponível', toast_img_big:'⚠️ Arquivo maior que 5MB!',
-    toast_no_img:'⚠️ Selecione uma foto!', toast_no_title:'⚠️ Digite um nome de base!',
-    toast_no_coc:'⚠️ Digite o link CoC!',
-    loading_bases:'Carregando bases', loading_home:'Carregando início',
-    loading_search:'Carregando busca', loading_favs:'Carregando favoritos',
-    loading_community:'Carregando comunidade', loading_upload:'Carregando envio',
-    loading_category:'Abrindo categoria', loading_filtering:'Filtrando',
-    loading_detail:'Carregando base', loading_back:'Voltando',
-    share_title:'🔗 Compartilhar base', share_copy:'Copiar',
-    share_whatsapp:'WhatsApp', share_discord:'Discord', share_more:'Mais',
-    sort_newest:'✨ Mais recente', sort_popular:'🔥 Mais usado',
-    sort_favs:'❤️ Mais curtido', sort_az:'🔤 A–Z',
-    section_choose_cat:'Escolha sua categoria',
-    comm_lock_title:'🔒 COMUNIDADE BLOQUEADA',
-    comm_lock_desc:'Para ver conteúdo da comunidade, assista a um <b>anúncio de recompensa curto</b>.',
-    comm_lock_once:'Assista ao anúncio uma vez e <b>Community desbloqueia permanentemente</b>.',
-    comm_lock_duration:'Você assistirá a um anúncio em vídeo de aproximadamente <b>~30 segundos</b>.',
-    comm_lock_btn:'🎬 Ver anúncio para desbloquear',
-    comm_lock_back:'← Voltar',
-    comm_lock_footer:'Você não pode acessar esta aba sem ver o anúncio.',
-    upload_lock_btn:'🎬 Ver anúncio para enviar',
-  },
-  ar: {
-    nav_home:'الرئيسية', nav_browse:'استعرض', nav_community:'المجتمع',
-    nav_upload:'رفع', nav_favs:'المفضلة',
-    home_cat_title:'اختر الفئة',
-    home_th_title:'قواعد قاعة المدينة', home_th_sub:'QM 4 – QM 18 · القرية الرئيسية',
-    home_bh_title:'قواعد البناء', home_bh_sub:'MB 4 – MB 10 · قرية البناء',
-    home_layouts:'تصميم',
-    list_th_title:'🏰 قواعد <span>المدينة</span>', list_bh_title:'🔨 قواعد <span>البناء</span>',
-    filter_all_types:'🏷 الكل',
-    type_war:'⚔️ حرب', type_farm:'🌾 زراعة', type_trophy:'🏆 كأس',
-    type_hybrid:'🔥 مختلط', type_progress:'⬆️ تقدم', type_fun:'🎉 مرح',
-    detail_share:'↗ مشاركة القاعدة', detail_copy:'🏰 نسخ إلى CoC',
-    stat_uses:'الاستخدامات', stat_favs:'المفضلة', stat_th:'قاعة المدينة',
-    similar_title:'قواعد مشابهة',
-    village_home:'🏰 القرية الرئيسية', village_builder:'🔨 قرية البناء',
-    search_placeholder:'ابحث عن قاعدة...',
-    filter_village:'نوع القرية', filter_level:'المستوى', filter_type:'نوع القاعدة',
-    filter_all:'الكل', filter_home_v:'🏰 القرية الرئيسية', filter_builder_v:'🔨 قرية البناء',
-    empty_title:'لا توجد قواعد', empty_sub:'جرب فلتراً مختلفاً.',
-    favs_title:'مفضلتي', favs_empty_title:'لا توجد مفضلات بعد',
-    favs_empty_sub:'اضغط ❤️ على أي قاعدة لحفظها.',
-    comm_title:'👥 المجتمع', comm_tab_all:'كل القواعد', comm_tab_mine:'رفوعاتي',
-    comm_empty_title:'لا توجد قواعد بعد', comm_empty_sub:'كن أول من يرفع قاعدة!',
-    pending_label:'⏳ قيد المراجعة',
-    upload_title:'⬆️ رفع قاعدة',
-    upload_photo_label:'📷 صورة القاعدة *', upload_photo_text:'اختر أو اسحب صورة',
-    upload_photo_sub:'JPG, PNG · حد أقصى 5MB', upload_name_label:'🏷 اسم القاعدة *',
-    upload_name_ph:'مثال: QM9 مضادة 3 نجوم حرب', upload_village_label:'🏘 نوع القرية *',
-    upload_level_label:'⭐ المستوى *', upload_type_label:'⚔️ نوع القاعدة *',
-    upload_coc_label:'🔗 رابط Clash of Clans *', upload_coc_ph:'https://link.clashofclans.com/...',
-    upload_coc_hint:'CoC → القاعدة → مشاركة → نسخ الرابط',
-    upload_nick_label:'👤 اللقب (اختياري)', upload_nick_ph:'مثال: ClashMaster99',
-    upload_btn:'⬆️ شاهد إعلاناً للرفع', upload_uploading:'⏳ جارٍ الرفع...',
-    upload_moderation:'تتم مراجعة الرفوعات قبل النشر.',
-    upload_success_title:'تم الرفع!', upload_success_sub:'قاعدتك قيد المراجعة.',
-    upload_new_btn:'⬆️ رفع قاعدة أخرى',
-    toast_fav_add:'❤️ أضيف للمفضلة!', toast_fav_remove:'أزيل من المفضلة',
-    toast_copied:'🔗 نسخ الرابط!', toast_coc_open:'🏰 فتح CoC…',
-    toast_coc_missing:'⚠️ رابط CoC غير متاح', toast_img_big:'⚠️ الملف أكبر من 5MB!',
-    toast_no_img:'⚠️ اختر صورة!', toast_no_title:'⚠️ أدخل اسم القاعدة!',
-    toast_no_coc:'⚠️ أدخل رابط CoC!',
-    loading_bases:'تحميل القواعد', loading_home:'تحميل الرئيسية',
-    loading_search:'تحميل البحث', loading_favs:'تحميل المفضلة',
-    loading_community:'تحميل المجتمع', loading_upload:'تحميل الرفع',
-    loading_category:'فتح الفئة', loading_filtering:'تصفية',
-    loading_detail:'تحميل القاعدة', loading_back:'رجوع',
-    share_title:'🔗 مشاركة القاعدة', share_copy:'نسخ',
-    share_whatsapp:'واتساب', share_discord:'ديسكورد', share_more:'المزيد',
-    sort_newest:'✨ الأحدث', sort_popular:'🔥 الأكثر استخداماً',
-    sort_favs:'❤️ الأكثر إعجاباً', sort_az:'🔤 أ–ي',
-    section_choose_cat:'اختر فئتك',
-    comm_lock_title:'🔒 المجتمع مقفل',
-    comm_lock_desc:'لمشاهدة محتوى المجتمع، شاهد <b>إعلانًا مكافأة قصيرًا</b>.',
-    comm_lock_once:'شاهد الإعلان مرة واحدة و<b>يفتح المجتمع بشكل دائم</b>.',
-    comm_lock_duration:'ستشاهد إعلانًا مرئيًا لمدة <b>~30 ثانية</b> تقريبًا.',
-    comm_lock_btn:'🎬 شاهد إعلاناً للفتح',
-    comm_lock_back:'→ رجوع',
-    comm_lock_footer:'لا يمكنك الوصول إلى هذا التبويب بدون مشاهدة الإعلان.',
-    upload_lock_btn:'🎬 شاهد إعلاناً للرفع',
-  },
+  tr:{nav_home:'Ana Sayfa',nav_browse:'Keşfet',nav_community:'Topluluk',nav_upload:'Yükle',nav_favs:'Favoriler',home_cat_title:'Kategori Seçin',home_th_title:'Belediye Binası Düzenleri',home_th_sub:'TH 4 – TH 18 · Ana Köy',home_bh_title:'İnşaatçı Köyü Düzenleri',home_bh_sub:'BH 4 – BH 10 · İnşaatçı Köyü',home_layouts:'düzen',list_th_title:'🏰 Belediye <span>Binası</span>',list_bh_title:'🔨 İnşaatçı <span>Köyü</span>',filter_all_types:'🏷 Tümü',type_war:'⚔️ Savaş',type_farm:'🌾 Çiftlik',type_trophy:'🏆 Kupa',type_hybrid:'🔥 Karma',type_progress:'⬆️ İlerleme',type_fun:'🎉 Eğlence',detail_share:'↗ Bu Düzeni Paylaş',detail_copy:'🏰 Clash of Clans\'a Kopyala',stat_uses:'Kullanım',stat_favs:'Favori',stat_th:'Bina Seviyesi',similar_title:'Benzer Kaleler',village_home:'🏰 Ana Köy',village_builder:'🔨 İnşaatçı Köyü',search_placeholder:'Base ara...',filter_village:'Köy Tipi',filter_level:'Seviye',filter_type:'Tür',filter_all:'Tümü',filter_home_v:'🏰 Ana Köy',filter_builder_v:'🔨 İnşaatçı Köyü',empty_title:'Base Bulunamadı',empty_sub:'Farklı bir filtre deneyin.',favs_title:'Favorilerim',favs_empty_title:'Henüz Favori Yok',favs_empty_sub:'Kaydetmek için herhangi bir basede kalp simgesine bas.',comm_title:'👥 Topluluk',comm_tab_all:'Tüm Baseler',comm_tab_mine:'Benim Yüklediklerim',comm_empty_title:'Henüz Base Yok',comm_empty_sub:'İlk community baseni yükle!',pending_label:'⏳ İncelemede',upload_title:'⬆️ Base Yükle',upload_photo_label:'📷 Base Fotoğrafı *',upload_photo_text:'Fotoğraf seç veya bırak',upload_photo_sub:'JPG, PNG · Max 5MB',upload_name_label:'🏷 Base Adı *',upload_name_ph:'örn: TH9 Anti-3 Star Savaş Kalesi',upload_village_label:'🏘 Köy Tipi *',upload_level_label:'⭐ Seviye *',upload_type_label:'⚔️ Base Türü *',upload_coc_label:'🔗 Clash of Clans Linki *',upload_coc_ph:'https://link.clashofclans.com/...',upload_coc_hint:'CoC → Base → Paylaş → Bağlantıyı Kopyala',upload_nick_label:'👤 Takma Adın (opsiyonel)',upload_nick_ph:'örn: ClashMaster99',upload_btn:'⬆️ Reklam İzle & Yükle',upload_uploading:'⏳ Yükleniyor...',upload_moderation:'Yüklenen baseler moderasyon sonrası yayınlanır.',upload_success_title:'Yüklendi!',upload_success_sub:'Base incelemeye alındı. Community görünecek.',upload_new_btn:'⬆️ Yeni Base Yükle',toast_fav_add:'❤️ Favorilere eklendi!',toast_fav_remove:'Favorilerden kaldırıldı',toast_copied:'🔗 Link kopyalandı!',toast_coc_open:'🏰 CoC açılıyor...',toast_coc_missing:'⚠️ CoC linki bulunamadı',toast_img_big:'⚠️ Dosya 5MB den büyük!',toast_no_img:'⚠️ Fotoğraf seç!',toast_no_title:'⚠️ Base adı gir!',toast_no_coc:'⚠️ CoC linki gir!',loading_bases:'Baseler yükleniyor',loading_home:'Ana sayfa yükleniyor',loading_search:'Arama yükleniyor',loading_favs:'Favoriler yükleniyor',loading_community:'Topluluk yükleniyor',loading_upload:'Yükleme sayfası',loading_category:'Kategoriye giriliyor',loading_filtering:'Filtreleniyor',loading_detail:'Base yükleniyor',loading_back:'Geri dönülüyor',share_title:'🔗 Bu Düzeni Paylaş',share_copy:'Kopyala',share_whatsapp:'WhatsApp',share_discord:'Discord',share_more:'Daha Fazla',sort_newest:'✨ En Yeni',sort_popular:'🔥 En Popüler',sort_favs:'❤️ En Çok Beğenilen',sort_az:'🔤 A–Z',section_choose_cat:'Kategori Seçin',comm_lock_title:'🔒 COMMUNITY KİLİTLİ',comm_lock_desc:'Topluluk içeriklerini görmek için <b>kısa bir ödüllü reklam</b> izlemen gerekiyor.',comm_lock_once:'Reklamı bir kez izledikten sonra <b>Community kalıcı olarak açılır</b>.',comm_lock_duration:'Yaklaşık <b>~30 saniye</b> sürecek bir video reklam.',comm_lock_btn:'🎬 Reklam İzle ve Aç',comm_lock_back:'← Geri Dön',comm_lock_footer:'Reklamı izlemeden bu sekmeye erişilemez.',upload_lock_btn:'🎬 Reklam İzle ve Yükle'},
+  en:{nav_home:'Home',nav_browse:'Browse',nav_community:'Community',nav_upload:'Upload',nav_favs:'Favorites',home_cat_title:'Choose Category',home_th_title:'Town Hall Bases',home_th_sub:'TH 4 – TH 18 · Home Village',home_bh_title:'Builder Base Layouts',home_bh_sub:'BH 4 – BH 10 · Builder Village',home_layouts:'layouts',list_th_title:'🏰 Town Hall <span>Bases</span>',list_bh_title:'🔨 Builder <span>Bases</span>',filter_all_types:'🏷 All Types',type_war:'⚔️ War',type_farm:'🌾 Farm',type_trophy:'🏆 Trophy',type_hybrid:'🔥 Hybrid',type_progress:'⬆️ Progress',type_fun:'🎉 Fun',detail_share:'↗ Share This Base',detail_copy:'🏰 Copy to Clash of Clans',stat_uses:'Uses',stat_favs:'Favorites',stat_th:'Town Hall',similar_title:'Similar Bases',village_home:'🏰 Home Village',village_builder:'🔨 Builder Base',search_placeholder:'Search bases...',filter_village:'Village Type',filter_level:'Level',filter_type:'Base Type',filter_all:'All',filter_home_v:'🏰 Home Village',filter_builder_v:'🔨 Builder Base',empty_title:'No Bases Found',empty_sub:'Try a different filter.',favs_title:'My Favorites',favs_empty_title:'No Favorites Yet',favs_empty_sub:'Tap ❤️ on any base to save it here.',comm_title:'👥 Community',comm_tab_all:'All Bases',comm_tab_mine:'My Uploads',comm_empty_title:'No Bases Yet',comm_empty_sub:'Be the first to upload a community base!',pending_label:'⏳ Pending Review',upload_title:'⬆️ Upload Base',upload_photo_label:'📷 Base Screenshot *',upload_photo_text:'Select or drop photo',upload_photo_sub:'JPG, PNG · Max 5MB',upload_name_label:'🏷 Base Name *',upload_name_ph:'e.g. TH9 Anti-3 Star War Base',upload_village_label:'🏘 Village Type *',upload_level_label:'⭐ Level *',upload_type_label:'⚔️ Base Type *',upload_coc_label:'🔗 Clash of Clans Link *',upload_coc_ph:'https://link.clashofclans.com/...',upload_coc_hint:'CoC → Base → Share → Copy Link',upload_nick_label:'👤 Nickname (optional)',upload_nick_ph:'e.g. ClashMaster99',upload_btn:'⬆️ Watch Ad to Upload',upload_uploading:'⏳ Uploading...',upload_moderation:'Uploads are reviewed before going live.',upload_success_title:'Uploaded!',upload_success_sub:'Your base is under review. It will appear in Community once approved.',upload_new_btn:'⬆️ Upload Another Base',toast_fav_add:'❤️ Added to favorites!',toast_fav_remove:'Removed from favorites',toast_copied:'🔗 Link copied!',toast_coc_open:'🏰 Opening Clash of Clans…',toast_coc_missing:'⚠️ CoC link not available',toast_img_big:'⚠️ File exceeds 5MB!',toast_no_img:'⚠️ Please select a photo!',toast_no_title:'⚠️ Please enter a base name!',toast_no_coc:'⚠️ Please enter CoC link!',loading_bases:'Loading bases',loading_home:'Loading home',loading_search:'Loading search',loading_favs:'Loading favorites',loading_community:'Loading community',loading_upload:'Loading upload',loading_category:'Opening category',loading_filtering:'Filtering',loading_detail:'Loading base',loading_back:'Going back',share_title:'🔗 Share This Base',share_copy:'Copy Link',share_whatsapp:'WhatsApp',share_discord:'Discord',share_more:'More',sort_newest:'✨ Newest',sort_popular:'🔥 Most Used',sort_favs:'❤️ Most Liked',sort_az:'🔤 A–Z',section_choose_cat:'Choose Your Category',comm_lock_title:'🔒 COMMUNITY LOCKED',comm_lock_desc:'To view community content, watch a <b>short rewarded ad</b>.',comm_lock_once:'Watch the ad once and <b>Community unlocks permanently</b>.',comm_lock_duration:'You will watch a video ad of about <b>~30 seconds</b>.',comm_lock_btn:'🎬 Watch Ad to Unlock',comm_lock_back:'← Go Back',comm_lock_footer:'You cannot access this tab without watching the ad.',upload_lock_btn:'🎬 Watch Ad to Upload'},
+  de:{nav_home:'Start',nav_browse:'Suchen',nav_community:'Community',nav_upload:'Hochladen',nav_favs:'Favoriten',home_cat_title:'Kategorie wählen',home_th_title:'Rathaus-Basen',home_th_sub:'TH 4 – TH 18 · Heimatdorf',home_bh_title:'Baumeister-Basen',home_bh_sub:'BH 4 – BH 10 · Baumeisterdorf',home_layouts:'Layouts',list_th_title:'🏰 Rathaus-<span>Basen</span>',list_bh_title:'🔨 Baumeister-<span>Basen</span>',filter_all_types:'🏷 Alle',type_war:'⚔️ Krieg',type_farm:'🌾 Farm',type_trophy:'🏆 Pokal',type_hybrid:'🔥 Hybrid',type_progress:'⬆️ Fortschritt',type_fun:'🎉 Spaß',detail_share:'↗ Basis teilen',detail_copy:'🏰 In CoC kopieren',stat_uses:'Nutzungen',stat_favs:'Favoriten',stat_th:'Rathaus',similar_title:'Ähnliche Basen',village_home:'🏰 Heimatdorf',village_builder:'🔨 Baumeisterdorf',search_placeholder:'Basis suchen...',filter_village:'Dorftyp',filter_level:'Level',filter_type:'Basistyp',filter_all:'Alle',filter_home_v:'🏰 Heimatdorf',filter_builder_v:'🔨 Baumeisterdorf',empty_title:'Keine Basen gefunden',empty_sub:'Anderen Filter versuchen.',favs_title:'Meine Favoriten',favs_empty_title:'Noch keine Favoriten',favs_empty_sub:'Tippe ❤️ um eine Basis zu speichern.',comm_title:'👥 Community',comm_tab_all:'Alle Basen',comm_tab_mine:'Meine Uploads',comm_empty_title:'Noch keine Basen',comm_empty_sub:'Lade die erste Community-Basis hoch!',pending_label:'⏳ In Prüfung',upload_title:'⬆️ Basis hochladen',upload_photo_label:'📷 Basis-Screenshot *',upload_photo_text:'Foto auswählen oder ablegen',upload_photo_sub:'JPG, PNG · Max 5MB',upload_name_label:'🏷 Basisname *',upload_name_ph:'z.B. TH9 Anti-3 Stern Kriegsbasis',upload_village_label:'🏘 Dorftyp *',upload_level_label:'⭐ Level *',upload_type_label:'⚔️ Basistyp *',upload_coc_label:'🔗 Clash of Clans Link *',upload_coc_ph:'https://link.clashofclans.com/...',upload_coc_hint:'CoC → Basis → Teilen → Link kopieren',upload_nick_label:'👤 Spitzname (optional)',upload_nick_ph:'z.B. ClashMaster99',upload_btn:'⬆️ Werbung ansehen & hochladen',upload_uploading:'⏳ Wird hochgeladen...',upload_moderation:'Uploads werden vor Veröffentlichung geprüft.',upload_success_title:'Hochgeladen!',upload_success_sub:'Deine Basis wird geprüft.',upload_new_btn:'⬆️ Weitere Basis hochladen',toast_fav_add:'❤️ Zu Favoriten hinzugefügt!',toast_fav_remove:'Aus Favoriten entfernt',toast_copied:'🔗 Link kopiert!',toast_coc_open:'🏰 CoC wird geöffnet…',toast_coc_missing:'⚠️ CoC-Link nicht verfügbar',toast_img_big:'⚠️ Datei überschreitet 5MB!',toast_no_img:'⚠️ Bitte Foto auswählen!',toast_no_title:'⚠️ Bitte Basisname eingeben!',toast_no_coc:'⚠️ Bitte CoC-Link eingeben!',loading_bases:'Basen laden',loading_home:'Startseite laden',loading_search:'Suche laden',loading_favs:'Favoriten laden',loading_community:'Community laden',loading_upload:'Upload laden',loading_category:'Kategorie öffnen',loading_filtering:'Filtern',loading_detail:'Basis laden',loading_back:'Zurück',share_title:'🔗 Basis teilen',share_copy:'Link kopieren',share_whatsapp:'WhatsApp',share_discord:'Discord',share_more:'Mehr',sort_newest:'✨ Neueste',sort_popular:'🔥 Meistgenutzt',sort_favs:'❤️ Meistgeliked',sort_az:'🔤 A–Z',section_choose_cat:'Kategorie wählen',comm_lock_title:'🔒 COMMUNITY GESPERRT',comm_lock_desc:'Um Community-Inhalte zu sehen, musst du eine <b>kurze Belohnungswerbung</b> ansehen.',comm_lock_once:'Schaue die Werbung einmal an und <b>Community wird dauerhaft entsperrt</b>.',comm_lock_duration:'Du wirst eine Videowerbung von ca. <b>~30 Sekunden</b> sehen.',comm_lock_btn:'🎬 Werbung ansehen & entsperren',comm_lock_back:'← Zurück',comm_lock_footer:'Ohne Werbung kann nicht auf diesen Tab zugegriffen werden.',upload_lock_btn:'🎬 Werbung ansehen & hochladen'},
+  fr:{nav_home:'Accueil',nav_browse:'Explorer',nav_community:'Communauté',nav_upload:'Uploader',nav_favs:'Favoris',home_cat_title:'Choisir une catégorie',home_th_title:'Bases Hôtel de Ville',home_th_sub:'HV 4 – HV 18 · Village Principal',home_bh_title:'Bases Maître Bâtisseur',home_bh_sub:'MB 4 – MB 10 · Village Bâtisseur',home_layouts:'layouts',list_th_title:'🏰 Bases <span>HdV</span>',list_bh_title:'🔨 Bases <span>Bâtisseur</span>',filter_all_types:'🏷 Tous',type_war:'⚔️ Guerre',type_farm:'🌾 Farm',type_trophy:'🏆 Trophées',type_hybrid:'🔥 Hybride',type_progress:'⬆️ Progression',type_fun:'🎉 Amusement',detail_share:'↗ Partager cette base',detail_copy:'🏰 Copier dans CoC',stat_uses:'Utilisations',stat_favs:'Favoris',stat_th:'Hôtel de Ville',similar_title:'Bases similaires',village_home:'🏰 Village Principal',village_builder:'🔨 Village Bâtisseur',search_placeholder:'Rechercher des bases...',filter_village:'Type de village',filter_level:'Niveau',filter_type:'Type de base',filter_all:'Tous',filter_home_v:'🏰 Village Principal',filter_builder_v:'🔨 Village Bâtisseur',empty_title:'Aucune base trouvée',empty_sub:'Essayez un autre filtre.',favs_title:'Mes Favoris',favs_empty_title:'Pas encore de favoris',favs_empty_sub:'Appuyez sur ❤️ pour sauvegarder une base.',comm_title:'👥 Communauté',comm_tab_all:'Toutes les bases',comm_tab_mine:'Mes uploads',comm_empty_title:'Pas encore de bases',comm_empty_sub:'Soyez le premier à uploader!',pending_label:'⏳ En cours de vérification',upload_title:'⬆️ Uploader une base',upload_photo_label:'📷 Capture ecran *',upload_photo_text:'Sélectionner ou déposer',upload_photo_sub:'JPG, PNG · Max 5Mo',upload_name_label:'🏷 Nom de la base *',upload_name_ph:'ex: HV9 Anti-3 Étoiles Guerre',upload_village_label:'🏘 Type de village *',upload_level_label:'⭐ Niveau *',upload_type_label:'⚔️ Type de base *',upload_coc_label:'🔗 Lien Clash of Clans *',upload_coc_ph:'https://link.clashofclans.com/...',upload_coc_hint:'CoC → Base → Partager → Copier le lien',upload_nick_label:'👤 Pseudo (optionnel)',upload_nick_ph:'ex: ClashMaster99',upload_btn:'⬆️ Voir une pub pour uploader',upload_uploading:'⏳ Envoi en cours...',upload_moderation:'Les uploads sont vérifiés avant publication.',upload_success_title:'Uploadé!',upload_success_sub:'Votre base est en cours de verification.',upload_new_btn:'⬆️ Uploader une autre base',toast_fav_add:'❤️ Ajouté aux favoris!',toast_fav_remove:'Retiré des favoris',toast_copied:'🔗 Lien copié!',toast_coc_open:'🏰 Ouverture de CoC…',toast_coc_missing:'⚠️ Lien CoC non disponible',toast_img_big:'⚠️ Fichier trop grand!',toast_no_img:'⚠️ Veuillez sélectionner une photo!',toast_no_title:'⚠️ Veuillez saisir un nom!',toast_no_coc:'⚠️ Veuillez saisir le lien CoC!',loading_bases:'Chargement des bases',loading_home:'Chargement accueil',loading_search:'Chargement recherche',loading_favs:'Chargement favoris',loading_community:'Chargement communauté',loading_upload:'Chargement upload',loading_category:'Ouverture catégorie',loading_filtering:'Filtrage',loading_detail:'Chargement base',loading_back:'Retour',share_title:'🔗 Partager cette base',share_copy:'Copier',share_whatsapp:'WhatsApp',share_discord:'Discord',share_more:'Plus',sort_newest:'✨ Plus récent',sort_popular:'🔥 Plus utilisé',sort_favs:'❤️ Plus aimé',sort_az:'🔤 A–Z',section_choose_cat:'Choisir une catégorie',comm_lock_title:'🔒 COMMUNAUTÉ VERROUILLÉE',comm_lock_desc:'Pour voir le contenu communautaire, regardez une <b>courte publicité récompensée</b>.',comm_lock_once:'Regardez la pub une fois et <b>Community se déverrouille définitivement</b>.',comm_lock_duration:'Vous regarderez une vidéo publicitaire d\'environ <b>~30 secondes</b>.',comm_lock_btn:'🎬 Voir la pub pour débloquer',comm_lock_back:'← Retour',comm_lock_footer:'Vous ne pouvez pas accéder à cet onglet sans regarder la pub.',upload_lock_btn:'🎬 Voir une pub pour uploader'},
+  es:{nav_home:'Inicio',nav_browse:'Explorar',nav_community:'Comunidad',nav_upload:'Subir',nav_favs:'Favoritos',home_cat_title:'Elegir categoría',home_th_title:'Bases Ayuntamiento',home_th_sub:'AY 4 – AY 18 · Aldea Principal',home_bh_title:'Bases Constructor',home_bh_sub:'CC 4 – CC 10 · Aldea Constructor',home_layouts:'diseños',list_th_title:'🏰 Bases <span>Ayuntamiento</span>',list_bh_title:'🔨 Bases <span>Constructor</span>',filter_all_types:'🏷 Todos',type_war:'⚔️ Guerra',type_farm:'🌾 Granja',type_trophy:'🏆 Trofeos',type_hybrid:'🔥 Híbrido',type_progress:'⬆️ Progreso',type_fun:'🎉 Diversión',detail_share:'↗ Compartir base',detail_copy:'🏰 Copiar en CoC',stat_uses:'Usos',stat_favs:'Favoritos',stat_th:'Ayuntamiento',similar_title:'Bases similares',village_home:'🏰 Aldea Principal',village_builder:'🔨 Aldea Constructor',search_placeholder:'Buscar bases...',filter_village:'Tipo de aldea',filter_level:'Nivel',filter_type:'Tipo de base',filter_all:'Todos',filter_home_v:'🏰 Aldea Principal',filter_builder_v:'🔨 Aldea Constructor',empty_title:'No se encontraron bases',empty_sub:'Prueba otro filtro.',favs_title:'Mis Favoritos',favs_empty_title:'Sin favoritos aún',favs_empty_sub:'Toca ❤️ en cualquier base para guardarla.',comm_title:'👥 Comunidad',comm_tab_all:'Todas las bases',comm_tab_mine:'Mis subidas',comm_empty_title:'Sin bases aún',comm_empty_sub:'¡Sé el primero en subir una base!',pending_label:'⏳ En revisión',upload_title:'⬆️ Subir base',upload_photo_label:'📷 Captura de base *',upload_photo_text:'Seleccionar o soltar foto',upload_photo_sub:'JPG, PNG · Máx 5MB',upload_name_label:'🏷 Nombre de base *',upload_name_ph:'ej: AY9 Anti-3 Estrellas Guerra',upload_village_label:'🏘 Tipo de aldea *',upload_level_label:'⭐ Nivel *',upload_type_label:'⚔️ Tipo de base *',upload_coc_label:'🔗 Enlace Clash of Clans *',upload_coc_ph:'https://link.clashofclans.com/...',upload_coc_hint:'CoC → Base → Compartir → Copiar enlace',upload_nick_label:'👤 Apodo (opcional)',upload_nick_ph:'ej: ClashMaster99',upload_btn:'⬆️ Ver anuncio para subir',upload_uploading:'⏳ Subiendo...',upload_moderation:'Las subidas se revisan antes de publicarse.',upload_success_title:'¡Subido!',upload_success_sub:'Tu base está en revisión.',upload_new_btn:'⬆️ Subir otra base',toast_fav_add:'❤️ ¡Añadido a favoritos!',toast_fav_remove:'Eliminado de favoritos',toast_copied:'🔗 ¡Enlace copiado!',toast_coc_open:'🏰 Abriendo CoC…',toast_coc_missing:'⚠️ Enlace CoC no disponible',toast_img_big:'⚠️ Archivo mayor de 5MB!',toast_no_img:'⚠️ Selecciona una foto!',toast_no_title:'⚠️ Introduce un nombre!',toast_no_coc:'⚠️ Introduce el enlace CoC!',loading_bases:'Cargando bases',loading_home:'Cargando inicio',loading_search:'Cargando búsqueda',loading_favs:'Cargando favoritos',loading_community:'Cargando comunidad',loading_upload:'Cargando subida',loading_category:'Abriendo categoría',loading_filtering:'Filtrando',loading_detail:'Cargando base',loading_back:'Volviendo',share_title:'🔗 Compartir base',share_copy:'Copiar',share_whatsapp:'WhatsApp',share_discord:'Discord',share_more:'Más',sort_newest:'✨ Más reciente',sort_popular:'🔥 Más usado',sort_favs:'❤️ Más gustado',sort_az:'🔤 A–Z',section_choose_cat:'Elige tu categoría',comm_lock_title:'🔒 COMUNIDAD BLOQUEADA',comm_lock_desc:'Para ver contenido comunitario, mira un <b>anuncio de recompensa corto</b>.',comm_lock_once:'Mira el anuncio una vez y <b>Community se desbloquea permanentemente</b>.',comm_lock_duration:'Verás un anuncio de video de aproximadamente <b>~30 segundos</b>.',comm_lock_btn:'🎬 Ver anuncio para desbloquear',comm_lock_back:'← Volver',comm_lock_footer:'No puedes acceder a esta pestaña sin ver el anuncio.',upload_lock_btn:'🎬 Ver anuncio para subir'},
+  pt:{nav_home:'Início',nav_browse:'Explorar',nav_community:'Comunidade',nav_upload:'Enviar',nav_favs:'Favoritos',home_cat_title:'Escolher categoria',home_th_title:'Bases Prefeitura',home_th_sub:'PP 4 – PP 18 · Vila Principal',home_bh_title:'Bases Construtor',home_bh_sub:'MC 4 – MC 10 · Vila Construtor',home_layouts:'layouts',list_th_title:'🏰 Bases <span>Prefeitura</span>',list_bh_title:'🔨 Bases <span>Construtor</span>',filter_all_types:'🏷 Todos',type_war:'⚔️ Guerra',type_farm:'🌾 Fazenda',type_trophy:'🏆 Troféus',type_hybrid:'🔥 Híbrido',type_progress:'⬆️ Progresso',type_fun:'🎉 Diversão',detail_share:'↗ Compartilhar base',detail_copy:'🏰 Copiar no CoC',stat_uses:'Usos',stat_favs:'Favoritos',stat_th:'Prefeitura',similar_title:'Bases similares',village_home:'🏰 Vila Principal',village_builder:'🔨 Vila Construtor',search_placeholder:'Buscar bases...',filter_village:'Tipo de vila',filter_level:'Nível',filter_type:'Tipo de base',filter_all:'Todos',filter_home_v:'🏰 Vila Principal',filter_builder_v:'🔨 Vila Construtor',empty_title:'Nenhuma base encontrada',empty_sub:'Tente outro filtro.',favs_title:'Meus Favoritos',favs_empty_title:'Sem favoritos ainda',favs_empty_sub:'Toque em ❤️ para salvar uma base.',comm_title:'👥 Comunidade',comm_tab_all:'Todas as bases',comm_tab_mine:'Meus envios',comm_empty_title:'Sem bases ainda',comm_empty_sub:'Seja o primeiro a enviar uma base!',pending_label:'⏳ Em análise',upload_title:'⬆️ Enviar base',upload_photo_label:'📷 Captura da base *',upload_photo_text:'Selecionar ou soltar foto',upload_photo_sub:'JPG, PNG · Máx 5MB',upload_name_label:'🏷 Nome da base *',upload_name_ph:'ex: PP9 Anti-3 Estrelas Guerra',upload_village_label:'🏘 Tipo de vila *',upload_level_label:'⭐ Nível *',upload_type_label:'⚔️ Tipo de base *',upload_coc_label:'🔗 Link Clash of Clans *',upload_coc_ph:'https://link.clashofclans.com/...',upload_coc_hint:'CoC → Base → Compartilhar → Copiar link',upload_nick_label:'👤 Apelido (opcional)',upload_nick_ph:'ex: ClashMaster99',upload_btn:'⬆️ Ver anúncio para enviar',upload_uploading:'⏳ Enviando...',upload_moderation:'Envios são analisados antes de serem publicados.',upload_success_title:'Enviado!',upload_success_sub:'Sua base está em análise.',upload_new_btn:'⬆️ Enviar outra base',toast_fav_add:'❤️ Adicionado aos favoritos!',toast_fav_remove:'Removido dos favoritos',toast_copied:'🔗 Link copiado!',toast_coc_open:'🏰 Abrindo CoC…',toast_coc_missing:'⚠️ Link CoC não disponível',toast_img_big:'⚠️ Arquivo maior que 5MB!',toast_no_img:'⚠️ Selecione uma foto!',toast_no_title:'⚠️ Digite um nome de base!',toast_no_coc:'⚠️ Digite o link CoC!',loading_bases:'Carregando bases',loading_home:'Carregando início',loading_search:'Carregando busca',loading_favs:'Carregando favoritos',loading_community:'Carregando comunidade',loading_upload:'Carregando envio',loading_category:'Abrindo categoria',loading_filtering:'Filtrando',loading_detail:'Carregando base',loading_back:'Voltando',share_title:'🔗 Compartilhar base',share_copy:'Copiar',share_whatsapp:'WhatsApp',share_discord:'Discord',share_more:'Mais',sort_newest:'✨ Mais recente',sort_popular:'🔥 Mais usado',sort_favs:'❤️ Mais curtido',sort_az:'🔤 A–Z',section_choose_cat:'Escolha sua categoria',comm_lock_title:'🔒 COMUNIDADE BLOQUEADA',comm_lock_desc:'Para ver conteúdo da comunidade, assista a um <b>anúncio de recompensa curto</b>.',comm_lock_once:'Assista ao anúncio uma vez e <b>Community desbloqueia permanentemente</b>.',comm_lock_duration:'Você assistirá a um anúncio em vídeo de aproximadamente <b>~30 segundos</b>.',comm_lock_btn:'🎬 Ver anúncio para desbloquear',comm_lock_back:'← Voltar',comm_lock_footer:'Você não pode acessar esta aba sem ver o anúncio.',upload_lock_btn:'🎬 Ver anúncio para enviar'},
+  ar:{nav_home:'الرئيسية',nav_browse:'استعرض',nav_community:'المجتمع',nav_upload:'رفع',nav_favs:'المفضلة',home_cat_title:'اختر الفئة',home_th_title:'قواعد قاعة المدينة',home_th_sub:'QM 4 – QM 18 · القرية الرئيسية',home_bh_title:'قواعد البناء',home_bh_sub:'MB 4 – MB 10 · قرية البناء',home_layouts:'تصميم',list_th_title:'🏰 قواعد <span>المدينة</span>',list_bh_title:'🔨 قواعد <span>البناء</span>',filter_all_types:'🏷 الكل',type_war:'⚔️ حرب',type_farm:'🌾 زراعة',type_trophy:'🏆 كأس',type_hybrid:'🔥 مختلط',type_progress:'⬆️ تقدم',type_fun:'🎉 مرح',detail_share:'↗ مشاركة القاعدة',detail_copy:'🏰 نسخ إلى CoC',stat_uses:'الاستخدامات',stat_favs:'المفضلة',stat_th:'قاعة المدينة',similar_title:'قواعد مشابهة',village_home:'🏰 القرية الرئيسية',village_builder:'🔨 قرية البناء',search_placeholder:'ابحث عن قاعدة...',filter_village:'نوع القرية',filter_level:'المستوى',filter_type:'نوع القاعدة',filter_all:'الكل',filter_home_v:'🏰 القرية الرئيسية',filter_builder_v:'🔨 قرية البناء',empty_title:'لا توجد قواعد',empty_sub:'جرب فلتراً مختلفاً.',favs_title:'مفضلتي',favs_empty_title:'لا توجد مفضلات بعد',favs_empty_sub:'اضغط ❤️ على أي قاعدة لحفظها.',comm_title:'👥 المجتمع',comm_tab_all:'كل القواعد',comm_tab_mine:'رفوعاتي',comm_empty_title:'لا توجد قواعد بعد',comm_empty_sub:'كن أول من يرفع قاعدة!',pending_label:'⏳ قيد المراجعة',upload_title:'⬆️ رفع قاعدة',upload_photo_label:'📷 صورة القاعدة *',upload_photo_text:'اختر أو اسحب صورة',upload_photo_sub:'JPG, PNG · حد أقصى 5MB',upload_name_label:'🏷 اسم القاعدة *',upload_name_ph:'مثال: QM9 مضادة 3 نجوم حرب',upload_village_label:'🏘 نوع القرية *',upload_level_label:'⭐ المستوى *',upload_type_label:'⚔️ نوع القاعدة *',upload_coc_label:'🔗 رابط Clash of Clans *',upload_coc_ph:'https://link.clashofclans.com/...',upload_coc_hint:'CoC → القاعدة → مشاركة → نسخ الرابط',upload_nick_label:'👤 اللقب (اختياري)',upload_nick_ph:'مثال: ClashMaster99',upload_btn:'⬆️ شاهد إعلاناً للرفع',upload_uploading:'⏳ جارٍ الرفع...',upload_moderation:'تتم مراجعة الرفوعات قبل النشر.',upload_success_title:'تم الرفع!',upload_success_sub:'قاعدتك قيد المراجعة.',upload_new_btn:'⬆️ رفع قاعدة أخرى',toast_fav_add:'❤️ أضيف للمفضلة!',toast_fav_remove:'أزيل من المفضلة',toast_copied:'🔗 نسخ الرابط!',toast_coc_open:'🏰 فتح CoC…',toast_coc_missing:'⚠️ رابط CoC غير متاح',toast_img_big:'⚠️ الملف أكبر من 5MB!',toast_no_img:'⚠️ اختر صورة!',toast_no_title:'⚠️ أدخل اسم القاعدة!',toast_no_coc:'⚠️ أدخل رابط CoC!',loading_bases:'تحميل القواعد',loading_home:'تحميل الرئيسية',loading_search:'تحميل البحث',loading_favs:'تحميل المفضلة',loading_community:'تحميل المجتمع',loading_upload:'تحميل الرفع',loading_category:'فتح الفئة',loading_filtering:'تصفية',loading_detail:'تحميل القاعدة',loading_back:'رجوع',share_title:'🔗 مشاركة القاعدة',share_copy:'نسخ',share_whatsapp:'واتساب',share_discord:'ديسكورد',share_more:'المزيد',sort_newest:'✨ الأحدث',sort_popular:'🔥 الأكثر استخداماً',sort_favs:'❤️ الأكثر إعجاباً',sort_az:'🔤 أ–ي',section_choose_cat:'اختر فئتك',comm_lock_title:'🔒 المجتمع مقفل',comm_lock_desc:'لمشاهدة محتوى المجتمع، شاهد <b>إعلانًا مكافأة قصيرًا</b>.',comm_lock_once:'شاهد الإعلان مرة واحدة و<b>يفتح المجتمع بشكل دائم</b>.',comm_lock_duration:'ستشاهد إعلانًا مرئيًا لمدة <b>~30 ثانية</b> تقريبًا.',comm_lock_btn:'🎬 شاهد إعلاناً للفتح',comm_lock_back:'→ رجوع',comm_lock_footer:'لا يمكنك الوصول إلى هذا التبويب بدون مشاهدة الإعلان.',upload_lock_btn:'🎬 شاهد إعلاناً للرفع'},
 };
-
-let currentLang = 'en';
-function t(key) {
-  return (TRANSLATIONS[currentLang] || TRANSLATIONS['en'])[key]
-      || TRANSLATIONS['en'][key] || key;
+let currentLang='en';
+function t(key){return(TRANSLATIONS[currentLang]||TRANSLATIONS['en'])[key]||TRANSLATIONS['en'][key]||key;}
+function detectLang(){const s=localStorage.getItem('cv_lang');if(s&&TRANSLATIONS[s])return s;const b=(navigator.language||'en').substring(0,2).toLowerCase();return TRANSLATIONS[b]?b:'en';}
+const LANG_LABELS={tr:'TR',en:'EN',de:'DE',fr:'FR',es:'ES',pt:'PT',ar:'AR'};
+function setLang(lang){currentLang=lang;localStorage.setItem('cv_lang',lang);document.getElementById('lang-btn').textContent=LANG_LABELS[lang]||lang.toUpperCase();document.querySelectorAll('.lang-opt').forEach(el=>el.classList.toggle('active',el.id==='lang-opt-'+lang));document.getElementById('lang-menu').style.display='none';applyTranslations();}
+function toggleLangMenu(){const m=document.getElementById('lang-menu');m.style.display=m.style.display==='none'?'block':'none';}
+document.addEventListener('click',function(e){const menu=document.getElementById('lang-menu');const btn=document.getElementById('lang-btn');if(menu&&btn&&!menu.contains(e.target)&&!btn.contains(e.target))menu.style.display='none';});
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.dataset.i18n;if(el.placeholder!==undefined&&el.tagName==='INPUT')el.placeholder=t(key);else el.innerHTML=t(key);});
+  const typeBtnLabel=document.getElementById('type-btn-label');if(typeBtnLabel){const curType=listTypeFilter||'all';typeBtnLabel.textContent=t(curType==='all'?'filter_all_types':'type_'+curType);}
+  const typeDropdown=document.getElementById('type-dropdown');if(typeDropdown){const types=[['all','filter_all_types'],['war','type_war'],['farm','type_farm'],['trophy','type_trophy'],['hybrid','type_hybrid'],['progress','type_progress'],['fun','type_fun']];typeDropdown.querySelector('div').innerHTML=types.map(([val,key])=>{const sel=val===listTypeFilter?'selected':'';return`<div class="dd-item ${sel}" data-ddtype="type" data-val="${val}" onclick="selectType('${val}','${t(key)}')">${t(key)}</div>`;}).join('');}
+  document.querySelectorAll('[data-sort]').forEach(p=>{const l=t('sort_'+p.dataset.sort);if(l)p.innerHTML=l;});
+  document.querySelectorAll('[data-hsort]').forEach(p=>{const l=t('sort_'+p.dataset.hsort);if(l)p.innerHTML=l;});
+  const bvLabel=document.getElementById('browse-village-label');if(bvLabel){const vMap={home:t('village_home'),builder:t('village_builder'),all:t('filter_all')||'All'};bvLabel.textContent=vMap[activeFilters.village]||bvLabel.textContent;}
+  const btLabel=document.getElementById('browse-type-label');if(btLabel){const tVal=activeFilters.type;btLabel.textContent=tVal==='all'?(t('filter_all')||'All'):t('type_'+tVal)||btLabel.textContent;}
+  if(document.getElementById('upload-level'))updateUploadLevels();
+  const uv=document.getElementById('upload-village');if(uv){uv.options[0].text=t('village_home');uv.options[1].text=t('village_builder');}
+  const ut=document.getElementById('upload-type');if(ut){['war','farm','trophy','hybrid','progress','fun'].forEach((v,i)=>{if(ut.options[i])ut.options[i].text=t('type_'+v);});}
+  const homeCount=allBases.filter(b=>b.village==='home').length;const builderCount=allBases.filter(b=>b.village==='builder').length;
+  const cH=document.getElementById('count-home');const cB=document.getElementById('count-builder');
+  if(cH)cH.textContent=homeCount+' '+t('home_layouts');if(cB)cB.textContent=builderCount+' '+t('home_layouts');
+  document.documentElement.dir=currentLang==='ar'?'rtl':'ltr';
 }
-function detectLang() {
-  const saved = localStorage.getItem('cv_lang');
-  if (saved && TRANSLATIONS[saved]) return saved;
-  const browserLang = (navigator.language || navigator.userLanguage || 'en').substring(0, 2).toLowerCase();
-  if (TRANSLATIONS[browserLang]) return browserLang;
-  return 'en';
-}
-const LANG_FLAGS  = { tr:'🇹🇷', en:'🇬🇧', de:'🇩🇪', fr:'🇫🇷', es:'🇪🇸', pt:'🇧🇷', ar:'🇸🇦' };
-const LANG_LABELS = { tr:'TR', en:'EN', de:'DE', fr:'FR', es:'ES', pt:'PT', ar:'AR' };
-function setLang(lang) {
-  currentLang = lang; localStorage.setItem('cv_lang', lang);
-  document.getElementById('lang-btn').textContent = LANG_LABELS[lang] || lang.toUpperCase();
-  document.querySelectorAll('.lang-opt').forEach(el => el.classList.toggle('active', el.id === 'lang-opt-' + lang));
-  document.getElementById('lang-menu').style.display = 'none';
-  applyTranslations();
-}
-function toggleLangMenu() {
-  const m = document.getElementById('lang-menu');
-  m.style.display = m.style.display === 'none' ? 'block' : 'none';
-}
-document.addEventListener('click', function(e) {
-  const menu = document.getElementById('lang-menu');
-  const btn  = document.getElementById('lang-btn');
-  if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) menu.style.display = 'none';
-});
-
-function applyTranslations() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.dataset.i18n;
-    if (el.placeholder !== undefined && el.tagName === 'INPUT') el.placeholder = t(key);
-    else el.innerHTML = t(key);
-  });
-  const typeBtnLabel = document.getElementById('type-btn-label');
-  if (typeBtnLabel) {
-    const curType = listTypeFilter || 'all';
-    typeBtnLabel.textContent = t(curType === 'all' ? 'filter_all_types' : 'type_' + curType);
-  }
-  const typeDropdown = document.getElementById('type-dropdown');
-  if (typeDropdown) {
-    const types = [
-      ['all','filter_all_types'],['war','type_war'],['farm','type_farm'],
-      ['trophy','type_trophy'],['hybrid','type_hybrid'],['progress','type_progress'],['fun','type_fun']
-    ];
-    typeDropdown.querySelector('div').innerHTML = types.map(([val, key]) => {
-      const sel = val === listTypeFilter ? 'selected' : '';
-      return `<div class="dd-item ${sel}" data-ddtype="type" data-val="${val}"
-        onclick="selectType('${val}','${t(key)}')">${t(key)}</div>`;
-    }).join('');
-  }
-  document.querySelectorAll('[data-sort]').forEach(p => { const l=t('sort_'+p.dataset.sort); if(l) p.innerHTML=l; });
-  document.querySelectorAll('[data-hsort]').forEach(p => { const l=t('sort_'+p.dataset.hsort); if(l) p.innerHTML=l; });
-  const bvLabel = document.getElementById('browse-village-label');
-  if (bvLabel) {
-    const vMap = { home:t('village_home'), builder:t('village_builder'), all:t('filter_all')||'All' };
-    bvLabel.textContent = vMap[activeFilters.village] || bvLabel.textContent;
-  }
-  const btLabel = document.getElementById('browse-type-label');
-  if (btLabel) {
-    const tVal = activeFilters.type;
-    btLabel.textContent = tVal === 'all' ? (t('filter_all')||'All') : t('type_'+tVal) || btLabel.textContent;
-  }
-  if (document.getElementById('upload-level')) updateUploadLevels();
-  const uploadVillageEl = document.getElementById('upload-village');
-  if (uploadVillageEl) {
-    uploadVillageEl.options[0].text = t('village_home');
-    uploadVillageEl.options[1].text = t('village_builder');
-  }
-  const uploadTypeEl = document.getElementById('upload-type');
-  if (uploadTypeEl) {
-    const typeVals = ['war','farm','trophy','hybrid','progress','fun'];
-    typeVals.forEach((v,i) => { if(uploadTypeEl.options[i]) uploadTypeEl.options[i].text = t('type_'+v); });
-  }
-  const homeCount    = allBases.filter(b => b.village === 'home').length;
-  const builderCount = allBases.filter(b => b.village === 'builder').length;
-  const cH = document.getElementById('count-home');
-  const cB = document.getElementById('count-builder');
-  if (cH) cH.textContent = homeCount    + ' ' + t('home_layouts');
-  if (cB) cB.textContent = builderCount + ' ' + t('home_layouts');
-  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-}
-
-/* ═══════════════════════════════════════════
-   HAPTIC
-═══════════════════════════════════════════ */
-const haptic = {
-  light:   () => navigator.vibrate && navigator.vibrate(8),
-  medium:  () => navigator.vibrate && navigator.vibrate(22),
-  heavy:   () => navigator.vibrate && navigator.vibrate(50),
-  success: () => navigator.vibrate && navigator.vibrate([12, 60, 20]),
-  error:   () => navigator.vibrate && navigator.vibrate([30, 40, 30]),
-  heart:   () => navigator.vibrate && navigator.vibrate([18, 50, 12]),
-};
-
-/* ═══════════════════════════════════════════
-   LOADING OVERLAY
-═══════════════════════════════════════════ */
-let loadingTimer = null;
-let loadingShownAt = 0;
-const LOADING_MIN_MS = 2000;
-function showLoading(msg) {
-  clearTimeout(loadingTimer);
-  const el = document.getElementById('loading-msg-text');
-  if (el) el.textContent = msg || 'Yükleniyor';
-  document.getElementById('loading-overlay').classList.add('show');
-  loadingShownAt = Date.now();
-}
-function hideLoading(fast) {
-  const elapsed = Date.now() - loadingShownAt;
-  const minMs = fast ? 400 : LOADING_MIN_MS;
-  const remaining = Math.max(0, minMs - elapsed);
-  clearTimeout(loadingTimer);
-  loadingTimer = setTimeout(() => {
-    document.getElementById('loading-overlay').classList.remove('show');
-  }, remaining);
-}
-
-/* ═══════════════════════════════════════════
-   SUPABASE
-═══════════════════════════════════════════ */
-const SUPABASE_URL = 'https://waznhibpsxrwmcyyijrx.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indhem5oaWJwc3hyd21jeXlpanJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNDI2MTAsImV4cCI6MjA4ODgxODYxMH0.vDILZMq3A96vPRixa1RQaoCPTYBwyDdMF_y-gZ7PlPM';
-const SB_HEADERS = {
-  'apikey': SUPABASE_KEY,
-  'Authorization': `Bearer ${SUPABASE_KEY}`,
-  'Content-Type': 'application/json',
-  'Prefer': 'return=representation'
-};
-
-async function sbGet(path) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { headers: SB_HEADERS });
-  if (!r.ok) throw new Error(`Supabase ${r.status}`);
-  return r.json();
-}
-
-async function sbGetRange(path, from, to) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    headers: {
-      ...SB_HEADERS,
-      'Range-Unit': 'items',
-      'Range': `${from}-${to}`
-    }
-  });
-  if (!r.ok && r.status !== 206) throw new Error(`Supabase range ${r.status}`);
-  return r.json();
-}
-
-async function sbGetAll(path) {
-  const PAGE_SIZE = 1000;
-  let allData = [];
-  let from = 0;
-  while (true) {
-    const data = await sbGetRange(path, from, from + PAGE_SIZE - 1);
-    if (!Array.isArray(data) || data.length === 0) break;
-    allData = allData.concat(data);
-    if (data.length < PAGE_SIZE) break;
-    from += PAGE_SIZE;
-  }
-  return allData;
-}
-
-async function supabasePatch(path, body) {
-  await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    method:'PATCH', headers: SB_HEADERS, body: JSON.stringify(body)
-  });
-}
-async function sbIncrement(id, column, delta) {
-  const fresh = await sbGet(`layouts?id=eq.${id}&select=${column}`);
-  const cur = fresh?.[0]?.[column] ?? 0;
-  const newVal = Math.max(0, cur + delta);
-  await supabasePatch(`layouts?id=eq.${id}`, { [column]: newVal });
-  return newVal;
-}
-
-/* ═══════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════ */
-let allBases    = [];
-let currentBase = null;
-let prevScreen  = 'screen-home';
-let activeFilters = { village:'home', th:'TH 9', type:'war' };
-let activeSort = 'newest';
-let listVillage   = 'home';
-let listLevelFilter = 'all';
-let listTypeFilter  = 'all';
-let favorites = JSON.parse(localStorage.getItem('cv_favs') || '[]');
-
-/* ═══════════════════════════════════════════
-   AD STATE
-═══════════════════════════════════════════ */
-let transitionCount = 0;
-let adPushed = {};
-const isNativeApp = () => typeof window.AndroidApp !== 'undefined';
-function pushAd(key) { if (adPushed[key]) return; adPushed[key] = true; }
-function tickTransition() {
-  transitionCount++;
-  if (typeof window.AndroidApp !== 'undefined') window.AndroidApp.tickTransition();
-}
-function showInterstitial() {
-  if (typeof window.AndroidApp !== 'undefined') window.AndroidApp.showInterstitial();
-}
-
-/* ═══════════════════════════════════════════
-   CONSTANTS
-═══════════════════════════════════════════ */
-const TYPES = {
-  war:'tag-war', farm:'tag-farm', trophy:'tag-trophy',
-  hybrid:'tag-hybrid', progress:'tag-progress', fun:'tag-fun'
-};
-const TYPE_LABELS = {
-  war:'⚔️ War', farm:'🌾 Farming', trophy:'🏆 Trophy',
-  hybrid:'🔥 Hybrid', progress:'⬆️ Progress', fun:'🎉 Fun'
-};
-function getTypeLabel(type) {
-  return t('type_' + type) || TYPE_LABELS[type] || type || '—';
-}
-function fmtNum(n) { if (!n) return '0'; return n >= 1000 ? (n/1000).toFixed(1)+'k' : String(n); }
-function isFav(id) { return favorites.includes(id); }
-function thLabel(base) {
-  if (!base.th_level) return base.village === 'builder' ? 'BH' : 'TH';
-  return base.village === 'builder' ? `BH ${base.th_level}` : `TH ${base.th_level}`;
-}
-
-/* ═══════════════════════════════════════════
-   DATA LOADING
-═══════════════════════════════════════════ */
-async function loadAllBases() {
+const haptic={light:()=>navigator.vibrate&&navigator.vibrate(8),medium:()=>navigator.vibrate&&navigator.vibrate(22),heavy:()=>navigator.vibrate&&navigator.vibrate(50),success:()=>navigator.vibrate&&navigator.vibrate([12,60,20]),error:()=>navigator.vibrate&&navigator.vibrate([30,40,30]),heart:()=>navigator.vibrate&&navigator.vibrate([18,50,12])};
+let loadingTimer=null,loadingShownAt=0;
+const LOADING_MIN_MS=2000;
+function showLoading(msg){clearTimeout(loadingTimer);const el=document.getElementById('loading-msg-text');if(el)el.textContent=msg||'Yükleniyor';document.getElementById('loading-overlay').classList.add('show');loadingShownAt=Date.now();}
+function hideLoading(fast){const elapsed=Date.now()-loadingShownAt;const minMs=fast?400:LOADING_MIN_MS;const remaining=Math.max(0,minMs-elapsed);clearTimeout(loadingTimer);loadingTimer=setTimeout(()=>{document.getElementById('loading-overlay').classList.remove('show');},remaining);}
+const SUPABASE_URL='https://waznhibpsxrwmcyyijrx.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indhem5oaWJwc3hyd21jeXlpanJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNDI2MTAsImV4cCI6MjA4ODgxODYxMH0.vDILZMq3A96vPRixa1RQaoCPTYBwyDdMF_y-gZ7PlPM';
+const SB_HEADERS={'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':'return=representation'};
+async function sbGet(path){const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:SB_HEADERS});if(!r.ok)throw new Error(`Supabase ${r.status}`);return r.json();}
+async function sbGetRange(path,from,to){const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:{...SB_HEADERS,'Range-Unit':'items','Range':`${from}-${to}`}});if(!r.ok&&r.status!==206)throw new Error(`Supabase range ${r.status}`);return r.json();}
+async function sbGetAll(path){const PAGE_SIZE=1000;let allData=[],from=0;while(true){const data=await sbGetRange(path,from,from+PAGE_SIZE-1);if(!Array.isArray(data)||data.length===0)break;allData=allData.concat(data);if(data.length<PAGE_SIZE)break;from+=PAGE_SIZE;}return allData;}
+async function supabasePatch(path,body){await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{method:'PATCH',headers:SB_HEADERS,body:JSON.stringify(body)});}
+async function sbIncrement(id,column,delta){const fresh=await sbGet(`layouts?id=eq.${id}&select=${column}`);const cur=fresh?.[0]?.[column]??0;const newVal=Math.max(0,cur+delta);await supabasePatch(`layouts?id=eq.${id}`,{[column]:newVal});return newVal;}
+let allBases=[],currentBase=null,prevScreen='screen-home';
+let activeFilters={village:'home',th:'TH 9',type:'war'};
+let activeSort='newest',listVillage='home',listLevelFilter='all',listTypeFilter='all';
+let favorites=JSON.parse(localStorage.getItem('cv_favs')||'[]');
+let transitionCount=0,adPushed={};
+function pushAd(key){if(adPushed[key])return;adPushed[key]=true;}
+function tickTransition(){transitionCount++;if(typeof window.AndroidApp!=='undefined')window.AndroidApp.tickTransition();}
+const TYPES={war:'tag-war',farm:'tag-farm',trophy:'tag-trophy',hybrid:'tag-hybrid',progress:'tag-progress',fun:'tag-fun'};
+const TYPE_LABELS={war:'⚔️ War',farm:'🌾 Farming',trophy:'🏆 Trophy',hybrid:'🔥 Hybrid',progress:'⬆️ Progress',fun:'🎉 Fun'};
+function getTypeLabel(type){return t('type_'+type)||TYPE_LABELS[type]||type||'—';}
+function fmtNum(n){if(!n)return'0';return n>=1000?(n/1000).toFixed(1)+'k':String(n);}
+function isFav(id){return favorites.includes(id);}
+function thLabel(base){if(!base.th_level)return base.village==='builder'?'BH':'TH';return base.village==='builder'?`BH ${base.th_level}`:`TH ${base.th_level}`;}
+async function loadAllBases(){
   showLoading(t('loading_bases'));
-  try {
-    allBases = await sbGetAll('layouts?select=*&is_active=eq.true&order=created_at.desc');
-    console.log('Loaded bases:', allBases.length);
-  } catch(e) {
-    console.error('Supabase load error:', e);
-    try {
-      allBases = await sbGetAll('layouts?select=*&order=created_at.desc');
-      console.log('Fallback loaded:', allBases.length);
-    } catch(e2) {
-      console.error('Fallback also failed:', e2);
-      allBases = [];
-    }
-  } finally {
-    hideLoading();
-  }
+  try{allBases=await sbGetAll('layouts?select=*&is_active=eq.true&order=created_at.desc');console.log('Loaded:',allBases.length);}
+  catch(e){console.error(e);try{allBases=await sbGetAll('layouts?select=*&order=created_at.desc');}catch(e2){allBases=[];}}
+  finally{hideLoading();}
 }
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 /* ═══════════════════════════════════════════
-   CARD HTML
+   CARD HTML — sadeleştirilmiş, temiz lazy load
 ═══════════════════════════════════════════ */
-function cardHtml(base, opts={}) {
-  const fav      = isFav(base.id);
-  const tl       = thLabel(base);
-  const typeL    = getTypeLabel(base.type);
-  const showUploader = opts.showUploader && base.uploader_name && base.uploader_name !== 'Anonymous';
-  // ── OPTİMİZASYON: İlk 4 kart high priority, geri kalanlar low ──
-  const globalIndex = opts.globalIndex ?? 999;
-  const isEager = globalIndex < 4;
-  const priority = isEager ? 'high' : 'low';
-
-  const imgHtml = base.image_url
-    ? `<img ${isEager ? `src="${base.image_url}"` : `data-src="${base.image_url}"`}
-            alt="${escHtml(base.title)}"
-            loading="${isEager ? 'eager' : 'lazy'}"
-            decoding="async"
-            fetchpriority="${priority}"
-            width="640" height="360"
-            ${isEager ? 'data-eager="1"' : ''}>`
-    : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.25;">🏰</div>`;
-
-  return `
-  <div class="base-card" onclick="openDetail(${base.id})">
-    <div class="card-thumb ${base.image_url && !isEager ? 'skeleton' : ''}" style="position:relative;">
+function cardHtml(base,opts={}){
+  const fav=isFav(base.id);
+  const tl=thLabel(base);
+  const typeL=getTypeLabel(base.type);
+  const showUploader=opts.showUploader&&base.uploader_name&&base.uploader_name!=='Anonymous';
+  // İlk 2 kart doğrudan yüklensin, geri kalanlar lazy
+  const eager=opts.eager===true;
+  const imgHtml=base.image_url
+    ?`<img src="${eager?base.image_url:''}" data-src="${base.image_url}" alt="${escHtml(base.title)}" loading="${eager?'eager':'lazy'}" decoding="async" fetchpriority="${eager?'high':'low'}" width="640" height="360">`
+    :`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.25;">🏰</div>`;
+  return`<div class="base-card" onclick="openDetail(${base.id})">
+    <div class="card-thumb${base.image_url&&!eager?' skeleton':''}" style="position:relative;">
       ${imgHtml}
       <div class="card-badge">${tl}</div>
-      <div class="card-fav ${fav?'active':''}" onclick="event.stopPropagation();toggleFav(${base.id},this)">${fav?'❤️':'🤍'}</div>
+      <div class="card-fav${fav?' active':''}" onclick="event.stopPropagation();toggleFav(${base.id},this)">${fav?'❤️':'🤍'}</div>
     </div>
     <div class="card-info">
       <div class="card-type">${base.village==='builder'?'Builder Base':'Home Village'}</div>
@@ -1636,844 +848,188 @@ function cardHtml(base, opts={}) {
         <div class="stat-chip">👁 ${fmtNum(base.uses)}</div>
         <div class="stat-chip">❤️ ${fmtNum(base.favs)}</div>
         <div class="stat-chip">${typeL}</div>
-        ${opts.rank != null ? `<div class="card-rank-badge"><span class="rank-icon">🏆</span>${opts.rank}</div>` : ''}
+        ${opts.rank!=null?`<div class="card-rank-badge"><span class="rank-icon">🏆</span>${opts.rank}</div>`:''}
       </div>
-      ${showUploader ? `<div class="card-uploader"><span class="card-uploader-icon">👤</span>${escHtml(base.uploader_name)}</div>` : ''}
+      ${showUploader?`<div class="card-uploader"><span class="card-uploader-icon">👤</span>${escHtml(base.uploader_name)}</div>`:''}
     </div>
   </div>`;
 }
-function escHtml(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE=12;
 
-/* ── OPTİMİZE EDİLMİŞ IntersectionObserver ── */
-const imageObserver = new IntersectionObserver((entries, observer) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const img = entry.target;
-    const realSrc = img.dataset.src;
-    if (realSrc && !img.getAttribute('src')) {
-      img.onload = () => {
-        img.classList.add('loaded');
-        img.closest('.card-thumb')?.classList.remove('skeleton');
-      };
-      img.onerror = () => {
-        img.closest('.card-thumb')?.classList.remove('skeleton');
-      };
-      img.src = realSrc;
-    }
+/* ═══════════════════════════════════════════
+   IMAGE OBSERVER — sadece data-src olan,
+   src'si boş olan kartları izle
+═══════════════════════════════════════════ */
+const imageObserver=new IntersectionObserver((entries,observer)=>{
+  entries.forEach(entry=>{
+    if(!entry.isIntersecting)return;
+    const img=entry.target;
+    const realSrc=img.dataset.src;
+    // Zaten yüklenmiş veya src atanmışsa atla
+    if(!realSrc||img.src===realSrc||(img.src&&!img.src.endsWith('/')))return;
+    img.onload=()=>{img.classList.add('loaded');img.closest('.card-thumb')?.classList.remove('skeleton');};
+    img.onerror=()=>{img.closest('.card-thumb')?.classList.remove('skeleton');};
+    img.src=realSrc;
     observer.unobserve(img);
   });
-}, {
-  root: null,
-  rootMargin: '400px 0px', // ── OPTİMİZASYON: 250px → 400px daha önceden yükle
-  threshold: 0             // ── OPTİMİZASYON: 0.01 → 0 piksel görününce hemen tetikle
-});
+},{root:null,rootMargin:'300px 0px',threshold:0});
 
-function observeGridImages(rootEl) {
-  if (!rootEl) return;
-  rootEl.querySelectorAll('img[data-src]').forEach(img => {
-    if (img.dataset.observed === '1') return;
-    img.dataset.observed = '1';
-    // ── OPTİMİZASYON: eager olanlar direkt yüklenir, observer'a takılmaz
-    if (img.dataset.eager === '1') {
-      img.onload = () => {
-        img.classList.add('loaded');
-        img.closest('.card-thumb')?.classList.remove('skeleton');
-      };
-      img.onerror = () => {
-        img.closest('.card-thumb')?.classList.remove('skeleton');
-      };
-      img.src = img.dataset.src;
-      return; // ── KRİTİK: observer'a geçme
+function observeGridImages(rootEl){
+  if(!rootEl)return;
+  // Sadece src'si boş olan img'leri gözlemle (eager olanların src'si dolu)
+  rootEl.querySelectorAll('img[data-src]').forEach(img=>{
+    if(img.dataset.observed==='1')return;
+    img.dataset.observed='1';
+    if(img.src&&img.src!==window.location.href&&!img.src.endsWith('/')){
+      // src zaten atanmış (eager), sadece onload'ı bağla
+      if(!img.complete){
+        img.onload=()=>{img.classList.add('loaded');img.closest('.card-thumb')?.classList.remove('skeleton');};
+        img.onerror=()=>{img.closest('.card-thumb')?.classList.remove('skeleton');};
+      }else{
+        img.classList.add('loaded');img.closest('.card-thumb')?.classList.remove('skeleton');
+      }
+      return;
     }
     imageObserver.observe(img);
   });
 }
 
-function renderGrid(bases, gridEl, emptyEl) {
-  if (!bases.length) {
-    if (emptyEl) emptyEl.style.display = 'flex';
-    gridEl.innerHTML = '';
-    if (gridEl._scrollEl && gridEl._scrollHandler) {
-      gridEl._scrollEl.removeEventListener('scroll', gridEl._scrollHandler);
-    }
-    return;
-  }
-  if (emptyEl) emptyEl.style.display = 'none';
-
-  let page = 0;
-
-  function renderPage() {
-    const slice = bases.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-    if (!slice.length) return;
-
-    // ── OPTİMİZASYON: DocumentFragment ile tek seferde DOM'a ekle (tek reflow)
-    const frag = document.createDocumentFragment();
-    const wrapper = document.createElement('div');
-
-    slice.forEach((b, i) => {
-      const globalIndex = page * PAGE_SIZE + i;
-      wrapper.innerHTML = cardHtml(b, { globalIndex, eager: globalIndex < 4 });
-      frag.appendChild(wrapper.firstElementChild);
+function renderGrid(bases,gridEl,emptyEl){
+  if(!bases.length){if(emptyEl)emptyEl.style.display='flex';gridEl.innerHTML='';if(gridEl._scrollEl&&gridEl._scrollHandler)gridEl._scrollEl.removeEventListener('scroll',gridEl._scrollHandler);return;}
+  if(emptyEl)emptyEl.style.display='none';
+  let page=0;
+  function renderPage(){
+    const slice=bases.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
+    if(!slice.length)return;
+    let html='';
+    slice.forEach((b,i)=>{
+      const globalI=page*PAGE_SIZE+i;
+      html+=cardHtml(b,{eager:globalI<2});
     });
-
-    if (page === 0) {
-      gridEl.replaceChildren(frag);
-    } else {
-      const spinner = gridEl.querySelector('#load-more-spinner');
-      if (spinner) spinner.remove();
-      gridEl.appendChild(frag);
-    }
-
-    requestAnimationFrame(() => observeGridImages(gridEl));
+    if(page===0){gridEl.innerHTML=html;}
+    else{const spinner=gridEl.querySelector('#load-more-spinner');if(spinner)spinner.remove();gridEl.insertAdjacentHTML('beforeend',html);}
+    requestAnimationFrame(()=>observeGridImages(gridEl));
     page++;
-
-    if (page * PAGE_SIZE < bases.length) {
-      const spinnerDiv = document.createElement('div');
-      spinnerDiv.id = 'load-more-spinner';
-      spinnerDiv.style.cssText = 'grid-column:1/-1;display:flex;justify-content:center;padding:.8rem;';
-      spinnerDiv.innerHTML = '<div class="spinner"></div>';
-      gridEl.appendChild(spinnerDiv);
-    }
+    if(page*PAGE_SIZE<bases.length){gridEl.insertAdjacentHTML('beforeend',`<div id="load-more-spinner" style="grid-column:1/-1;display:flex;justify-content:center;padding:.8rem;"><div class="spinner"></div></div>`);}
   }
-
   renderPage();
-
-  const scrollEl = gridEl.closest('.scroll-content');
-  if (!scrollEl) return;
-
-  if (gridEl._scrollEl && gridEl._scrollHandler) {
-    gridEl._scrollEl.removeEventListener('scroll', gridEl._scrollHandler);
-  }
-
-  gridEl._scrollEl = scrollEl;
-  gridEl._scrollHandler = function() {
-    const spinner = gridEl.querySelector('#load-more-spinner');
-    if (!spinner) return;
-    const spinnerRect = spinner.getBoundingClientRect();
-    const containerRect = scrollEl.getBoundingClientRect();
-    if (spinnerRect.top < containerRect.bottom + 200) {
-      renderPage();
-    }
-  };
-  scrollEl.addEventListener('scroll', gridEl._scrollHandler, { passive: true });
+  const scrollEl=gridEl.closest('.scroll-content');
+  if(!scrollEl)return;
+  if(gridEl._scrollEl&&gridEl._scrollHandler)gridEl._scrollEl.removeEventListener('scroll',gridEl._scrollHandler);
+  gridEl._scrollEl=scrollEl;
+  gridEl._scrollHandler=function(){const spinner=gridEl.querySelector('#load-more-spinner');if(!spinner)return;const sR=spinner.getBoundingClientRect();const cR=scrollEl.getBoundingClientRect();if(sR.top<cR.bottom+200)renderPage();};
+  scrollEl.addEventListener('scroll',gridEl._scrollHandler,{passive:true});
 }
 
-/* ═══════════════════════════════════════════
-   NAVIGATION
-═══════════════════════════════════════════ */
-function goScreen(id) { haptic.light();
-  const SCREEN_LABELS = {
-    'screen-home': t('loading_home'), 'screen-list': t('loading_bases'),
-    'screen-search': t('loading_search'), 'screen-favs': t('loading_favs'),
-    'screen-community': t('loading_community'), 'screen-upload': t('loading_upload'),
-  };
-  showLoading(SCREEN_LABELS[id] || 'Yükleniyor');
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    const leaving = document.querySelector('.screen.active')?.id;
-    if (id !== 'screen-detail') prevScreen = id;
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+function goScreen(id){haptic.light();
+  const LABELS={'screen-home':t('loading_home'),'screen-list':t('loading_bases'),'screen-search':t('loading_search'),'screen-favs':t('loading_favs'),'screen-community':t('loading_community'),'screen-upload':t('loading_upload')};
+  showLoading(LABELS[id]||'Yükleniyor');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const leaving=document.querySelector('.screen.active')?.id;
+    if(id!=='screen-detail')prevScreen=id;
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if (id !== 'screen-home') history.pushState({ screen: id }, '', '');
-    if (id !== 'screen-home' && id !== 'screen-detail' && leaving !== id) tickTransition();
-    if (id === 'screen-search')         { applyFilters();            hideLoading(true); }
-    else if (id === 'screen-favs')      { renderFavs();              hideLoading(true); }
-    else if (id === 'screen-list')      { renderListScreen();        hideLoading(true); }
-    else if (id === 'screen-community') { renderCommunityScreen();   hideLoading(true); }
-    else if (id === 'screen-upload')    { updateUploadLevels();      hideLoading(true); }
-    else { hideLoading(true); }
+    if(id!=='screen-home')history.pushState({screen:id},'','');
+    if(id!=='screen-home'&&id!=='screen-detail'&&leaving!==id)tickTransition();
+    if(id==='screen-search'){applyFilters();hideLoading(true);}
+    else if(id==='screen-favs'){renderFavs();hideLoading(true);}
+    else if(id==='screen-list'){renderListScreen();hideLoading(true);}
+    else if(id==='screen-community'){renderCommunityScreen();hideLoading(true);}
+    else if(id==='screen-upload'){updateUploadLevels();hideLoading(true);}
+    else{hideLoading(true);}
   }));
 }
-function goBack() {
-  showLoading(t('loading_back'));
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    const id = prevScreen || 'screen-home';
-    prevScreen = 'screen-home';
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    if (id === 'screen-search')    applyFilters();
-    if (id === 'screen-favs')      renderFavs();
-    if (id === 'screen-list')      renderListScreen();
-    if (id === 'screen-community') renderCommunityScreen();
-    hideLoading(true);
-  }));
+function goBack(){showLoading(t('loading_back'));requestAnimationFrame(()=>requestAnimationFrame(()=>{const id=prevScreen||'screen-home';prevScreen='screen-home';document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='screen-search')applyFilters();if(id==='screen-favs')renderFavs();if(id==='screen-list')renderListScreen();if(id==='screen-community')renderCommunityScreen();hideLoading(true);}));}
+window.addEventListener('popstate',function(){const active=document.querySelector('.screen.active')?.id;if(!active||active==='screen-home')return;history.pushState({screen:'screen-home'},'','');if(active==='screen-detail')goScreen(prevScreen||'screen-home');else goScreen('screen-home');});
+function openCategory(village){haptic.medium();showLoading(t('loading_category'));requestAnimationFrame(()=>requestAnimationFrame(()=>{listVillage=village;listLevelFilter='all';listTypeFilter='all';buildLevelDropdown();document.getElementById('type-btn-label').textContent=t('filter_all_types')||'🏷 Tümü';document.querySelectorAll('#type-dropdown .dd-item').forEach(el=>el.classList.toggle('selected',el.dataset.val==='all'));document.getElementById('list-screen-title').innerHTML=village==='builder'?'🔨 Builder <span>Bases</span>':'🏰 Town Hall <span>Bases</span>';goScreen('screen-list');}));}
+function toggleDropdown(ddId,btnId){const dd=document.getElementById(ddId);if(!dd)return;const isOpen=dd.style.display!=='none';['level-dropdown','type-dropdown'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});if(!isOpen)dd.style.display='block';}
+document.addEventListener('click',function(e){if(!e.target.closest('#list-filter-bar'))['level-dropdown','type-dropdown'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});});
+let _filterSheetActive=null;
+function openFilterSheet(type){haptic.light();_filterSheetActive=type;const overlay=document.getElementById('filter-sheet-overlay');const sheet=document.getElementById('filter-sheet');const title=document.getElementById('filter-sheet-title');const items=document.getElementById('filter-sheet-items');items.innerHTML='';
+  if(type==='village'){title.textContent=t('filter_village')||'Village';[{val:'home',label:t('village_home')},{val:'builder',label:t('village_builder')},{val:'all',label:'🏘 '+(t('filter_all')||'All')}].forEach(o=>items.appendChild(makeSheetChip(o.val,o.label,activeFilters.village,function(v,l){setBrowseVillage(v,l);closeFilterSheet();})));}
+  else if(type==='level'){title.textContent=t('filter_level')||'Level';const isBuilder=activeFilters.village==='builder';const levels=isBuilder?['4','5','6','7','8','9','10']:['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];const prefix=isBuilder?'BH':'TH';const emoji=isBuilder?'🔨':'🏰';levels.forEach(l=>{const val=prefix+' '+l;items.appendChild(makeSheetChip(val,emoji+' '+val,activeFilters.th,function(v,lb){setBrowseLevel(v,lb);closeFilterSheet();}));});items.appendChild(makeSheetChip('all','🏘 '+(t('filter_all')||'All'),activeFilters.th,function(v,lb){setBrowseLevel(v,lb);closeFilterSheet();}));}
+  else if(type==='type'){title.textContent=t('filter_type')||'Type';[{val:'war',label:t('type_war')},{val:'farm',label:t('type_farm')},{val:'trophy',label:t('type_trophy')},{val:'hybrid',label:t('type_hybrid')},{val:'progress',label:t('type_progress')},{val:'fun',label:t('type_fun')},{val:'all',label:'🏷 '+(t('filter_all')||'All')}].forEach(o=>items.appendChild(makeSheetChip(o.val,o.label,activeFilters.type,function(v,l){setBrowseType(v,l);closeFilterSheet();})));}
+  overlay.style.display='flex';requestAnimationFrame(()=>requestAnimationFrame(()=>{sheet.style.transform='translateY(0)';}));
 }
-window.addEventListener('popstate', function(e) {
-  const active = document.querySelector('.screen.active')?.id;
-  if (!active || active === 'screen-home') return;
-  history.pushState({ screen: 'screen-home' }, '', '');
-  if (active === 'screen-detail') goScreen(prevScreen || 'screen-home');
-  else goScreen('screen-home');
-});
-
-/* ═══════════════════════════════════════════
-   CATEGORY OPEN
-═══════════════════════════════════════════ */
-function openCategory(village) { haptic.medium();
-  showLoading(t('loading_category'));
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    listVillage = village; listLevelFilter = 'all'; listTypeFilter = 'all';
-    buildLevelDropdown();
-    document.getElementById('type-btn-label').textContent = t('filter_all_types') || '🏷 Tümü';
-    document.querySelectorAll('#type-dropdown .dd-item').forEach(el =>
-      el.classList.toggle('selected', el.dataset.val === 'all'));
-    document.getElementById('list-screen-title').innerHTML =
-      village === 'builder' ? '🔨 Builder <span>Bases</span>' : '🏰 Town Hall <span>Bases</span>';
-    goScreen('screen-list');
-  }));
-}
-function toggleDropdown(ddId, btnId) {
-  const dd = document.getElementById(ddId);
-  if (!dd) return;
-  const isOpen = dd.style.display !== 'none';
-  ['level-dropdown','type-dropdown'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-  if (!isOpen) dd.style.display = 'block';
-}
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('#list-filter-bar')) {
-    ['level-dropdown','type-dropdown'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-  }
-});
-
-/* ── Browse Bottom Sheet ── */
-let _filterSheetActive = null;
-function openFilterSheet(type) {
-  haptic.light(); _filterSheetActive = type;
-  const overlay = document.getElementById('filter-sheet-overlay');
-  const sheet   = document.getElementById('filter-sheet');
-  const title   = document.getElementById('filter-sheet-title');
-  const items   = document.getElementById('filter-sheet-items');
-  items.innerHTML = '';
-  if (type === 'village') {
-    title.textContent = t('filter_village') || 'Village';
-    [{ val:'home', label:t('village_home') }, { val:'builder', label:t('village_builder') }, { val:'all', label:'🏘 '+(t('filter_all')||'All') }]
-      .forEach(o => items.appendChild(makeSheetChip(o.val, o.label, activeFilters.village, function(v,l){ setBrowseVillage(v,l); closeFilterSheet(); })));
-  } else if (type === 'level') {
-    title.textContent = t('filter_level') || 'Level';
-    const isBuilder = activeFilters.village === 'builder';
-    const levels = isBuilder ? ['4','5','6','7','8','9','10'] : ['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
-    const prefix = isBuilder ? 'BH' : 'TH'; const emoji = isBuilder ? '🔨' : '🏰';
-    levels.forEach(l => {
-      const val = prefix+' '+l;
-      items.appendChild(makeSheetChip(val, emoji+' '+val, activeFilters.th, function(v,lb){ setBrowseLevel(v,lb); closeFilterSheet(); }));
-    });
-    items.appendChild(makeSheetChip('all', '🏘 '+(t('filter_all')||'All'), activeFilters.th, function(v,lb){ setBrowseLevel(v,lb); closeFilterSheet(); }));
-  } else if (type === 'type') {
-    title.textContent = t('filter_type') || 'Type';
-    [
-      { val:'war', label:t('type_war') }, { val:'farm', label:t('type_farm') },
-      { val:'trophy', label:t('type_trophy') }, { val:'hybrid', label:t('type_hybrid') },
-      { val:'progress', label:t('type_progress') }, { val:'fun', label:t('type_fun') },
-      { val:'all', label:'🏷 '+(t('filter_all')||'All') }
-    ].forEach(o => items.appendChild(makeSheetChip(o.val, o.label, activeFilters.type, function(v,l){ setBrowseType(v,l); closeFilterSheet(); })));
-  }
-  overlay.style.display = 'flex';
-  requestAnimationFrame(() => requestAnimationFrame(() => { sheet.style.transform = 'translateY(0)'; }));
-}
-function makeSheetChip(val, label, activeVal, onClick) {
-  const btn = document.createElement('button');
-  const isActive = val === activeVal;
-  btn.textContent = label;
-  btn.style.cssText = [
-    'padding:.33rem .66rem','border-radius:2rem','font-family:Nunito,sans-serif',
-    'font-size:.44rem','font-weight:700','cursor:pointer',
-    'border:1.5px solid '+(isActive?'var(--gold)':'var(--brown-border)'),
-    'background:'+(isActive?'var(--gold-dark)':'var(--brown-card)'),
-    'color:'+(isActive?'var(--brown-dark)':'var(--text-muted)'),'transition:all .15s',
-  ].join(';');
-  btn.addEventListener('click', function(e) { e.stopPropagation(); haptic.light(); onClick(val, label); });
-  return btn;
-}
-function closeFilterSheet() {
-  const overlay = document.getElementById('filter-sheet-overlay');
-  const sheet   = document.getElementById('filter-sheet');
-  sheet.style.transform = 'translateY(100%)';
-  setTimeout(() => { overlay.style.display = 'none'; }, 300);
-  _filterSheetActive = null;
-}
-function buildLevelDropdown() {
-  const levels = listVillage === 'builder' ? ['4','5','6','7','8','9','10'] : ['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
-  const prefix = listVillage === 'builder' ? 'BH' : 'TH';
-  if (listLevelFilter === 'all' || !levels.includes(listLevelFilter)) listLevelFilter = levels[0];
-  const list = document.getElementById('level-dropdown-list');
-  list.innerHTML = '<div style="padding:.17rem 0;">' + levels.map(v => {
-    const sel = v === listLevelFilter ? 'selected' : '';
-    return `<div class="dd-item ${sel}" data-val="${v}" onclick="selectLevel('${v}','${prefix} ${v}')">${prefix} ${v}</div>`;
-  }).join('') + '</div>';
-  document.getElementById('level-btn-label').textContent = `${prefix === 'BH'?'🔨':'🏰'} ${prefix} ${listLevelFilter}`;
-}
-function selectLevel(val, label) {
-  listLevelFilter = val;
-  document.getElementById('level-btn-label').textContent = `${listVillage==='builder'?'🔨':'🏰'} ${label}`;
-  document.getElementById('level-dropdown').style.display = 'none';
-  document.querySelectorAll('#level-dropdown-list .dd-item').forEach(el => el.classList.toggle('selected', el.dataset.val === val));
-  showLoading(t('loading_filtering'));
-  requestAnimationFrame(() => requestAnimationFrame(() => { renderListScreen(); hideLoading(true); }));
-}
-function selectType(val, label) {
-  listTypeFilter = val;
-  document.getElementById('type-btn-label').textContent = label;
-  document.getElementById('type-dropdown').style.display = 'none';
-  document.querySelectorAll('#type-dropdown .dd-item').forEach(el => el.classList.toggle('selected', el.dataset.val === val));
-  showLoading(t('loading_filtering'));
-  requestAnimationFrame(() => requestAnimationFrame(() => { renderListScreen(); hideLoading(true); }));
-}
-function renderListScreen() {
-  const filtered = allBases.filter(b => {
-    if (b.village !== listVillage) return false;
-    if (listLevelFilter !== 'all' && String(b.th_level) !== listLevelFilter) return false;
-    if (listTypeFilter !== 'all' && b.type !== listTypeFilter) return false;
-    return true;
-  });
-  renderGrid(filtered, document.getElementById('list-grid'), document.getElementById('list-empty'));
-  pushAd('list-top-banner');
-}
-
-/* ═══════════════════════════════════════════
-   SEARCH SCREEN
-═══════════════════════════════════════════ */
-let activeHomeSort = 'newest';
-function setHomeSort(sort) {
-  haptic.light(); activeHomeSort = sort;
-  document.querySelectorAll('[data-hsort]').forEach(p => p.classList.toggle('active', p.dataset.hsort === sort));
-  renderHomeBases();
-}
-function renderHomeBases() {
-  const grid  = document.getElementById('home-bases-grid');
-  const empty = document.getElementById('home-bases-empty');
-  if (!grid || !allBases.length) return;
-  let sorted = [...allBases];
-  switch (activeHomeSort) {
-    case 'popular': sorted.sort((a,b) => (b.uses||0)-(a.uses||0)); break;
-    case 'favs':    sorted.sort((a,b) => (b.favs||0)-(a.favs||0)); break;
-    default:        sorted.sort((a,b) => new Date(b.created_at||0)-new Date(a.created_at||0)); break;
-  }
-  renderGrid(sorted.slice(0,6), grid, empty);
-  document.querySelectorAll('[data-hsort]').forEach(p => { const l=t('sort_'+p.dataset.hsort); if(l) p.innerHTML=l; });
-}
-function setSort(sort) {
-  haptic.light(); activeSort = sort;
-  document.querySelectorAll('.sort-pill').forEach(p => p.classList.toggle('active', p.dataset.sort === sort));
-  applyFilters();
-}
-function setBrowseVillage(val, label) {
-  haptic.light(); activeFilters.village = val;
-  const lbl = document.getElementById('browse-village-label');
-  if (lbl) lbl.textContent = label;
-  const btn = document.getElementById('browse-village-btn');
-  if (btn) { btn.style.borderColor='var(--gold)'; btn.style.background='rgba(245,166,35,.15)'; btn.style.color='var(--gold-light)'; }
-  const isBuilder = val === 'builder';
-  const defLvl = (val==='all') ? 'all' : (isBuilder ? 'BH 7' : 'TH 9');
-  const emoji = isBuilder ? '🔨' : '🏰';
-  activeFilters.th = defLvl;
-  const lvlLbl = document.getElementById('browse-level-label');
-  if (lvlLbl) lvlLbl.textContent = defLvl==='all' ? ('🏘 '+(t('filter_all')||'All')) : emoji+' '+defLvl;
-  applyFilters();
-}
-function setBrowseLevel(val, label) {
-  haptic.light(); activeFilters.th = val;
-  const lbl = document.getElementById('browse-level-label');
-  if (lbl) lbl.textContent = label;
-  const btn = document.getElementById('browse-level-btn');
-  if (btn) { btn.style.borderColor='var(--gold)'; btn.style.background='rgba(245,166,35,.15)'; btn.style.color='var(--gold-light)'; }
-  applyFilters();
-}
-function setBrowseType(val, label) {
-  haptic.light(); activeFilters.type = val;
-  const lbl = document.getElementById('browse-type-label');
-  if (lbl) lbl.textContent = label;
-  const btn = document.getElementById('browse-type-btn');
-  if (btn) { btn.style.borderColor='var(--gold)'; btn.style.background='rgba(245,166,35,.15)'; btn.style.color='var(--gold-light)'; }
-  applyFilters();
-}
-let searchLastScroll = 0;
-function handleSearchScroll(el) {
-  const current = el.scrollTop;
-  const collapsible = document.getElementById('search-collapsible');
-  if (!collapsible) return;
-  if (current > searchLastScroll && current > 40) { collapsible.style.maxHeight='0'; collapsible.style.opacity='0'; }
-  else if (current < searchLastScroll - 10 || current < 20) { collapsible.style.maxHeight='20rem'; collapsible.style.opacity='1'; }
-  searchLastScroll = current;
-}
-function applyFilters() {
-  const q = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
-  let filtered = allBases.filter(b => {
-    const tl = thLabel(b);
-    const thM  = activeFilters.th === 'all' || tl === activeFilters.th;
-    const viM  = activeFilters.village === 'all' || b.village === activeFilters.village;
-    const tyM  = activeFilters.type === 'all' || b.type === activeFilters.type;
-    const txM  = !q || b.title.toLowerCase().includes(q) || tl.toLowerCase().includes(q) || (b.type||'').includes(q);
-    return thM && viM && tyM && txM;
-  });
-  switch (activeSort) {
-    case 'popular': filtered.sort((a,b) => (b.uses||0)-(a.uses||0)); break;
-    case 'favs':    filtered.sort((a,b) => (b.favs||0)-(a.favs||0)); break;
-    case 'az':      filtered.sort((a,b) => (a.title||'').localeCompare(b.title||'')); break;
-    default:        filtered.sort((a,b) => new Date(b.created_at||0)-new Date(a.created_at||0)); break;
-  }
-  const countEl = document.getElementById('sort-result-count');
-  if (countEl) countEl.textContent = filtered.length > 0 ? `${filtered.length} base${filtered.length!==1?'s':''} found` : '';
-  const grid  = document.getElementById('search-grid');
-  const empty = document.getElementById('search-empty');
-  document.getElementById('search-loading').style.display = 'none';
-  renderGrid(filtered, grid, empty);
-}
-
-/* ═══════════════════════════════════════════
-   DETAIL SCREEN
-═══════════════════════════════════════════ */
-async function openDetail(id) { haptic.light();
-  if (typeof window.AndroidApp !== 'undefined') {
-    window.AndroidApp.onCardOpened();
-  }
-  showLoading(t('loading_detail'));
-  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-  try {
-    const fresh = await sbGet(`layouts?id=eq.${id}&select=*`);
-    if (Array.isArray(fresh) && fresh.length) {
-      const idx = allBases.findIndex(b => b.id === id);
-      if (idx !== -1) allBases[idx] = { ...allBases[idx], ...fresh[0] };
-    }
-  } catch(e) {}
-  currentBase = allBases.find(b => b.id === id);
-  if (!currentBase) { hideLoading(); return; }
-  sbIncrement(id, 'uses', 1).then(newVal => {
-    if (newVal != null) { currentBase.uses = newVal; document.getElementById('stat-uses').textContent = fmtNum(newVal); const cached = allBases.find(b=>b.id===id); if(cached) cached.uses=newVal; }
-  }).catch(() => { currentBase.uses = (currentBase.uses||0)+1; });
-  const tl = thLabel(currentBase);
-  document.getElementById('detail-name').textContent  = currentBase.title;
-  document.getElementById('stat-uses').textContent    = fmtNum(currentBase.uses);
-  document.getElementById('stat-favs').textContent    = fmtNum(currentBase.favs);
-  document.getElementById('stat-th').textContent      = tl;
-  const preview = document.getElementById('detail-preview');
-  if (currentBase.image_url) {
-    preview.innerHTML = `<img src="${currentBase.image_url}" alt="${escHtml(currentBase.title)}" decoding="async" fetchpriority="high">`;
-    preview.onclick = () => openLightbox(currentBase.image_url);
-    const img = preview.querySelector('img');
-    await new Promise(resolve => { if(img.complete){resolve();}else{img.onload=resolve;img.onerror=resolve;} });
-  } else { preview.innerHTML = `<div class="no-img">🏰</div>`; preview.onclick = null; }
-  const typeTag = TYPES[currentBase.type] || '';
-  const typeLabel = getTypeLabel(currentBase.type);
-  const villageLabel = currentBase.village === 'builder' ? t('village_builder') : t('village_home');
-  document.getElementById('detail-tags').innerHTML = `
-    <div class="type-tag ${typeTag}">${typeLabel}</div>
-    <div class="detail-tag chip-gold">${villageLabel}</div>
-    <div class="detail-tag chip-blue">${tl}</div>`;
-  document.querySelector('#stat-uses + .lbl').textContent = t('stat_uses');
-  document.querySelector('#stat-favs + .lbl').textContent = t('stat_favs');
-  document.querySelector('#stat-th + .lbl').textContent   = t('stat_th');
-  document.getElementById('fav-btn').textContent = isFav(id) ? '❤️' : '🤍';
-  pushAd('detail-ad');
-  const similar = allBases.filter(b =>
-    b.id !== id && String(b.th_level) === String(currentBase.th_level) &&
-    b.type === currentBase.type && b.village === currentBase.village
-  ).slice(0, 6);
-  document.getElementById('similar-list').innerHTML = similar.map(b => cardHtml(b)).join('');
-  const leaving = document.querySelector('.screen.active')?.id;
-  if (leaving !== 'screen-detail') prevScreen = leaving || 'screen-home';
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-detail').classList.add('active');
-  history.pushState({ screen: 'screen-detail' }, '', '');
-  hideLoading(true);
-}
-
-/* ═══════════════════════════════════════════
-   FAVORITES
-═══════════════════════════════════════════ */
-async function toggleFav(id, el) {
-  const base = allBases.find(b => b.id === id);
-  const wasLiked = favorites.includes(id);
-  const delta = wasLiked ? -1 : 1;
-  if (wasLiked) {
-    favorites = favorites.filter(f => f !== id);
-    if (el) { el.textContent = '🤍'; el.classList.remove('active'); }
-    haptic.light(); showToast(t('toast_fav_remove'));
-  } else {
-    favorites.push(id);
-    if (el) { el.textContent = '❤️'; el.classList.add('active'); }
-    haptic.heart(); showToast(t('toast_fav_add'));
-  }
-  if (base) base.favs = Math.max(0, (base.favs||0)+delta);
-  if (currentBase?.id === id) document.getElementById('stat-favs').textContent = fmtNum(base?.favs??0);
-  localStorage.setItem('cv_favs', JSON.stringify(favorites));
-  sbIncrement(id, 'favs', delta).then(newVal => {
-    if (newVal != null) { if(base) base.favs=newVal; if(currentBase?.id===id) document.getElementById('stat-favs').textContent=fmtNum(newVal); }
-  }).catch(()=>{});
-}
-function toggleDetailFav() {
-  if (!currentBase) return;
-  toggleFav(currentBase.id, document.getElementById('fav-btn'));
-  document.getElementById('stat-favs').textContent = fmtNum(currentBase.favs);
-}
-function renderFavs() {
-  const grid  = document.getElementById('favs-grid');
-  const empty = document.getElementById('favs-empty');
-  const favBases = allBases.filter(b => favorites.includes(b.id));
-  if (!favBases.length) { empty.style.display='flex'; grid.style.display='none'; }
-  else { empty.style.display='none'; grid.style.display='grid'; grid.innerHTML=favBases.map(cardHtml).join(''); }
-}
-
-/* ═══════════════════════════════════════════
-   CoC LINK
-═══════════════════════════════════════════ */
-function copyToClash() {
-  if (!currentBase) return;
-  if (currentBase.coc_link) {
-    haptic.medium(); showToast(t('toast_coc_open'));
-    if (typeof window.AndroidApp !== 'undefined' && window.AndroidApp.openExternalUrl) {
-      window.AndroidApp.openExternalUrl(currentBase.coc_link);
-    } else {
-      window.open(currentBase.coc_link, '_blank');
-    }
-  } else {
-    haptic.error(); showToast(t('toast_coc_missing'));
-  }
-}
-
-/* ═══════════════════════════════════════════
-   SHARE
-═══════════════════════════════════════════ */
-function openShare(base) {
-  const url = base ? `${location.origin}/layout/${base.id}` : location.origin;
-  document.getElementById('share-url-text').textContent = url;
-  document.getElementById('share-modal').classList.add('open');
-}
-function closeShare(e) { if(e.target===document.getElementById('share-modal')) document.getElementById('share-modal').classList.remove('open'); }
-function copyShareLink() {
-  navigator.clipboard.writeText(document.getElementById('share-url-text').textContent).catch(()=>{});
-  haptic.success(); showToast(t('toast_copied')); document.getElementById('share-modal').classList.remove('open');
-}
-function shareWhatsApp() { const txt=document.getElementById('share-url-text').textContent; window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank'); }
-function nativeShare() {
-  const txt = document.getElementById('share-url-text').textContent;
-  if (navigator.share) { navigator.share({ title:'ClashVault Base', url:txt }); }
-  else { navigator.clipboard.writeText(txt).catch(()=>{}); haptic.success(); showToast('🔗 Link copied!'); }
-  document.getElementById('share-modal').classList.remove('open');
-}
-
-/* ═══════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════ */
+function makeSheetChip(val,label,activeVal,onClick){const btn=document.createElement('button');const isActive=val===activeVal;btn.textContent=label;btn.style.cssText=['padding:.33rem .66rem','border-radius:2rem','font-family:Nunito,sans-serif','font-size:.44rem','font-weight:700','cursor:pointer','border:1.5px solid '+(isActive?'var(--gold)':'var(--brown-border)'),'background:'+(isActive?'var(--gold-dark)':'var(--brown-card)'),'color:'+(isActive?'var(--brown-dark)':'var(--text-muted)'),'transition:all .15s'].join(';');btn.addEventListener('click',function(e){e.stopPropagation();haptic.light();onClick(val,label);});return btn;}
+function closeFilterSheet(){const overlay=document.getElementById('filter-sheet-overlay');const sheet=document.getElementById('filter-sheet');sheet.style.transform='translateY(100%)';setTimeout(()=>{overlay.style.display='none';},300);_filterSheetActive=null;}
+function buildLevelDropdown(){const levels=listVillage==='builder'?['4','5','6','7','8','9','10']:['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];const prefix=listVillage==='builder'?'BH':'TH';if(listLevelFilter==='all'||!levels.includes(listLevelFilter))listLevelFilter=levels[0];const list=document.getElementById('level-dropdown-list');list.innerHTML='<div style="padding:.17rem 0;">'+levels.map(v=>{const sel=v===listLevelFilter?'selected':'';return`<div class="dd-item ${sel}" data-val="${v}" onclick="selectLevel('${v}','${prefix} ${v}')">${prefix} ${v}</div>`;}).join('')+'</div>';document.getElementById('level-btn-label').textContent=`${prefix==='BH'?'🔨':'🏰'} ${prefix} ${listLevelFilter}`;}
+function selectLevel(val,label){listLevelFilter=val;document.getElementById('level-btn-label').textContent=`${listVillage==='builder'?'🔨':'🏰'} ${label}`;document.getElementById('level-dropdown').style.display='none';document.querySelectorAll('#level-dropdown-list .dd-item').forEach(el=>el.classList.toggle('selected',el.dataset.val===val));showLoading(t('loading_filtering'));requestAnimationFrame(()=>requestAnimationFrame(()=>{renderListScreen();hideLoading(true);}));}
+function selectType(val,label){listTypeFilter=val;document.getElementById('type-btn-label').textContent=label;document.getElementById('type-dropdown').style.display='none';document.querySelectorAll('#type-dropdown .dd-item').forEach(el=>el.classList.toggle('selected',el.dataset.val===val));showLoading(t('loading_filtering'));requestAnimationFrame(()=>requestAnimationFrame(()=>{renderListScreen();hideLoading(true);}));}
+function renderListScreen(){const filtered=allBases.filter(b=>{if(b.village!==listVillage)return false;if(listLevelFilter!=='all'&&String(b.th_level)!==listLevelFilter)return false;if(listTypeFilter!=='all'&&b.type!==listTypeFilter)return false;return true;});renderGrid(filtered,document.getElementById('list-grid'),document.getElementById('list-empty'));pushAd('list-top-banner');}
+let activeHomeSort='newest';
+function setHomeSort(sort){haptic.light();activeHomeSort=sort;document.querySelectorAll('[data-hsort]').forEach(p=>p.classList.toggle('active',p.dataset.hsort===sort));renderHomeBases();}
+function renderHomeBases(){const grid=document.getElementById('home-bases-grid');const empty=document.getElementById('home-bases-empty');if(!grid||!allBases.length)return;let sorted=[...allBases];switch(activeHomeSort){case'popular':sorted.sort((a,b)=>(b.uses||0)-(a.uses||0));break;case'favs':sorted.sort((a,b)=>(b.favs||0)-(a.favs||0));break;default:sorted.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));break;}renderGrid(sorted.slice(0,6),grid,empty);document.querySelectorAll('[data-hsort]').forEach(p=>{const l=t('sort_'+p.dataset.hsort);if(l)p.innerHTML=l;});}
+function setSort(sort){haptic.light();activeSort=sort;document.querySelectorAll('.sort-pill').forEach(p=>p.classList.toggle('active',p.dataset.sort===sort));applyFilters();}
+function setBrowseVillage(val,label){haptic.light();activeFilters.village=val;const lbl=document.getElementById('browse-village-label');if(lbl)lbl.textContent=label;const btn=document.getElementById('browse-village-btn');if(btn){btn.style.borderColor='var(--gold)';btn.style.background='rgba(245,166,35,.15)';btn.style.color='var(--gold-light)';}const isBuilder=val==='builder';const defLvl=(val==='all')?'all':(isBuilder?'BH 7':'TH 9');const emoji=isBuilder?'🔨':'🏰';activeFilters.th=defLvl;const lvlLbl=document.getElementById('browse-level-label');if(lvlLbl)lvlLbl.textContent=defLvl==='all'?('🏘 '+(t('filter_all')||'All')):emoji+' '+defLvl;applyFilters();}
+function setBrowseLevel(val,label){haptic.light();activeFilters.th=val;const lbl=document.getElementById('browse-level-label');if(lbl)lbl.textContent=label;const btn=document.getElementById('browse-level-btn');if(btn){btn.style.borderColor='var(--gold)';btn.style.background='rgba(245,166,35,.15)';btn.style.color='var(--gold-light)';}applyFilters();}
+function setBrowseType(val,label){haptic.light();activeFilters.type=val;const lbl=document.getElementById('browse-type-label');if(lbl)lbl.textContent=label;const btn=document.getElementById('browse-type-btn');if(btn){btn.style.borderColor='var(--gold)';btn.style.background='rgba(245,166,35,.15)';btn.style.color='var(--gold-light)';}applyFilters();}
+let searchLastScroll=0;
+function handleSearchScroll(el){const current=el.scrollTop;const collapsible=document.getElementById('search-collapsible');if(!collapsible)return;if(current>searchLastScroll&&current>40){collapsible.style.maxHeight='0';collapsible.style.opacity='0';}else if(current<searchLastScroll-10||current<20){collapsible.style.maxHeight='20rem';collapsible.style.opacity='1';}searchLastScroll=current;}
+function applyFilters(){const q=(document.getElementById('search-input')?.value||'').toLowerCase().trim();let filtered=allBases.filter(b=>{const tl=thLabel(b);const thM=activeFilters.th==='all'||tl===activeFilters.th;const viM=activeFilters.village==='all'||b.village===activeFilters.village;const tyM=activeFilters.type==='all'||b.type===activeFilters.type;const txM=!q||b.title.toLowerCase().includes(q)||tl.toLowerCase().includes(q)||(b.type||'').includes(q);return thM&&viM&&tyM&&txM;});switch(activeSort){case'popular':filtered.sort((a,b)=>(b.uses||0)-(a.uses||0));break;case'favs':filtered.sort((a,b)=>(b.favs||0)-(a.favs||0));break;case'az':filtered.sort((a,b)=>(a.title||'').localeCompare(b.title||''));break;default:filtered.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));break;}const countEl=document.getElementById('sort-result-count');if(countEl)countEl.textContent=filtered.length>0?`${filtered.length} base${filtered.length!==1?'s':''} found`:'';const grid=document.getElementById('search-grid');const empty=document.getElementById('search-empty');document.getElementById('search-loading').style.display='none';renderGrid(filtered,grid,empty);}
+async function openDetail(id){haptic.light();if(typeof window.AndroidApp!=='undefined')window.AndroidApp.onCardOpened();showLoading(t('loading_detail'));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));try{const fresh=await sbGet(`layouts?id=eq.${id}&select=*`);if(Array.isArray(fresh)&&fresh.length){const idx=allBases.findIndex(b=>b.id===id);if(idx!==-1)allBases[idx]={...allBases[idx],...fresh[0]};}}catch(e){}currentBase=allBases.find(b=>b.id===id);if(!currentBase){hideLoading();return;}sbIncrement(id,'uses',1).then(newVal=>{if(newVal!=null){currentBase.uses=newVal;document.getElementById('stat-uses').textContent=fmtNum(newVal);const cached=allBases.find(b=>b.id===id);if(cached)cached.uses=newVal;}}).catch(()=>{currentBase.uses=(currentBase.uses||0)+1;});const tl=thLabel(currentBase);document.getElementById('detail-name').textContent=currentBase.title;document.getElementById('stat-uses').textContent=fmtNum(currentBase.uses);document.getElementById('stat-favs').textContent=fmtNum(currentBase.favs);document.getElementById('stat-th').textContent=tl;const preview=document.getElementById('detail-preview');if(currentBase.image_url){preview.innerHTML=`<img src="${currentBase.image_url}" alt="${escHtml(currentBase.title)}" decoding="async" fetchpriority="high">`;preview.onclick=()=>openLightbox(currentBase.image_url);const img=preview.querySelector('img');await new Promise(resolve=>{if(img.complete){resolve();}else{img.onload=resolve;img.onerror=resolve;}});}else{preview.innerHTML=`<div class="no-img">🏰</div>`;preview.onclick=null;}const typeTag=TYPES[currentBase.type]||'';const typeLabel=getTypeLabel(currentBase.type);const villageLabel=currentBase.village==='builder'?t('village_builder'):t('village_home');document.getElementById('detail-tags').innerHTML=`<div class="type-tag ${typeTag}">${typeLabel}</div><div class="detail-tag chip-gold">${villageLabel}</div><div class="detail-tag chip-blue">${tl}</div>`;document.querySelector('#stat-uses + .lbl').textContent=t('stat_uses');document.querySelector('#stat-favs + .lbl').textContent=t('stat_favs');document.querySelector('#stat-th + .lbl').textContent=t('stat_th');document.getElementById('fav-btn').textContent=isFav(id)?'❤️':'🤍';pushAd('detail-ad');const similar=allBases.filter(b=>b.id!==id&&String(b.th_level)===String(currentBase.th_level)&&b.type===currentBase.type&&b.village===currentBase.village).slice(0,6);document.getElementById('similar-list').innerHTML=similar.map(b=>cardHtml(b)).join('');const leaving=document.querySelector('.screen.active')?.id;if(leaving!=='screen-detail')prevScreen=leaving||'screen-home';document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-detail').classList.add('active');history.pushState({screen:'screen-detail'},'','');hideLoading(true);}
+async function toggleFav(id,el){const base=allBases.find(b=>b.id===id);const wasLiked=favorites.includes(id);const delta=wasLiked?-1:1;if(wasLiked){favorites=favorites.filter(f=>f!==id);if(el){el.textContent='🤍';el.classList.remove('active');}haptic.light();showToast(t('toast_fav_remove'));}else{favorites.push(id);if(el){el.textContent='❤️';el.classList.add('active');}haptic.heart();showToast(t('toast_fav_add'));}if(base)base.favs=Math.max(0,(base.favs||0)+delta);if(currentBase?.id===id)document.getElementById('stat-favs').textContent=fmtNum(base?.favs??0);localStorage.setItem('cv_favs',JSON.stringify(favorites));sbIncrement(id,'favs',delta).then(newVal=>{if(newVal!=null){if(base)base.favs=newVal;if(currentBase?.id===id)document.getElementById('stat-favs').textContent=fmtNum(newVal);}}).catch(()=>{});}
+function toggleDetailFav(){if(!currentBase)return;toggleFav(currentBase.id,document.getElementById('fav-btn'));document.getElementById('stat-favs').textContent=fmtNum(currentBase.favs);}
+function renderFavs(){const grid=document.getElementById('favs-grid');const empty=document.getElementById('favs-empty');const favBases=allBases.filter(b=>favorites.includes(b.id));if(!favBases.length){empty.style.display='flex';grid.style.display='none';}else{empty.style.display='none';grid.style.display='grid';grid.innerHTML=favBases.map(cardHtml).join('');}}
+function copyToClash(){if(!currentBase)return;if(currentBase.coc_link){haptic.medium();showToast(t('toast_coc_open'));if(typeof window.AndroidApp!=='undefined'&&window.AndroidApp.openExternalUrl){window.AndroidApp.openExternalUrl(currentBase.coc_link);}else{window.open(currentBase.coc_link,'_blank');}}else{haptic.error();showToast(t('toast_coc_missing'));}}
+function openShare(base){const url=base?`${location.origin}/layout/${base.id}`:location.origin;document.getElementById('share-url-text').textContent=url;document.getElementById('share-modal').classList.add('open');}
+function closeShare(e){if(e.target===document.getElementById('share-modal'))document.getElementById('share-modal').classList.remove('open');}
+function copyShareLink(){navigator.clipboard.writeText(document.getElementById('share-url-text').textContent).catch(()=>{});haptic.success();showToast(t('toast_copied'));document.getElementById('share-modal').classList.remove('open');}
+function shareWhatsApp(){const txt=document.getElementById('share-url-text').textContent;window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`,'_blank');}
+function nativeShare(){const txt=document.getElementById('share-url-text').textContent;if(navigator.share){navigator.share({title:'ClashVault Base',url:txt});}else{navigator.clipboard.writeText(txt).catch(()=>{});haptic.success();showToast('🔗 Link copied!');}document.getElementById('share-modal').classList.remove('open');}
 let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-/* ═══════════════════════════════════════════
-   SUPABASE STORAGE UPLOAD
-═══════════════════════════════════════════ */
-const STORAGE_BUCKET = 'base-images';
-const CROP_RATIO = 3 / 2;
-let cropState = {
-  img:null, naturalW:0, naturalH:0, canvasW:0, canvasH:0, scale:1,
-  cx:0, cy:0, cw:0, ch:0, dragging:false, dragMode:null,
-  dragStartX:0, dragStartY:0, dragStartRect:null, pendingFile:null,
-};
-const HANDLE_SIZE = 32;
-function openCropModal(file) {
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const img = new Image();
-    img.onload = () => {
-      cropState.img=img; cropState.naturalW=img.naturalWidth; cropState.naturalH=img.naturalHeight; cropState.pendingFile=file;
-      document.getElementById('crop-modal').classList.add('show');
-      requestAnimationFrame(() => requestAnimationFrame(() => initCropCanvas()));
-    };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-function initCropCanvas() {
-  const wrap=document.getElementById('crop-canvas-wrap'); const canvas=document.getElementById('crop-canvas');
-  const availW=wrap.clientWidth||window.innerWidth; const availH=wrap.clientHeight||(window.innerHeight*0.62);
-  const imgRatio=cropState.naturalW/cropState.naturalH;
-  let cW,cH;
-  if (availW/availH>imgRatio) { cH=availH; cW=Math.round(cH*imgRatio); } else { cW=availW; cH=Math.round(cW/imgRatio); }
-  canvas.width=cW; canvas.height=cH; cropState.canvasW=cW; cropState.canvasH=cH; cropState.scale=cropState.naturalW/cW;
-  let initW=cW; let initH=Math.round(initW/CROP_RATIO);
-  if (initH>cH) { initH=cH; initW=Math.round(initH*CROP_RATIO); }
-  cropState.cx=Math.round((cW-initW)/2); cropState.cy=Math.round((cH-initH)/2); cropState.cw=initW; cropState.ch=initH;
-  drawCrop(); attachCropEvents(canvas);
-}
-function drawCrop() {
-  const canvas=document.getElementById('crop-canvas'); const ctx=canvas.getContext('2d');
-  const {img,canvasW:cW,canvasH:cH,cx,cy,cw,ch}=cropState;
-  ctx.clearRect(0,0,cW,cH); ctx.drawImage(img,0,0,cW,cH);
-  ctx.fillStyle='rgba(0,0,0,0.55)';
-  ctx.fillRect(0,0,cW,cy); ctx.fillRect(0,cy+ch,cW,cH-cy-ch); ctx.fillRect(0,cy,cx,ch); ctx.fillRect(cx+cw,cy,cW-cx-cw,ch);
-  ctx.strokeStyle='#F5A623'; ctx.lineWidth=2; ctx.strokeRect(cx+1,cy+1,cw-2,ch-2);
-  ctx.strokeStyle='rgba(245,166,35,0.3)'; ctx.lineWidth=0.8;
-  for (let i=1;i<3;i++) {
-    ctx.beginPath(); ctx.moveTo(cx+cw*i/3,cy); ctx.lineTo(cx+cw*i/3,cy+ch); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cx,cy+ch*i/3); ctx.lineTo(cx+cw,cy+ch*i/3); ctx.stroke();
-  }
-  const arm=Math.max(14,Math.round(cw*0.06)); const hw=3;
-  ctx.fillStyle='#F5A623';
-  [{x:cx,y:cy,dx:1,dy:1},{x:cx+cw,y:cy,dx:-1,dy:1},{x:cx,y:cy+ch,dx:1,dy:-1},{x:cx+cw,y:cy+ch,dx:-1,dy:-1}].forEach(({x,y,dx,dy})=>{
-    ctx.fillRect(x,y-hw/2,dx*arm,hw); ctx.fillRect(x-hw/2,y,hw,dy*arm);
-  });
-  ctx.fillStyle='rgba(245,166,35,0.9)'; ctx.font=`bold ${Math.max(11,Math.round(cw*0.035))}px sans-serif`;
-  ctx.textAlign='right'; ctx.textBaseline='bottom'; ctx.fillText('3:2',cx+cw-6,cy+ch-5);
-}
-function getHandleAt(px,py) {
-  const {cx,cy,cw,ch}=cropState; const hs=HANDLE_SIZE;
-  if (Math.abs(px-cx)<hs&&Math.abs(py-cy)<hs) return 'tl';
-  if (Math.abs(px-cx-cw)<hs&&Math.abs(py-cy)<hs) return 'tr';
-  if (Math.abs(px-cx)<hs&&Math.abs(py-cy-ch)<hs) return 'bl';
-  if (Math.abs(px-cx-cw)<hs&&Math.abs(py-cy-ch)<hs) return 'br';
-  if (px>cx&&px<cx+cw&&py>cy&&py<cy+ch) return 'move';
-  return null;
-}
-function attachCropEvents(canvas) {
-  const fresh=canvas.cloneNode(true); canvas.parentNode.replaceChild(fresh,canvas);
-  const c=document.getElementById('crop-canvas');
-  function getPos(e) {
-    const rect=c.getBoundingClientRect(); const scaleX=c.width/rect.width; const scaleY=c.height/rect.height;
-    const src=e.touches?e.touches[0]:e;
-    return { x:(src.clientX-rect.left)*scaleX, y:(src.clientY-rect.top)*scaleY };
-  }
-  function onStart(e) {
-    e.preventDefault(); const {x,y}=getPos(e); const mode=getHandleAt(x,y);
-    if (!mode) return;
-    cropState.dragging=true; cropState.dragMode=mode; cropState.dragStartX=x; cropState.dragStartY=y;
-    cropState.dragStartRect={cx:cropState.cx,cy:cropState.cy,cw:cropState.cw,ch:cropState.ch};
-  }
-  function onMove(e) {
-    e.preventDefault(); if(!cropState.dragging) return;
-    const {x,y}=getPos(e); const dx=x-cropState.dragStartX; const dy=y-cropState.dragStartY;
-    const {cx:ox,cy:oy,cw:ow,ch:oh}=cropState.dragStartRect;
-    const {canvasW:cW,canvasH:cH}=cropState; const MIN_W=40;
-    let {cx,cy,cw,ch}=cropState.dragStartRect;
-    if (cropState.dragMode==='move') { cx=Math.max(0,Math.min(cW-cw,ox+dx)); cy=Math.max(0,Math.min(cH-ch,oy+dy)); }
-    else {
-      let newX=ox,newY=oy,newW=ow,newH=oh;
-      if (cropState.dragMode==='br') { newW=Math.max(MIN_W,ow+dx); newH=newW/CROP_RATIO; }
-      else if (cropState.dragMode==='bl') { newW=Math.max(MIN_W,ow-dx); newH=newW/CROP_RATIO; newX=ox+ow-newW; }
-      else if (cropState.dragMode==='tr') { newW=Math.max(MIN_W,ow+dx); newH=newW/CROP_RATIO; newY=oy+oh-newH; }
-      else if (cropState.dragMode==='tl') { newW=Math.max(MIN_W,ow-dx); newH=newW/CROP_RATIO; newX=ox+ow-newW; newY=oy+oh-newH; }
-      if (newX<0){newW+=newX;newH=newW/CROP_RATIO;newX=0;} if (newY<0){newH=oh;newW=newH*CROP_RATIO;newY=0;}
-      if (newX+newW>cW){newW=cW-newX;newH=newW/CROP_RATIO;} if (newY+newH>cH){newH=cH-newY;newW=newH*CROP_RATIO;}
-      cx=newX;cy=newY;cw=newW;ch=newH;
-    }
-    cropState.cx=cx;cropState.cy=cy;cropState.cw=cw;cropState.ch=ch; drawCrop();
-  }
-  function onEnd(e) { cropState.dragging=false; }
-  c.addEventListener('mousedown',onStart,{passive:false}); c.addEventListener('mousemove',onMove,{passive:false}); c.addEventListener('mouseup',onEnd);
-  c.addEventListener('touchstart',onStart,{passive:false}); c.addEventListener('touchmove',onMove,{passive:false}); c.addEventListener('touchend',onEnd);
-}
-function reOpenCrop() { if(!cropState.img) return; document.getElementById('crop-modal').classList.add('show'); requestAnimationFrame(()=>requestAnimationFrame(()=>initCropCanvas())); }
-function cancelCrop() { document.getElementById('crop-modal').classList.remove('show'); cropState.pendingFile=null; document.getElementById('upload-file-input').value=''; }
-function confirmCrop() {
-  haptic.success(); const {img,cx,cy,cw,ch,scale}=cropState;
-  const outCanvas=document.createElement('canvas'); const OUT_W=1200,OUT_H=800;
-  outCanvas.width=OUT_W; outCanvas.height=OUT_H;
-  const ctx=outCanvas.getContext('2d');
-  const srcX=Math.round(cx*scale),srcY=Math.round(cy*scale),srcW=Math.round(cw*scale),srcH=Math.round(ch*scale);
-  ctx.drawImage(img,srcX,srcY,srcW,srcH,0,0,OUT_W,OUT_H);
-  outCanvas.toBlob(blob => {
-    const croppedFile=new File([blob],'base_cropped.jpg',{type:'image/jpeg'});
-    uploadImageFile=croppedFile;
-    const previewUrl=URL.createObjectURL(blob);
-    document.getElementById('img-preview').src=previewUrl;
-    document.getElementById('img-preview-wrap').style.display='block';
-    document.getElementById('img-upload-area').style.display='none';
-    document.getElementById('crop-modal').classList.remove('show');
-  },'image/jpeg',0.92);
-}
-let uploadImageFile=null; let uploadImageUrl=null; let commTab='all';
-async function uploadImageToStorage(file) {
-  const ext=file.name.split('.').pop().toLowerCase();
-  const path=`community/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-  const url=`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`;
-  const wrap=document.getElementById('upload-progress-wrap'); const bar=document.getElementById('upload-progress-bar');
-  wrap.style.display='block'; bar.style.width='15%';
-  const res=await fetch(url,{ method:'POST', headers:{'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':file.type,'x-upsert':'true'}, body:file });
-  bar.style.width='90%';
-  if (!res.ok) { const txt=await res.text(); throw new Error('Storage upload failed: '+txt); }
-  bar.style.width='100%'; setTimeout(()=>{wrap.style.display='none';bar.style.width='0%';},600);
-  return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
-}
-function handleImageSelect(e) {
-  const file=e.target.files[0]; if(!file) return;
-  if (file.size>5*1024*1024) { haptic.error(); showToast(t('toast_img_big')); return; }
-  openCropModal(file);
-}
-function removeImage() {
-  uploadImageFile=null; uploadImageUrl=null; cropState.img=null; cropState.pendingFile=null;
-  document.getElementById('img-preview-wrap').style.display='none';
-  document.getElementById('img-upload-area').style.display='flex';
-  document.getElementById('upload-file-input').value='';
-  const prev=document.getElementById('img-preview');
-  if (prev.src&&prev.src.startsWith('blob:')) URL.revokeObjectURL(prev.src); prev.src='';
-}
-function updateUploadLevels() {
-  const village=document.getElementById('upload-village').value;
-  const levels=village==='builder'?['4','5','6','7','8','9','10']:['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
-  const prefix=village==='builder'?'BH':'TH';
-  const sel=document.getElementById('upload-level');
-  sel.innerHTML=levels.map(v=>`<option value="${v}">${prefix} ${v}</option>`).join('');
-  sel.value=village==='builder'?'7':'9';
-}
-async function submitUpload() {
-  const title=document.getElementById('upload-title').value.trim();
-  const village=document.getElementById('upload-village').value;
-  const level=document.getElementById('upload-level').value;
-  const type=document.getElementById('upload-type').value;
-  const cocLink=document.getElementById('upload-coc-link').value.trim();
-  const nickname=document.getElementById('upload-nickname').value.trim();
-  if (!uploadImageFile) { haptic.error(); showToast(t('toast_no_img')); return; }
-  if (!title)           { haptic.error(); showToast(t('toast_no_title')); return; }
-  if (!cocLink)         { haptic.error(); showToast(t('toast_no_coc')); return; }
-  const btn=document.getElementById('upload-submit-btn');
-  btn.disabled=true; btn.textContent=t('upload_uploading'); showLoading(t('loading_bases'));
-  try {
-    uploadImageUrl=await uploadImageToStorage(uploadImageFile);
-    const body={ title, village, th_level:parseInt(level), type, image_url:uploadImageUrl, coc_link:cocLink, source:'community', uploader_name:nickname||'Anonymous', uploaded_by:getUserId(), status:'pending', is_active:false, uses:0, favs:0 };
-    const res=await fetch(`${SUPABASE_URL}/rest/v1/layouts`,{ method:'POST', headers:{...SB_HEADERS,'Prefer':'return=minimal'}, body:JSON.stringify(body) });
-    if (!res.ok) throw new Error('DB insert failed: '+await res.text());
-    hideLoading(true);
-    document.getElementById('upload-form').style.display='none';
-    haptic.success(); setTimeout(()=>haptic.success(),120);
-    document.getElementById('upload-success').classList.add('show');
-  } catch(e) {
-    console.error(e); haptic.error(); showToast('❌ Hata: '+e.message);
-    btn.disabled=false; btn.textContent='⬆️ Yükle & İncelemeye Gönder'; hideLoading(true);
-  }
-}
-function resetUploadForm() {
-  document.getElementById('upload-form').style.display='flex';
-  document.getElementById('upload-success').classList.remove('show');
-  document.getElementById('upload-title').value='';
-  document.getElementById('upload-coc-link').value='';
-  document.getElementById('upload-nickname').value='';
-  document.getElementById('upload-submit-btn').disabled=false;
-  document.getElementById('upload-submit-btn').textContent=t('upload_btn');
-  removeImage(); updateUploadLevels();
-}
-function getUserId() {
-  let uid=localStorage.getItem('cv_uid');
-  if (!uid) { uid='u_'+Date.now()+'_'+Math.random().toString(36).slice(2); localStorage.setItem('cv_uid',uid); }
-  return uid;
-}
-
-/* ═══════════════════════════════════════════
-   COMMUNITY SCREEN
-═══════════════════════════════════════════ */
-let communityBases=[];
-let commSort='score'; let commVillage='all'; let commType='all';
-function commScore(b) { return (b.favs||0)*2+(b.uses||0); }
-async function loadCommunityBases() {
-  try {
-    communityBases = await sbGetAll('layouts?select=*&source=eq.community&is_active=eq.true&order=created_at.desc');
-  } catch(e) { communityBases=[]; }
-}
-function switchCommTab(tab) {
-  commTab=tab;
-  document.getElementById('comm-tab-all').classList.toggle('active',tab==='all');
-  document.getElementById('comm-tab-mine').classList.toggle('active',tab==='mine');
-  const showAll=tab==='all';
-  document.getElementById('comm-sort-bar').style.display=showAll?'':'none';
-  document.getElementById('comm-village-row').style.display=showAll?'':'none';
-  document.getElementById('comm-type-row').style.display=showAll?'':'none';
-  renderCommunityScreen();
-}
-function setCommSort(sort) {
-  haptic.light(); commSort=sort;
-  document.querySelectorAll('[data-csort]').forEach(p=>p.classList.toggle('active',p.dataset.csort===sort));
-  renderCommunityScreen();
-}
-function setCommVillage(val) {
-  haptic.light(); commVillage=val;
-  document.querySelectorAll('[data-cvillage]').forEach(c=>c.classList.toggle('active',c.dataset.cvillage===val));
-  renderCommunityScreen();
-}
-function setCommType(val) {
-  haptic.light(); commType=val;
-  document.querySelectorAll('[data-ctype]').forEach(c=>c.classList.toggle('active',c.dataset.ctype===val));
-  renderCommunityScreen();
-}
-function renderCommunityScreen() {
-  const grid=document.getElementById('comm-grid'); const empty=document.getElementById('comm-empty');
-  if (commTab==='mine') {
-    const uid=getUserId();
-    let bases=communityBases.filter(b=>b.uploaded_by===uid);
-    const pending=allBases.filter(b=>b.source==='community'&&b.uploaded_by===uid);
-    const ids=new Set(bases.map(b=>b.id)); pending.forEach(b=>{if(!ids.has(b.id)) bases.push(b);});
-    if (!bases.length) { empty.style.display='flex'; grid.innerHTML=''; return; }
-    const mineRanks=new Map();
-    [...communityBases].sort((a,b)=>commScore(b)-commScore(a)).forEach((b,i)=>mineRanks.set(b.id,i+1));
-    bases.sort((a,b)=>commScore(b)-commScore(a));
-    empty.style.display='none';
-    grid.innerHTML=bases.map(b=>{
-      const isPending=b.is_active===false||b.status==='pending';
-      const globalRank=mineRanks.get(b.id);
-      let card=cardHtml(b,{showUploader:false,rank:globalRank});
-      if (isPending) card=card.replace('<div class="base-card"','<div class="base-card" style="opacity:.7;border-color:rgba(245,166,35,.4);"').replace('<div class="card-type">','<div class="card-type" style="color:var(--gold);">⏳ İncelemede · </div><div class="card-type" style="display:none;">');
-      return card;
-    }).join(''); return;
-  }
-  let bases=[...communityBases];
-  if (commVillage!=='all') bases=bases.filter(b=>b.village===commVillage);
-  if (commType!=='all') bases=bases.filter(b=>b.type===commType);
-  const scoreRanks=new Map();
-  [...communityBases].sort((a,b)=>commScore(b)-commScore(a)).forEach((b,i)=>scoreRanks.set(b.id,i+1));
-  switch(commSort) {
-    case 'newest':  bases.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0)); break;
-    case 'popular': bases.sort((a,b)=>(b.uses||0)-(a.uses||0)); break;
-    case 'favs':    bases.sort((a,b)=>(b.favs||0)-(a.favs||0)); break;
-    default:        bases.sort((a,b)=>commScore(b)-commScore(a)); break;
-  }
-  if (!bases.length) { empty.style.display='flex'; grid.innerHTML=''; return; }
-  empty.style.display='none';
-  grid.innerHTML=bases.map(b=>cardHtml(b,{showUploader:true,rank:scoreRanks.get(b.id)})).join('');
-}
-
-/* ═══════════════════════════════════════════
-   LIGHTBOX
-═══════════════════════════════════════════ */
-function openLightbox(src) { haptic.light();
-  const lb=document.getElementById('lightbox'); const img=document.getElementById('lightbox-img');
-  img.src=src; lb.classList.add('open');
-  let startY=0;
-  lb.ontouchstart=e=>{startY=e.touches[0].clientY;};
-  lb.ontouchmove=e=>{if(e.touches[0].clientY-startY>80) closeLightbox();};
-}
-function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
-window.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLightbox(); });
-
-/* ═══════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════ */
-async function init() {
-  currentLang = detectLang();
-  document.getElementById('lang-btn').textContent = LANG_LABELS[currentLang] || currentLang.toUpperCase();
-  document.querySelectorAll('.lang-opt').forEach(el => el.classList.toggle('active', el.id==='lang-opt-'+currentLang));
-  document.documentElement.dir = currentLang==='ar' ? 'rtl' : 'ltr';
-  history.replaceState({ screen:'screen-home' }, '', '');
-  history.pushState({ screen:'screen-home' }, '', '');
-  document.getElementById('count-home').textContent    = '…';
-  document.getElementById('count-builder').textContent = '…';
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);}
+const STORAGE_BUCKET='base-images';const CROP_RATIO=3/2;
+let cropState={img:null,naturalW:0,naturalH:0,canvasW:0,canvasH:0,scale:1,cx:0,cy:0,cw:0,ch:0,dragging:false,dragMode:null,dragStartX:0,dragStartY:0,dragStartRect:null,pendingFile:null};
+const HANDLE_SIZE=32;
+function openCropModal(file){const reader=new FileReader();reader.onload=ev=>{const img=new Image();img.onload=()=>{cropState.img=img;cropState.naturalW=img.naturalWidth;cropState.naturalH=img.naturalHeight;cropState.pendingFile=file;document.getElementById('crop-modal').classList.add('show');requestAnimationFrame(()=>requestAnimationFrame(()=>initCropCanvas()));};img.src=ev.target.result;};reader.readAsDataURL(file);}
+function initCropCanvas(){const wrap=document.getElementById('crop-canvas-wrap');const canvas=document.getElementById('crop-canvas');const availW=wrap.clientWidth||window.innerWidth;const availH=wrap.clientHeight||(window.innerHeight*0.62);const imgRatio=cropState.naturalW/cropState.naturalH;let cW,cH;if(availW/availH>imgRatio){cH=availH;cW=Math.round(cH*imgRatio);}else{cW=availW;cH=Math.round(cW/imgRatio);}canvas.width=cW;canvas.height=cH;cropState.canvasW=cW;cropState.canvasH=cH;cropState.scale=cropState.naturalW/cW;let initW=cW;let initH=Math.round(initW/CROP_RATIO);if(initH>cH){initH=cH;initW=Math.round(initH*CROP_RATIO);}cropState.cx=Math.round((cW-initW)/2);cropState.cy=Math.round((cH-initH)/2);cropState.cw=initW;cropState.ch=initH;drawCrop();attachCropEvents(canvas);}
+function drawCrop(){const canvas=document.getElementById('crop-canvas');const ctx=canvas.getContext('2d');const{img,canvasW:cW,canvasH:cH,cx,cy,cw,ch}=cropState;ctx.clearRect(0,0,cW,cH);ctx.drawImage(img,0,0,cW,cH);ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(0,0,cW,cy);ctx.fillRect(0,cy+ch,cW,cH-cy-ch);ctx.fillRect(0,cy,cx,ch);ctx.fillRect(cx+cw,cy,cW-cx-cw,ch);ctx.strokeStyle='#F5A623';ctx.lineWidth=2;ctx.strokeRect(cx+1,cy+1,cw-2,ch-2);ctx.strokeStyle='rgba(245,166,35,0.3)';ctx.lineWidth=0.8;for(let i=1;i<3;i++){ctx.beginPath();ctx.moveTo(cx+cw*i/3,cy);ctx.lineTo(cx+cw*i/3,cy+ch);ctx.stroke();ctx.beginPath();ctx.moveTo(cx,cy+ch*i/3);ctx.lineTo(cx+cw,cy+ch*i/3);ctx.stroke();}const arm=Math.max(14,Math.round(cw*0.06));const hw=3;ctx.fillStyle='#F5A623';[{x:cx,y:cy,dx:1,dy:1},{x:cx+cw,y:cy,dx:-1,dy:1},{x:cx,y:cy+ch,dx:1,dy:-1},{x:cx+cw,y:cy+ch,dx:-1,dy:-1}].forEach(({x,y,dx,dy})=>{ctx.fillRect(x,y-hw/2,dx*arm,hw);ctx.fillRect(x-hw/2,y,hw,dy*arm);});ctx.fillStyle='rgba(245,166,35,0.9)';ctx.font=`bold ${Math.max(11,Math.round(cw*0.035))}px sans-serif`;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('3:2',cx+cw-6,cy+ch-5);}
+function getHandleAt(px,py){const{cx,cy,cw,ch}=cropState;const hs=HANDLE_SIZE;if(Math.abs(px-cx)<hs&&Math.abs(py-cy)<hs)return'tl';if(Math.abs(px-cx-cw)<hs&&Math.abs(py-cy)<hs)return'tr';if(Math.abs(px-cx)<hs&&Math.abs(py-cy-ch)<hs)return'bl';if(Math.abs(px-cx-cw)<hs&&Math.abs(py-cy-ch)<hs)return'br';if(px>cx&&px<cx+cw&&py>cy&&py<cy+ch)return'move';return null;}
+function attachCropEvents(canvas){const fresh=canvas.cloneNode(true);canvas.parentNode.replaceChild(fresh,canvas);const c=document.getElementById('crop-canvas');function getPos(e){const rect=c.getBoundingClientRect();const scaleX=c.width/rect.width;const scaleY=c.height/rect.height;const src=e.touches?e.touches[0]:e;return{x:(src.clientX-rect.left)*scaleX,y:(src.clientY-rect.top)*scaleY};}function onStart(e){e.preventDefault();const{x,y}=getPos(e);const mode=getHandleAt(x,y);if(!mode)return;cropState.dragging=true;cropState.dragMode=mode;cropState.dragStartX=x;cropState.dragStartY=y;cropState.dragStartRect={cx:cropState.cx,cy:cropState.cy,cw:cropState.cw,ch:cropState.ch};}function onMove(e){e.preventDefault();if(!cropState.dragging)return;const{x,y}=getPos(e);const dx=x-cropState.dragStartX;const dy=y-cropState.dragStartY;const{cx:ox,cy:oy,cw:ow,ch:oh}=cropState.dragStartRect;const{canvasW:cW,canvasH:cH}=cropState;const MIN_W=40;let{cx,cy,cw,ch}=cropState.dragStartRect;if(cropState.dragMode==='move'){cx=Math.max(0,Math.min(cW-cw,ox+dx));cy=Math.max(0,Math.min(cH-ch,oy+dy));}else{let newX=ox,newY=oy,newW=ow,newH=oh;if(cropState.dragMode==='br'){newW=Math.max(MIN_W,ow+dx);newH=newW/CROP_RATIO;}else if(cropState.dragMode==='bl'){newW=Math.max(MIN_W,ow-dx);newH=newW/CROP_RATIO;newX=ox+ow-newW;}else if(cropState.dragMode==='tr'){newW=Math.max(MIN_W,ow+dx);newH=newW/CROP_RATIO;newY=oy+oh-newH;}else if(cropState.dragMode==='tl'){newW=Math.max(MIN_W,ow-dx);newH=newW/CROP_RATIO;newX=ox+ow-newW;newY=oy+oh-newH;}if(newX<0){newW+=newX;newH=newW/CROP_RATIO;newX=0;}if(newY<0){newH=oh;newW=newH*CROP_RATIO;newY=0;}if(newX+newW>cW){newW=cW-newX;newH=newW/CROP_RATIO;}if(newY+newH>cH){newH=cH-newY;newW=newH*CROP_RATIO;}cx=newX;cy=newY;cw=newW;ch=newH;}cropState.cx=cx;cropState.cy=cy;cropState.cw=cw;cropState.ch=ch;drawCrop();}function onEnd(){cropState.dragging=false;}c.addEventListener('mousedown',onStart,{passive:false});c.addEventListener('mousemove',onMove,{passive:false});c.addEventListener('mouseup',onEnd);c.addEventListener('touchstart',onStart,{passive:false});c.addEventListener('touchmove',onMove,{passive:false});c.addEventListener('touchend',onEnd);}
+function reOpenCrop(){if(!cropState.img)return;document.getElementById('crop-modal').classList.add('show');requestAnimationFrame(()=>requestAnimationFrame(()=>initCropCanvas()));}
+function cancelCrop(){document.getElementById('crop-modal').classList.remove('show');cropState.pendingFile=null;document.getElementById('upload-file-input').value='';}
+function confirmCrop(){haptic.success();const{img,cx,cy,cw,ch,scale}=cropState;const outCanvas=document.createElement('canvas');const OUT_W=1200,OUT_H=800;outCanvas.width=OUT_W;outCanvas.height=OUT_H;const ctx=outCanvas.getContext('2d');const srcX=Math.round(cx*scale),srcY=Math.round(cy*scale),srcW=Math.round(cw*scale),srcH=Math.round(ch*scale);ctx.drawImage(img,srcX,srcY,srcW,srcH,0,0,OUT_W,OUT_H);outCanvas.toBlob(blob=>{const croppedFile=new File([blob],'base_cropped.jpg',{type:'image/jpeg'});uploadImageFile=croppedFile;const previewUrl=URL.createObjectURL(blob);document.getElementById('img-preview').src=previewUrl;document.getElementById('img-preview-wrap').style.display='block';document.getElementById('img-upload-area').style.display='none';document.getElementById('crop-modal').classList.remove('show');},'image/jpeg',0.92);}
+let uploadImageFile=null,uploadImageUrl=null,commTab='all';
+async function uploadImageToStorage(file){const ext=file.name.split('.').pop().toLowerCase();const path=`community/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;const url=`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`;const wrap=document.getElementById('upload-progress-wrap');const bar=document.getElementById('upload-progress-bar');wrap.style.display='block';bar.style.width='15%';const res=await fetch(url,{method:'POST',headers:{'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':file.type,'x-upsert':'true'},body:file});bar.style.width='90%';if(!res.ok){const txt=await res.text();throw new Error('Storage upload failed: '+txt);}bar.style.width='100%';setTimeout(()=>{wrap.style.display='none';bar.style.width='0%';},600);return`${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;}
+function handleImageSelect(e){const file=e.target.files[0];if(!file)return;if(file.size>5*1024*1024){haptic.error();showToast(t('toast_img_big'));return;}openCropModal(file);}
+function removeImage(){uploadImageFile=null;uploadImageUrl=null;cropState.img=null;cropState.pendingFile=null;document.getElementById('img-preview-wrap').style.display='none';document.getElementById('img-upload-area').style.display='flex';document.getElementById('upload-file-input').value='';const prev=document.getElementById('img-preview');if(prev.src&&prev.src.startsWith('blob:'))URL.revokeObjectURL(prev.src);prev.src='';}
+function updateUploadLevels(){const village=document.getElementById('upload-village').value;const levels=village==='builder'?['4','5','6','7','8','9','10']:['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];const prefix=village==='builder'?'BH':'TH';const sel=document.getElementById('upload-level');sel.innerHTML=levels.map(v=>`<option value="${v}">${prefix} ${v}</option>`).join('');sel.value=village==='builder'?'7':'9';}
+async function submitUpload(){const title=document.getElementById('upload-title').value.trim();const village=document.getElementById('upload-village').value;const level=document.getElementById('upload-level').value;const type=document.getElementById('upload-type').value;const cocLink=document.getElementById('upload-coc-link').value.trim();const nickname=document.getElementById('upload-nickname').value.trim();if(!uploadImageFile){haptic.error();showToast(t('toast_no_img'));return;}if(!title){haptic.error();showToast(t('toast_no_title'));return;}if(!cocLink){haptic.error();showToast(t('toast_no_coc'));return;}const btn=document.getElementById('upload-submit-btn');btn.disabled=true;btn.textContent=t('upload_uploading');showLoading(t('loading_bases'));try{uploadImageUrl=await uploadImageToStorage(uploadImageFile);const body={title,village,th_level:parseInt(level),type,image_url:uploadImageUrl,coc_link:cocLink,source:'community',uploader_name:nickname||'Anonymous',uploaded_by:getUserId(),status:'pending',is_active:false,uses:0,favs:0};const res=await fetch(`${SUPABASE_URL}/rest/v1/layouts`,{method:'POST',headers:{...SB_HEADERS,'Prefer':'return=minimal'},body:JSON.stringify(body)});if(!res.ok)throw new Error('DB insert failed: '+await res.text());hideLoading(true);document.getElementById('upload-form').style.display='none';haptic.success();setTimeout(()=>haptic.success(),120);document.getElementById('upload-success').classList.add('show');}catch(e){console.error(e);haptic.error();showToast('❌ Hata: '+e.message);btn.disabled=false;btn.textContent='⬆️ Yükle & İncelemeye Gönder';hideLoading(true);}}
+function resetUploadForm(){document.getElementById('upload-form').style.display='flex';document.getElementById('upload-success').classList.remove('show');document.getElementById('upload-title').value='';document.getElementById('upload-coc-link').value='';document.getElementById('upload-nickname').value='';document.getElementById('upload-submit-btn').disabled=false;document.getElementById('upload-submit-btn').textContent=t('upload_btn');removeImage();updateUploadLevels();}
+function getUserId(){let uid=localStorage.getItem('cv_uid');if(!uid){uid='u_'+Date.now()+'_'+Math.random().toString(36).slice(2);localStorage.setItem('cv_uid',uid);}return uid;}
+let communityBases=[],commSort='score',commVillage='all',commType='all';
+function commScore(b){return(b.favs||0)*2+(b.uses||0);}
+async function loadCommunityBases(){try{communityBases=await sbGetAll('layouts?select=*&source=eq.community&is_active=eq.true&order=created_at.desc');}catch(e){communityBases=[];}}
+function switchCommTab(tab){commTab=tab;document.getElementById('comm-tab-all').classList.toggle('active',tab==='all');document.getElementById('comm-tab-mine').classList.toggle('active',tab==='mine');const showAll=tab==='all';document.getElementById('comm-sort-bar').style.display=showAll?'':'none';document.getElementById('comm-village-row').style.display=showAll?'':'none';document.getElementById('comm-type-row').style.display=showAll?'':'none';renderCommunityScreen();}
+function setCommSort(sort){haptic.light();commSort=sort;document.querySelectorAll('[data-csort]').forEach(p=>p.classList.toggle('active',p.dataset.csort===sort));renderCommunityScreen();}
+function setCommVillage(val){haptic.light();commVillage=val;document.querySelectorAll('[data-cvillage]').forEach(c=>c.classList.toggle('active',c.dataset.cvillage===val));renderCommunityScreen();}
+function setCommType(val){haptic.light();commType=val;document.querySelectorAll('[data-ctype]').forEach(c=>c.classList.toggle('active',c.dataset.ctype===val));renderCommunityScreen();}
+function renderCommunityScreen(){const grid=document.getElementById('comm-grid');const empty=document.getElementById('comm-empty');if(commTab==='mine'){const uid=getUserId();let bases=communityBases.filter(b=>b.uploaded_by===uid);const pending=allBases.filter(b=>b.source==='community'&&b.uploaded_by===uid);const ids=new Set(bases.map(b=>b.id));pending.forEach(b=>{if(!ids.has(b.id))bases.push(b);});if(!bases.length){empty.style.display='flex';grid.innerHTML='';return;}const mineRanks=new Map();[...communityBases].sort((a,b)=>commScore(b)-commScore(a)).forEach((b,i)=>mineRanks.set(b.id,i+1));bases.sort((a,b)=>commScore(b)-commScore(a));empty.style.display='none';grid.innerHTML=bases.map(b=>{const isPending=b.is_active===false||b.status==='pending';const globalRank=mineRanks.get(b.id);let card=cardHtml(b,{showUploader:false,rank:globalRank});if(isPending)card=card.replace('<div class="base-card"','<div class="base-card" style="opacity:.7;border-color:rgba(245,166,35,.4);"').replace('<div class="card-type">','<div class="card-type" style="color:var(--gold);">⏳ İncelemede · </div><div class="card-type" style="display:none;">');return card;}).join('');return;}let bases=[...communityBases];if(commVillage!=='all')bases=bases.filter(b=>b.village===commVillage);if(commType!=='all')bases=bases.filter(b=>b.type===commType);const scoreRanks=new Map();[...communityBases].sort((a,b)=>commScore(b)-commScore(a)).forEach((b,i)=>scoreRanks.set(b.id,i+1));switch(commSort){case'newest':bases.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));break;case'popular':bases.sort((a,b)=>(b.uses||0)-(a.uses||0));break;case'favs':bases.sort((a,b)=>(b.favs||0)-(a.favs||0));break;default:bases.sort((a,b)=>commScore(b)-commScore(a));break;}if(!bases.length){empty.style.display='flex';grid.innerHTML='';return;}empty.style.display='none';grid.innerHTML=bases.map(b=>cardHtml(b,{showUploader:true,rank:scoreRanks.get(b.id)})).join('');}
+function openLightbox(src){haptic.light();const lb=document.getElementById('lightbox');const img=document.getElementById('lightbox-img');img.src=src;lb.classList.add('open');let startY=0;lb.ontouchstart=e=>{startY=e.touches[0].clientY;};lb.ontouchmove=e=>{if(e.touches[0].clientY-startY>80)closeLightbox();};}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
+window.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+async function init(){
+  currentLang=detectLang();
+  document.getElementById('lang-btn').textContent=LANG_LABELS[currentLang]||currentLang.toUpperCase();
+  document.querySelectorAll('.lang-opt').forEach(el=>el.classList.toggle('active',el.id==='lang-opt-'+currentLang));
+  document.documentElement.dir=currentLang==='ar'?'rtl':'ltr';
+  history.replaceState({screen:'screen-home'},'','');
+  history.pushState({screen:'screen-home'},'','');
+  document.getElementById('count-home').textContent='…';
+  document.getElementById('count-builder').textContent='…';
   await loadAllBases();
-  loadCommunityBases().catch(e => console.warn('Community load skipped:', e));
+  loadCommunityBases().catch(e=>console.warn('Community load skipped:',e));
   applyTranslations();
   renderHomeBases();
-  const homeCount    = allBases.filter(b=>b.village==='home').length;
-  const builderCount = allBases.filter(b=>b.village==='builder').length;
-  document.getElementById('count-home').textContent    = `${homeCount} ${t('home_layouts')}`;
-  document.getElementById('count-builder').textContent = `${builderCount} ${t('home_layouts')}`;
+  const homeCount=allBases.filter(b=>b.village==='home').length;
+  const builderCount=allBases.filter(b=>b.village==='builder').length;
+  document.getElementById('count-home').textContent=`${homeCount} ${t('home_layouts')}`;
+  document.getElementById('count-builder').textContent=`${builderCount} ${t('home_layouts')}`;
   pushAd('home-banner');
-  document.body.style.opacity = '1';
-  window.CV_STRINGS = {
-    comm_lock_title:t('comm_lock_title'), comm_lock_desc:t('comm_lock_desc'),
-    comm_lock_once:t('comm_lock_once'), comm_lock_duration:t('comm_lock_duration'),
-    comm_lock_btn:t('comm_lock_btn'), comm_lock_back:t('comm_lock_back'),
-    comm_lock_footer:t('comm_lock_footer'), upload_lock_btn:t('upload_lock_btn'),
-  };
+  document.body.style.opacity='1';
+  window.CV_STRINGS={comm_lock_title:t('comm_lock_title'),comm_lock_desc:t('comm_lock_desc'),comm_lock_once:t('comm_lock_once'),comm_lock_duration:t('comm_lock_duration'),comm_lock_btn:t('comm_lock_btn'),comm_lock_back:t('comm_lock_back'),comm_lock_footer:t('comm_lock_footer'),upload_lock_btn:t('upload_lock_btn')};
 }
 init();
 </script>
