@@ -26,6 +26,26 @@
     }
     console.log("[Bridge] Android mode active.");
 
+    /* ── Çeviri yardımcısı ─────────────────────────────────────────────────
+       index.html init() çalıştıktan sonra window.CV_STRINGS set edilir.
+       Bridge o an için hazır olmayabilir, bu yüzden lazy getter kullanıyoruz.
+    ─────────────────────────────────────────────────────────────────────── */
+    function s(key) {
+        // CV_STRINGS henüz set edilmemişse fallback İngilizce
+        var fallback = {
+            comm_lock_title:    '🔒 COMMUNITY LOCKED',
+            comm_lock_desc:     'To view community content and share your own base, you need to watch a <b>short rewarded ad</b>.',
+            comm_lock_once:     'Watch the ad once and <b>Community unlocks permanently</b> — no more ads required.',
+            comm_lock_duration: 'You will watch a video ad of about <b>~30 seconds</b>.',
+            comm_lock_btn:      '🎬 Watch Ad to Unlock',
+            comm_lock_back:     '← Go Back',
+            comm_lock_footer:   'You cannot access this tab without watching the ad.',
+            upload_lock_btn:    '🎬 Watch Ad to Upload',
+        };
+        var src = (window.CV_STRINGS && window.CV_STRINGS[key]) ? window.CV_STRINGS[key] : fallback[key];
+        return src || key;
+    }
+
     /* ════════════════════════════════════════════════════════════════════════
        1. EKRAN GEÇİŞ SAYACI — 5 geçişte 1 interstitial
     ════════════════════════════════════════════════════════════════════════ */
@@ -49,11 +69,6 @@
         window.AndroidApp.requestUpload();
     };
 
-    /**
-     * Upload ekranına kilit bildirim banner'ı enjekte eder.
-     * Sitenin mevcut .btn-upload-submit butonunun üstüne gelir.
-     * Zaten eklenmişse tekrar eklemez.
-     */
     function refreshUploadLockUI() {
         const screen = document.getElementById("screen-upload");
         if (!screen) return;
@@ -79,19 +94,17 @@
             '<span style="font-size:1.1rem;flex-shrink:0;margin-top:.05rem;">🎬</span>' +
             '<div>' +
                 '<div style="font-size:.42rem;font-weight:900;color:#F5A623;margin-bottom:.14rem;letter-spacing:.3px;">' +
-                    'Base yüklemek için kısa bir reklam izle' +
+                    s('upload_lock_btn') +
                 '</div>' +
                 '<div style="font-size:.36rem;color:#B8926A;line-height:1.55;">' +
-                    'Her yükleme öncesinde yaklaşık <strong style="color:#FFF3DC;">~30 saniyelik</strong> ' +
-                    'ödüllü reklam izlemen gerekiyor. ' +
-                    'Reklam bittikten sonra yükleme formu otomatik olarak gönderilir.' +
+                    s('comm_lock_duration') +
                 '</div>' +
             '</div>';
 
         // ── "Reklam İzle ve Yükle" butonu ──
         const watchBtn = document.createElement("button");
         watchBtn.id = "android-upload-watch-btn";
-        watchBtn.innerHTML = "🎬&nbsp; Reklam İzle ve Yükle";
+        watchBtn.innerHTML = s('upload_lock_btn');
         watchBtn.style.cssText = [
             "width:100%",
             "padding:.55rem",
@@ -113,12 +126,11 @@
 
         watchBtn.addEventListener("click", function () {
             watchBtn.disabled = true;
-            watchBtn.innerHTML = "⏳&nbsp; Reklam yükleniyor...";
+            watchBtn.innerHTML = "⏳&nbsp; ...";
 
             window.requestUploadAccess(function () {
-                // Reklam izlendi → asıl submit butonunu tıkla
                 watchBtn.disabled = false;
-                watchBtn.innerHTML = "🎬&nbsp; Reklam İzle ve Yükle";
+                watchBtn.innerHTML = s('upload_lock_btn');
                 submitBtn.click();
             });
         });
@@ -142,10 +154,6 @@
         window.AndroidApp.unlockCommunity();
     };
 
-    /**
-     * Community ekranına kilit overlay'i enjekte eder.
-     * Zaten unlock edilmişse overlay gösterilmez / mevcutsa kaldırılır.
-     */
     function refreshCommunityLockUI() {
         const screen = document.getElementById("screen-community");
         if (!screen) return;
@@ -185,17 +193,14 @@
             // Başlık
             '<div style="font-family:\'Cinzel Decorative\',serif;font-size:.62rem;color:#F5A623;' +
                 'text-shadow:0 0 20px rgba(245,166,35,.4);line-height:1.3;">' +
-                'Community Kilitli' +
+                s('comm_lock_title') +
             '</div>' +
 
             // Açıklama
             '<div style="font-size:.42rem;color:#B8926A;line-height:1.65;max-width:18rem;">' +
-                'Topluluk içeriklerini görmek ve kendi base\'ini paylaşmak için ' +
-                '<span style="color:#FFF3DC;font-weight:700;">kısa bir ödüllü reklam</span> izlemen gerekiyor.' +
+                s('comm_lock_desc') +
                 '<br><br>' +
-                'Reklamı bir kez izledikten sonra ' +
-                '<span style="color:#F5A623;font-weight:700;">Community kalıcı olarak açılır</span>' +
-                ' — bir daha reklam sorulmaz.' +
+                s('comm_lock_once') +
             '</div>' +
 
             // Süre bilgisi kutusu
@@ -208,8 +213,7 @@
             '">' +
                 '<span style="font-size:.7rem;">🎬</span>' +
                 '<span style="font-size:.38rem;color:#B8926A;line-height:1.4;">' +
-                    'Yaklaşık <strong style="color:#FFF3DC;">~30 saniye</strong> sürecek<br>' +
-                    'bir video reklam izleyeceksin.' +
+                    s('comm_lock_duration') +
                 '</span>' +
             '</div>' +
 
@@ -224,10 +228,9 @@
                 'box-shadow:0 4px 20px rgba(245,166,35,.45);' +
                 'display:flex;align-items:center;gap:.28rem;' +
             '">' +
-                '🎬&nbsp; Reklam İzle ve Aç' +
+                s('comm_lock_btn') +
             '</button>' +
 
-            // Alt not
             // Geri butonu
             '<button onclick="window.goScreen(\'screen-home\')" style="' +
                 'margin-top:.1rem;' +
@@ -237,23 +240,21 @@
                 'font-family:\'Nunito\',sans-serif;' +
                 'border:1.5px solid rgba(107,63,18,.5);border-radius:.44rem;cursor:pointer;' +
             '">' +
-                '← Geri Dön' +
+                s('comm_lock_back') +
             '</button>' +
 
             // Alt not
             '<div style="font-size:.33rem;color:#6B3F12;margin-top:.1rem;">' +
-                'Reklamı izlemeden bu sekmeye erişilemez.' +
+                s('comm_lock_footer') +
             '</div>';
 
-        // Overlay screen içine eklenir — position:relative gerekli
         screen.style.position = "relative";
         screen.appendChild(overlay);
 
-        // Butona olay dinleyici
         document.getElementById("android-community-unlock-btn").addEventListener("click", function () {
             var btn = document.getElementById("android-community-unlock-btn");
             btn.disabled = true;
-            btn.innerHTML = "⏳&nbsp; Reklam yükleniyor...";
+            btn.innerHTML = "⏳&nbsp; ...";
 
             window.requestCommunityAccess(function () {
                 overlay.remove();
@@ -275,9 +276,9 @@
             } else {
                 if (watchBtn) {
                     watchBtn.disabled = false;
-                    watchBtn.innerHTML = "🎬&nbsp; Reklam İzle ve Yükle";
+                    watchBtn.innerHTML = s('upload_lock_btn');
                 }
-                showToast("⚠️ Reklam yüklenemedi, lütfen tekrar dene.");
+                if (window.showToast) window.showToast("⚠️ " + s('comm_lock_footer'));
             }
             window._pendingUploadCallback = null;
         }
@@ -289,26 +290,30 @@
             } else {
                 if (unlockBtn) {
                     unlockBtn.disabled = false;
-                    unlockBtn.innerHTML = "🎬&nbsp; Reklam İzle ve Aç";
+                    unlockBtn.innerHTML = s('comm_lock_btn');
                 }
-                showToast("⚠️ Reklam yüklenemedi, lütfen tekrar dene.");
+                if (window.showToast) window.showToast("⚠️ " + s('comm_lock_footer'));
             }
             window._pendingCommunityCallback = null;
         }
     };
 
     /* ════════════════════════════════════════════════════════════════════════
-       5. ANDROID READY — MainActivity sayfa yüklenince çağırır
+       5. ANDROID READY
     ════════════════════════════════════════════════════════════════════════ */
     window.onAndroidReady = function () {
         console.log("[Bridge] Android ready.");
         document.documentElement.style.setProperty("--android-banner-height", "50px");
+        // CV_STRINGS artık hazır — UI yenile
+        setTimeout(function () {
+            var active = document.querySelector('.screen.active');
+            if (active && active.id === 'screen-community') refreshCommunityLockUI();
+            if (active && active.id === 'screen-upload')    refreshUploadLockUI();
+        }, 200);
     };
 
     /* ════════════════════════════════════════════════════════════════════════
        6. NAVBAR HOOK
-       Upload → ekrana geç, kilit banner orada görünür
-       Community → ekrana geç, kilit overlay orada görünür
     ════════════════════════════════════════════════════════════════════════ */
     function hookNavItems() {
         document.querySelectorAll('[onclick*="screen-upload"]').forEach(function (el) {
@@ -338,26 +343,6 @@
         document.addEventListener("DOMContentLoaded", hookNavItems);
     } else {
         hookNavItems();
-    }
-
-    /* ════════════════════════════════════════════════════════════════════════
-       HELPER: Toast bildirimi
-    ════════════════════════════════════════════════════════════════════════ */
-    function showToast(msg) {
-        if (window.showToast) { window.showToast(msg); return; }
-        var t = document.createElement("div");
-        t.textContent = msg;
-        t.style.cssText = [
-            "position:fixed","bottom:5rem","left:50%",
-            "transform:translateX(-50%)",
-            "background:#4A2D0D","color:#FFF3DC",
-            "padding:.33rem .7rem","border-radius:.44rem",
-            "font-size:.38rem","z-index:9999",
-            "pointer-events:none",
-            "border:1px solid rgba(245,166,35,.35)"
-        ].join(";");
-        document.body.appendChild(t);
-        setTimeout(function () { t.remove(); }, 3500);
     }
 
 })();
