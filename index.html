@@ -823,37 +823,22 @@ async function loadAllBases(){
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 /* ═══════════════════════════════════════════
-   GÖRSEL URL OPTİMİZASYONU
-   Supabase Storage URL'lerine küçültme parametreleri ekler.
-   Kart görselleri: 640px genişlik, %70 kalite → ~5-10x daha küçük dosya
-   Bu sayede tüm görseller aynı anda hızlıca yüklenir.
-═══════════════════════════════════════════ */
-function thumbUrl(url){
-  if(!url)return url;
-  // Supabase Storage public URL'si mi kontrol et
-  if(url.includes('/storage/v1/object/public/')){
-    // Render endpoint'e çevir (Supabase Image Transformation)
-    const renderUrl=url.replace('/storage/v1/object/public/','/storage/v1/render/image/public/');
-    return renderUrl+'?width=640&quality=60&resize=cover';
-  }
-  return url;
-}
-
-/* ═══════════════════════════════════════════
-   CARD HTML — tüm görseller aynı anda yüklensin
+   CARD HTML
+   Native loading="lazy" kullanır — tarayıcı
+   görüntü alanına yaklaşınca otomatik yükler,
+   hiçbir JS observer karmaşası yok.
 ═══════════════════════════════════════════ */
 function cardHtml(base,opts={}){
   const fav=isFav(base.id);
   const tl=thLabel(base);
   const typeL=getTypeLabel(base.type);
   const showUploader=opts.showUploader&&base.uploader_name&&base.uploader_name!=='Anonymous';
-  // Optimize edilmiş (küçültülmüş) URL
-  const url=thumbUrl(base.image_url);
-  const imgHtml=url
-    ?`<img src="${url}" alt="${escHtml(base.title)}" decoding="async" loading="eager" fetchpriority="high" width="640" height="360" onload="this.classList.add('loaded');this.closest('.card-thumb')?.classList.remove('skeleton')" onerror="this.closest('.card-thumb')?.classList.remove('skeleton')">`
+  const isEager=opts.eager===true;
+  const imgHtml=base.image_url
+    ?`<img src="${base.image_url}" alt="${escHtml(base.title)}" decoding="async" loading="${isEager?'eager':'lazy'}" fetchpriority="${isEager?'high':'auto'}" width="640" height="360" onload="this.classList.add('loaded');this.closest('.card-thumb')?.classList.remove('skeleton')" onerror="this.closest('.card-thumb')?.classList.remove('skeleton')">`
     :`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.25;">🏰</div>`;
   return`<div class="base-card" onclick="openDetail(${base.id})">
-    <div class="card-thumb${url?' skeleton':''}" style="position:relative;">
+    <div class="card-thumb${base.image_url?' skeleton':''}" style="position:relative;">
       ${imgHtml}
       <div class="card-badge">${tl}</div>
       <div class="card-fav${fav?' active':''}" onclick="event.stopPropagation();toggleFav(${base.id},this)">${fav?'❤️':'🤍'}</div>
@@ -882,8 +867,9 @@ function renderGrid(bases,gridEl,emptyEl,opts){
     const slice=bases.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
     if(!slice.length)return;
     let html='';
-    slice.forEach((b)=>{
-      html+=cardHtml(b,opts||{});
+    slice.forEach((b,i)=>{
+      const globalI=page*PAGE_SIZE+i;
+      html+=cardHtml(b,{...(opts||{}),eager:globalI<4});
     });
     if(page===0){gridEl.innerHTML=html;}
     else{const spinner=gridEl.querySelector('#load-more-spinner');if(spinner)spinner.remove();gridEl.insertAdjacentHTML('beforeend',html);}
