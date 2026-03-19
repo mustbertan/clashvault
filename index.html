@@ -1991,8 +1991,14 @@ function renderFavs() {
 ═══════════════════════════════════════════ */
 function copyToClash() {
   if (!currentBase) return;
-  if (currentBase.coc_link) { window.open(currentBase.coc_link, '_blank'); haptic.medium(); showToast(t('toast_coc_open')); }
-  else { haptic.error(); showToast(t('toast_coc_missing')); }
+  if (currentBase.coc_link) {
+    // Android WebView'da window.open shouldOverrideUrlLoading'i tetiklemez
+    // location.href kullanınca WebViewClient devreye girer → CoC'a yönlendirir
+    window.location.href = currentBase.coc_link;
+    haptic.medium(); showToast(t('toast_coc_open'));
+  } else {
+    haptic.error(); showToast(t('toast_coc_missing'));
+  }
 }
 
 /* ═══════════════════════════════════════════
