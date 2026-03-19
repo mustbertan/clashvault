@@ -868,11 +868,17 @@ function waitForImages(gridEl,count){
     const imgs=Array.from(gridEl.querySelectorAll('img')).slice(0,count);
     if(!imgs.length){resolve();return;}
     let done=0;
-    const tick=()=>{done++;if(done>=imgs.length)resolve();};
+    const total=imgs.length;
+    const tick=()=>{done++;if(done>=total)resolve();};
+    let allComplete=true;
     imgs.forEach(img=>{
-      if(img.complete){tick();}
-      else{img.addEventListener('load',tick,{once:true});img.addEventListener('error',tick,{once:true});}
+      if(img.complete&&img.naturalWidth>0){tick();}
+      else{allComplete=false;img.addEventListener('load',tick,{once:true});img.addEventListener('error',tick,{once:true});}
     });
+    // Hepsi zaten yüklüyse hemen resolve et
+    if(allComplete)resolve();
+    // 3 saniye sonra her halükarda devam et (takılma önlemi)
+    setTimeout(resolve,3000);
   });
 }
 
