@@ -823,20 +823,37 @@ async function loadAllBases(){
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 /* ═══════════════════════════════════════════
-   CARD HTML — sadeleştirilmiş, temiz lazy load
+   GÖRSEL URL OPTİMİZASYONU
+   Supabase Storage URL'lerine küçültme parametreleri ekler.
+   Kart görselleri: 640px genişlik, %70 kalite → ~5-10x daha küçük dosya
+   Bu sayede tüm görseller aynı anda hızlıca yüklenir.
+═══════════════════════════════════════════ */
+function thumbUrl(url){
+  if(!url)return url;
+  // Supabase Storage public URL'si mi kontrol et
+  if(url.includes('/storage/v1/object/public/')){
+    // Render endpoint'e çevir (Supabase Image Transformation)
+    const renderUrl=url.replace('/storage/v1/object/public/','/storage/v1/render/image/public/');
+    return renderUrl+'?width=640&quality=60&resize=cover';
+  }
+  return url;
+}
+
+/* ═══════════════════════════════════════════
+   CARD HTML — tüm görseller aynı anda yüklensin
 ═══════════════════════════════════════════ */
 function cardHtml(base,opts={}){
   const fav=isFav(base.id);
   const tl=thLabel(base);
   const typeL=getTypeLabel(base.type);
   const showUploader=opts.showUploader&&base.uploader_name&&base.uploader_name!=='Anonymous';
-  // İlk 2 kart doğrudan yüklensin, geri kalanlar lazy
-  const eager=opts.eager===true;
-  const imgHtml=base.image_url
-    ?`<img src="${eager?base.image_url:''}" data-src="${base.image_url}" alt="${escHtml(base.title)}" loading="${eager?'eager':'lazy'}" decoding="async" fetchpriority="${eager?'high':'low'}" width="640" height="360">`
+  // Optimize edilmiş (küçültülmüş) URL
+  const url=thumbUrl(base.image_url);
+  const imgHtml=url
+    ?`<img src="${url}" alt="${escHtml(base.title)}" decoding="async" loading="eager" fetchpriority="high" width="640" height="360" onload="this.classList.add('loaded');this.closest('.card-thumb')?.classList.remove('skeleton')" onerror="this.closest('.card-thumb')?.classList.remove('skeleton')">`
     :`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.25;">🏰</div>`;
   return`<div class="base-card" onclick="openDetail(${base.id})">
-    <div class="card-thumb${base.image_url&&!eager?' skeleton':''}" style="position:relative;">
+    <div class="card-thumb${url?' skeleton':''}" style="position:relative;">
       ${imgHtml}
       <div class="card-badge">${tl}</div>
       <div class="card-fav${fav?' active':''}" onclick="event.stopPropagation();toggleFav(${base.id},this)">${fav?'❤️':'🤍'}</div>
@@ -857,45 +874,7 @@ function cardHtml(base,opts={}){
 
 const PAGE_SIZE=12;
 
-/* ═══════════════════════════════════════════
-   IMAGE OBSERVER — sadece data-src olan,
-   src'si boş olan kartları izle
-═══════════════════════════════════════════ */
-const imageObserver=new IntersectionObserver((entries,observer)=>{
-  entries.forEach(entry=>{
-    if(!entry.isIntersecting)return;
-    const img=entry.target;
-    const realSrc=img.dataset.src;
-    // Zaten yüklenmiş veya src atanmışsa atla
-    if(!realSrc||img.src===realSrc||(img.src&&!img.src.endsWith('/')))return;
-    img.onload=()=>{img.classList.add('loaded');img.closest('.card-thumb')?.classList.remove('skeleton');};
-    img.onerror=()=>{img.closest('.card-thumb')?.classList.remove('skeleton');};
-    img.src=realSrc;
-    observer.unobserve(img);
-  });
-},{root:null,rootMargin:'300px 0px',threshold:0});
-
-function observeGridImages(rootEl){
-  if(!rootEl)return;
-  // Sadece src'si boş olan img'leri gözlemle (eager olanların src'si dolu)
-  rootEl.querySelectorAll('img[data-src]').forEach(img=>{
-    if(img.dataset.observed==='1')return;
-    img.dataset.observed='1';
-    if(img.src&&img.src!==window.location.href&&!img.src.endsWith('/')){
-      // src zaten atanmış (eager), sadece onload'ı bağla
-      if(!img.complete){
-        img.onload=()=>{img.classList.add('loaded');img.closest('.card-thumb')?.classList.remove('skeleton');};
-        img.onerror=()=>{img.closest('.card-thumb')?.classList.remove('skeleton');};
-      }else{
-        img.classList.add('loaded');img.closest('.card-thumb')?.classList.remove('skeleton');
-      }
-      return;
-    }
-    imageObserver.observe(img);
-  });
-}
-
-function renderGrid(bases,gridEl,emptyEl){
+function renderGrid(bases,gridEl,emptyEl,opts){
   if(!bases.length){if(emptyEl)emptyEl.style.display='flex';gridEl.innerHTML='';if(gridEl._scrollEl&&gridEl._scrollHandler)gridEl._scrollEl.removeEventListener('scroll',gridEl._scrollHandler);return;}
   if(emptyEl)emptyEl.style.display='none';
   let page=0;
@@ -903,13 +882,11 @@ function renderGrid(bases,gridEl,emptyEl){
     const slice=bases.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
     if(!slice.length)return;
     let html='';
-    slice.forEach((b,i)=>{
-      const globalI=page*PAGE_SIZE+i;
-      html+=cardHtml(b,{eager:globalI<2});
+    slice.forEach((b)=>{
+      html+=cardHtml(b,opts||{});
     });
     if(page===0){gridEl.innerHTML=html;}
     else{const spinner=gridEl.querySelector('#load-more-spinner');if(spinner)spinner.remove();gridEl.insertAdjacentHTML('beforeend',html);}
-    requestAnimationFrame(()=>observeGridImages(gridEl));
     page++;
     if(page*PAGE_SIZE<bases.length){gridEl.insertAdjacentHTML('beforeend',`<div id="load-more-spinner" style="grid-column:1/-1;display:flex;justify-content:center;padding:.8rem;"><div class="spinner"></div></div>`);}
   }
