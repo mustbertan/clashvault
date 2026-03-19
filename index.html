@@ -114,7 +114,6 @@ body::before {
 .tag-trophy { background:rgba(245,166,35,.15);  color:var(--gold-light); border:1px solid rgba(245,166,35,.3); }
 .tag-hybrid { background:rgba(76,201,240,.15);  color:var(--blue);       border:1px solid rgba(76,201,240,.3); }
 .tag-progress { background:rgba(155,114,207,.15); color:var(--purple);   border:1px solid rgba(155,114,207,.3); }
-/* ── FUN TAG ── */
 .tag-fun    { background:rgba(255,107,157,.2);  color:#ff6b9d;  border:1px solid rgba(255,107,157,.3); }
 .section-head { display:flex; align-items:center; justify-content:space-between; padding:0 .45rem; margin-bottom:.38rem; }
 .section-title { font-family:'Cinzel Decorative',serif; font-size:.5rem; color:var(--gold-light); display:flex; align-items:center; gap:.22rem; }
@@ -127,8 +126,19 @@ body::before {
 .cards-grid { display:grid; grid-template-columns:1fr; gap:.33rem; padding:0 .45rem; margin-bottom:.55rem; }
 .base-card { background:var(--brown-card); border-radius:var(--radius); border:1.5px solid var(--brown-border); overflow:hidden; cursor:pointer; transition:all .25s; position:relative; content-visibility:auto; contain-intrinsic-size:300px; }
 .base-card:hover { transform:translateY(-3px); border-color:var(--gold-dark); box-shadow:0 8px 25px rgba(0,0,0,.4),var(--shadow-gold); }
-.card-thumb { width:100%; aspect-ratio:16/9; background:linear-gradient(135deg,#2D1A00,#1a1040); position:relative; overflow:hidden; }
-.card-thumb img { width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .25s ease; }
+.card-thumb { width:100%; aspect-ratio:16/9; background:linear-gradient(135deg,#2D1A00,#1a1040); position:relative; overflow:hidden; contain:content; }
+.card-thumb img { width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .3s ease; will-change:opacity; }
+.card-thumb img.loaded { opacity:1; }
+/* ── OPTİMİZE EDİLMİŞ SKELETON ── */
+.card-thumb.skeleton { position:relative; }
+.card-thumb.skeleton::after {
+  content:''; position:absolute; inset:0;
+  transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
+  animation:shimmer 1.4s infinite;
+  will-change:transform;
+}
+@keyframes shimmer { to { transform:translateX(100%); } }
 .card-badge { position:absolute; top:.33rem; left:.33rem; background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:var(--brown-dark); font-size:.42rem; font-weight:900; padding:.17rem .36rem; border-radius:.28rem; z-index:2; }
 .card-fav { position:absolute; top:.33rem; right:.33rem; width:1.17rem; height:1.17rem; background:rgba(26,15,0,.8); border-radius:.28rem; display:flex; align-items:center; justify-content:center; font-size:.6rem; z-index:2; cursor:pointer; border:1px solid rgba(107,63,18,.5); transition:all .2s; }
 .card-fav.active { background:rgba(230,57,70,.2); border-color:rgba(230,57,70,.4); }
@@ -418,18 +428,6 @@ body::before {
   font-size:.5rem; font-weight:900; color:var(--gold); letter-spacing:.5px;
 }
 .card-rank-badge .rank-icon { font-size:.5rem; }
-  /* ── Skeleton Loading ── */
-.card-thumb.skeleton {
-  background: linear-gradient(90deg, var(--brown-card) 25%, var(--brown-card2) 50%, var(--brown-card) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
-}
-@keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-.card-thumb img.loaded { opacity:1; animation: fadeInImg .3s ease; }
-@keyframes fadeInImg { from{opacity:0} to{opacity:1} }
 </style>
    <script src="android-bridge.js"></script>
 </head>
@@ -1491,7 +1489,6 @@ async function sbGet(path) {
   return r.json();
 }
 
-/* ── Pagination: tüm kayıtları sayfa sayfa çek ── */
 async function sbGetRange(path, from, to) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: {
@@ -1500,7 +1497,6 @@ async function sbGetRange(path, from, to) {
       'Range': `${from}-${to}`
     }
   });
-  // 206 Partial Content veya 200 her ikisi de geçerli
   if (!r.ok && r.status !== 206) throw new Error(`Supabase range ${r.status}`);
   return r.json();
 }
@@ -1513,7 +1509,7 @@ async function sbGetAll(path) {
     const data = await sbGetRange(path, from, from + PAGE_SIZE - 1);
     if (!Array.isArray(data) || data.length === 0) break;
     allData = allData.concat(data);
-    if (data.length < PAGE_SIZE) break; // son sayfa
+    if (data.length < PAGE_SIZE) break;
     from += PAGE_SIZE;
   }
   return allData;
@@ -1582,7 +1578,7 @@ function thLabel(base) {
 }
 
 /* ═══════════════════════════════════════════
-   DATA LOADING — with full pagination
+   DATA LOADING
 ═══════════════════════════════════════════ */
 async function loadAllBases() {
   showLoading(t('loading_bases'));
@@ -1611,19 +1607,24 @@ function cardHtml(base, opts={}) {
   const tl       = thLabel(base);
   const typeL    = getTypeLabel(base.type);
   const showUploader = opts.showUploader && base.uploader_name && base.uploader_name !== 'Anonymous';
-  const eager    = opts.eager === true;
+  // ── OPTİMİZASYON: İlk 4 kart high priority, geri kalanlar low ──
+  const globalIndex = opts.globalIndex ?? 999;
+  const isEager = globalIndex < 4;
+  const priority = isEager ? 'high' : 'low';
+
   const imgHtml = base.image_url
-    ? `<img data-src="${base.image_url}" alt="${escHtml(base.title)}"
-            loading="${eager ? 'eager' : 'lazy'}"
+    ? `<img ${isEager ? `src="${base.image_url}"` : `data-src="${base.image_url}"`}
+            alt="${escHtml(base.title)}"
+            loading="${isEager ? 'eager' : 'lazy'}"
             decoding="async"
-            fetchpriority="${eager ? 'high' : 'low'}"
+            fetchpriority="${priority}"
             width="640" height="360"
-            ${eager ? 'data-eager="1"' : ''}>`
+            ${isEager ? 'data-eager="1"' : ''}>`
     : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.25;">🏰</div>`;
 
   return `
   <div class="base-card" onclick="openDetail(${base.id})">
-    <div class="card-thumb ${base.image_url ? 'skeleton' : ''}" style="position:relative;">
+    <div class="card-thumb ${base.image_url && !isEager ? 'skeleton' : ''}" style="position:relative;">
       ${imgHtml}
       <div class="card-badge">${tl}</div>
       <div class="card-fav ${fav?'active':''}" onclick="event.stopPropagation();toggleFav(${base.id},this)">${fav?'❤️':'🤍'}</div>
@@ -1644,7 +1645,10 @@ function cardHtml(base, opts={}) {
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
 const PAGE_SIZE = 12;
+
+/* ── OPTİMİZE EDİLMİŞ IntersectionObserver ── */
 const imageObserver = new IntersectionObserver((entries, observer) => {
   entries.forEach(entry => {
     if (!entry.isIntersecting) return;
@@ -1664,16 +1668,17 @@ const imageObserver = new IntersectionObserver((entries, observer) => {
   });
 }, {
   root: null,
-  rootMargin: '250px 0px',
-  threshold: 0.01
+  rootMargin: '400px 0px', // ── OPTİMİZASYON: 250px → 400px daha önceden yükle
+  threshold: 0             // ── OPTİMİZASYON: 0.01 → 0 piksel görününce hemen tetikle
 });
 
 function observeGridImages(rootEl) {
   if (!rootEl) return;
-  rootEl.querySelectorAll('img[data-src]').forEach((img, i) => {
+  rootEl.querySelectorAll('img[data-src]').forEach(img => {
     if (img.dataset.observed === '1') return;
     img.dataset.observed = '1';
-    if (img.dataset.eager === '1' || i < 2) {
+    // ── OPTİMİZASYON: eager olanlar direkt yüklenir, observer'a takılmaz
+    if (img.dataset.eager === '1') {
       img.onload = () => {
         img.classList.add('loaded');
         img.closest('.card-thumb')?.classList.remove('skeleton');
@@ -1682,19 +1687,17 @@ function observeGridImages(rootEl) {
         img.closest('.card-thumb')?.classList.remove('skeleton');
       };
       img.src = img.dataset.src;
-      return;
+      return; // ── KRİTİK: observer'a geçme
     }
     imageObserver.observe(img);
   });
 }
 
-
 function renderGrid(bases, gridEl, emptyEl) {
   if (!bases.length) {
     if (emptyEl) emptyEl.style.display = 'flex';
     gridEl.innerHTML = '';
-    // Önceki scroll listener'ı temizle
-    if (gridEl._scrollEl) {
+    if (gridEl._scrollEl && gridEl._scrollHandler) {
       gridEl._scrollEl.removeEventListener('scroll', gridEl._scrollHandler);
     }
     return;
@@ -1707,43 +1710,41 @@ function renderGrid(bases, gridEl, emptyEl) {
     const slice = bases.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
     if (!slice.length) return;
 
-    let html = '';
+    // ── OPTİMİZASYON: DocumentFragment ile tek seferde DOM'a ekle (tek reflow)
+    const frag = document.createDocumentFragment();
+    const wrapper = document.createElement('div');
+
     slice.forEach((b, i) => {
-      const globalI = page * PAGE_SIZE + i;
-      if (globalI > 0 && globalI % 6 === 0) {
-        html += `<div style="height:4px;"></div>`;
-      }
-      html += cardHtml(b, { eager: page === 0 && i < 2 });
+      const globalIndex = page * PAGE_SIZE + i;
+      wrapper.innerHTML = cardHtml(b, { globalIndex, eager: globalIndex < 4 });
+      frag.appendChild(wrapper.firstElementChild);
     });
 
     if (page === 0) {
-      gridEl.innerHTML = html;
+      gridEl.replaceChildren(frag);
     } else {
-      // Spinner'ı kaldır, yeni kartları ekle
       const spinner = gridEl.querySelector('#load-more-spinner');
       if (spinner) spinner.remove();
-      gridEl.insertAdjacentHTML('beforeend', html);
+      gridEl.appendChild(frag);
     }
+
     requestAnimationFrame(() => observeGridImages(gridEl));
     page++;
 
-    // Daha fazla kart varsa spinner ekle
     if (page * PAGE_SIZE < bases.length) {
-      gridEl.insertAdjacentHTML('beforeend',
-        `<div id="load-more-spinner" style="grid-column:1/-1;display:flex;justify-content:center;padding:.8rem;">
-          <div class="spinner"></div>
-        </div>`
-      );
+      const spinnerDiv = document.createElement('div');
+      spinnerDiv.id = 'load-more-spinner';
+      spinnerDiv.style.cssText = 'grid-column:1/-1;display:flex;justify-content:center;padding:.8rem;';
+      spinnerDiv.innerHTML = '<div class="spinner"></div>';
+      gridEl.appendChild(spinnerDiv);
     }
   }
 
   renderPage();
 
-  // Scroll container'ı bul
   const scrollEl = gridEl.closest('.scroll-content');
   if (!scrollEl) return;
 
-  // Önceki listener'ı temizle
   if (gridEl._scrollEl && gridEl._scrollHandler) {
     gridEl._scrollEl.removeEventListener('scroll', gridEl._scrollHandler);
   }
@@ -1758,8 +1759,9 @@ function renderGrid(bases, gridEl, emptyEl) {
       renderPage();
     }
   };
-  scrollEl.addEventListener('scroll', gridEl._scrollHandler);
+  scrollEl.addEventListener('scroll', gridEl._scrollHandler, { passive: true });
 }
+
 /* ═══════════════════════════════════════════
    NAVIGATION
 ═══════════════════════════════════════════ */
@@ -2024,7 +2026,6 @@ function applyFilters() {
    DETAIL SCREEN
 ═══════════════════════════════════════════ */
 async function openDetail(id) { haptic.light();
-  // İlk kart açılışında interstitial
   if (typeof window.AndroidApp !== 'undefined') {
     window.AndroidApp.onCardOpened();
   }
@@ -2122,11 +2123,9 @@ function copyToClash() {
   if (!currentBase) return;
   if (currentBase.coc_link) {
     haptic.medium(); showToast(t('toast_coc_open'));
-    // Android: JavascriptInterface üzerinden harici aç
     if (typeof window.AndroidApp !== 'undefined' && window.AndroidApp.openExternalUrl) {
       window.AndroidApp.openExternalUrl(currentBase.coc_link);
     } else {
-      // Web fallback
       window.open(currentBase.coc_link, '_blank');
     }
   } else {
