@@ -1899,6 +1899,10 @@ function applyFilters() {
    DETAIL SCREEN
 ═══════════════════════════════════════════ */
 async function openDetail(id) { haptic.light();
+  // İlk kart açılışında interstitial
+  if (typeof window.AndroidApp !== 'undefined') {
+    window.AndroidApp.onCardOpened();
+  }
   showLoading(t('loading_detail'));
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   try {
