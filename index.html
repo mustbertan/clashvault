@@ -418,6 +418,18 @@ body::before {
   font-size:.5rem; font-weight:900; color:var(--gold); letter-spacing:.5px;
 }
 .card-rank-badge .rank-icon { font-size:.5rem; }
+  /* ── Skeleton Loading ── */
+.card-thumb.skeleton {
+  background: linear-gradient(90deg, var(--brown-card) 25%, var(--brown-card2) 50%, var(--brown-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.card-thumb img.loaded { animation: fadeInImg .3s ease; }
+@keyframes fadeInImg { from{opacity:0} to{opacity:1} }
 </style>
    <script src="android-bridge.js"></script>
 </head>
@@ -1595,16 +1607,20 @@ async function loadAllBases() {
    CARD HTML
 ═══════════════════════════════════════════ */
 function cardHtml(base, opts={}) {
-  const fav   = isFav(base.id);
-  const tl    = thLabel(base);
-  const typeL = getTypeLabel(base.type);
+  const fav      = isFav(base.id);
+  const tl       = thLabel(base);
+  const typeL    = getTypeLabel(base.type);
   const showUploader = opts.showUploader && base.uploader_name && base.uploader_name !== 'Anonymous';
+  const imgHtml = base.image_url
+    ? `<img src="${base.image_url}" alt="${base.title}" loading="lazy"
+            onload="this.classList.add('loaded');this.closest('.card-thumb').classList.remove('skeleton')"
+            onerror="this.closest('.card-thumb').classList.remove('skeleton')">`
+    : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.25;">🏰</div>`;
+
   return `
   <div class="base-card" onclick="openDetail(${base.id})">
-    <div class="card-thumb" style="position:relative;">
-      ${base.image_url
-        ? `<img src="${base.image_url}" alt="${base.title}" loading="lazy">`
-        : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.25;">🏰</div>`}
+    <div class="card-thumb ${base.image_url ? 'skeleton' : ''}" style="position:relative;">
+      ${imgHtml}
       <div class="card-badge">${tl}</div>
       <div class="card-fav ${fav?'active':''}" onclick="event.stopPropagation();toggleFav(${base.id},this)">${fav?'❤️':'🤍'}</div>
     </div>
@@ -1624,17 +1640,78 @@ function cardHtml(base, opts={}) {
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function renderGrid(bases, gridEl, emptyEl) {
-  if (!bases.length) { if (emptyEl) emptyEl.style.display = 'flex'; gridEl.innerHTML = ''; return; }
-  if (emptyEl) emptyEl.style.display = 'none';
-  let html = '';
-  bases.forEach((b, i) => {
-    if (i > 0 && i % 6 === 0) html += `<div style="height:4px;"></div>`;
-    html += cardHtml(b);
-  });
-  gridEl.innerHTML = html;
-}
+const PAGE_SIZE = 20;
 
+function renderGrid(bases, gridEl, emptyEl) {
+  if (!bases.length) {
+    if (emptyEl) emptyEl.style.display = 'flex';
+    gridEl.innerHTML = '';
+    // Önceki scroll listener'ı temizle
+    if (gridEl._scrollEl) {
+      gridEl._scrollEl.removeEventListener('scroll', gridEl._scrollHandler);
+    }
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+
+  let page = 0;
+
+  function renderPage() {
+    const slice = bases.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+    if (!slice.length) return;
+
+    let html = '';
+    slice.forEach((b, i) => {
+      const globalI = page * PAGE_SIZE + i;
+      if (globalI > 0 && globalI % 6 === 0) {
+        html += `<div style="height:4px;"></div>`;
+      }
+      html += cardHtml(b);
+    });
+
+    if (page === 0) {
+      gridEl.innerHTML = html;
+    } else {
+      // Spinner'ı kaldır, yeni kartları ekle
+      const spinner = gridEl.querySelector('#load-more-spinner');
+      if (spinner) spinner.remove();
+      gridEl.insertAdjacentHTML('beforeend', html);
+    }
+    page++;
+
+    // Daha fazla kart varsa spinner ekle
+    if (page * PAGE_SIZE < bases.length) {
+      gridEl.insertAdjacentHTML('beforeend',
+        `<div id="load-more-spinner" style="grid-column:1/-1;display:flex;justify-content:center;padding:.8rem;">
+          <div class="spinner"></div>
+        </div>`
+      );
+    }
+  }
+
+  renderPage();
+
+  // Scroll container'ı bul
+  const scrollEl = gridEl.closest('.scroll-content');
+  if (!scrollEl) return;
+
+  // Önceki listener'ı temizle
+  if (gridEl._scrollEl && gridEl._scrollHandler) {
+    gridEl._scrollEl.removeEventListener('scroll', gridEl._scrollHandler);
+  }
+
+  gridEl._scrollEl = scrollEl;
+  gridEl._scrollHandler = function() {
+    const spinner = gridEl.querySelector('#load-more-spinner');
+    if (!spinner) return;
+    const spinnerRect = spinner.getBoundingClientRect();
+    const containerRect = scrollEl.getBoundingClientRect();
+    if (spinnerRect.top < containerRect.bottom + 200) {
+      renderPage();
+    }
+  };
+  scrollEl.addEventListener('scroll', gridEl._scrollHandler);
+}
 /* ═══════════════════════════════════════════
    NAVIGATION
 ═══════════════════════════════════════════ */
