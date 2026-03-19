@@ -1992,10 +1992,14 @@ function renderFavs() {
 function copyToClash() {
   if (!currentBase) return;
   if (currentBase.coc_link) {
-    // Android WebView'da window.open shouldOverrideUrlLoading'i tetiklemez
-    // location.href kullanınca WebViewClient devreye girer → CoC'a yönlendirir
-    window.location.href = currentBase.coc_link;
     haptic.medium(); showToast(t('toast_coc_open'));
+    // Android: JavascriptInterface üzerinden harici aç
+    if (typeof window.AndroidApp !== 'undefined' && window.AndroidApp.openExternalUrl) {
+      window.AndroidApp.openExternalUrl(currentBase.coc_link);
+    } else {
+      // Web fallback
+      window.open(currentBase.coc_link, '_blank');
+    }
   } else {
     haptic.error(); showToast(t('toast_coc_missing'));
   }
