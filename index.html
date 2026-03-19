@@ -125,10 +125,10 @@ body::before {
 .pill { padding:.33rem .6rem; border-radius:.55rem; border:1.5px solid var(--brown-border); background:var(--brown-card); color:var(--text-muted); font-size:.47rem; font-weight:700; cursor:pointer; transition:all .2s; white-space:nowrap; }
 .pill.active,.pill:hover { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); border-color:var(--gold); color:var(--brown-dark); box-shadow:0 3px 10px rgba(245,166,35,.3); }
 .cards-grid { display:grid; grid-template-columns:1fr; gap:.33rem; padding:0 .45rem; margin-bottom:.55rem; }
-.base-card { background:var(--brown-card); border-radius:var(--radius); border:1.5px solid var(--brown-border); overflow:hidden; cursor:pointer; transition:all .25s; position:relative; content-visibility:auto; contain-intrinsic-size:300px; }
+.base-card { background:var(--brown-card); border-radius:var(--radius); border:1.5px solid var(--brown-border); overflow:hidden; cursor:pointer; transition:all .25s; position:relative; }
 .base-card:hover { transform:translateY(-3px); border-color:var(--gold-dark); box-shadow:0 8px 25px rgba(0,0,0,.4),var(--shadow-gold); }
 .card-thumb { width:100%; aspect-ratio:16/9; background:linear-gradient(135deg,#2D1A00,#1a1040); position:relative; overflow:hidden; }
-.card-thumb img { width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .25s ease; }
+.card-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
 .card-badge { position:absolute; top:.33rem; left:.33rem; background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:var(--brown-dark); font-size:.42rem; font-weight:900; padding:.17rem .36rem; border-radius:.28rem; z-index:2; }
 .card-fav { position:absolute; top:.33rem; right:.33rem; width:1.17rem; height:1.17rem; background:rgba(26,15,0,.8); border-radius:.28rem; display:flex; align-items:center; justify-content:center; font-size:.6rem; z-index:2; cursor:pointer; border:1px solid rgba(107,63,18,.5); transition:all .2s; }
 .card-fav.active { background:rgba(230,57,70,.2); border-color:rgba(230,57,70,.4); }
@@ -422,14 +422,16 @@ body::before {
 .card-thumb.skeleton {
   background: linear-gradient(90deg, var(--brown-card) 25%, var(--brown-card2) 50%, var(--brown-card) 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
+  animation: shimmer 1.1s infinite;
 }
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
-.card-thumb img.loaded { opacity:1; animation: fadeInImg .3s ease; }
-@keyframes fadeInImg { from{opacity:0} to{opacity:1} }
+.card-thumb img { opacity:1; }
+.card-thumb img.preload-pending { opacity:0; }
+.card-thumb img.loaded { animation:none; opacity:1; }
+.base-card { content-visibility:auto; contain-intrinsic-size:300px; }
 </style>
    <script src="android-bridge.js"></script>
 </head>
@@ -1606,24 +1608,80 @@ async function loadAllBases() {
 /* ═══════════════════════════════════════════
    CARD HTML
 ═══════════════════════════════════════════ */
+const imagePreloadCache = new Set();
+const imagePreloadInflight = new Map();
+const FIRST_SCREEN_PRELOAD_COUNT = 8;
+const NEXT_PAGE_PRELOAD_COUNT = 6;
+
+function preloadImage(url) {
+  if (!url) return Promise.resolve(false);
+  if (imagePreloadCache.has(url)) return Promise.resolve(true);
+  if (imagePreloadInflight.has(url)) return imagePreloadInflight.get(url);
+
+  const promise = new Promise(resolve => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.loading = 'eager';
+    img.onload = () => {
+      imagePreloadCache.add(url);
+      imagePreloadInflight.delete(url);
+      resolve(true);
+    };
+    img.onerror = () => {
+      imagePreloadInflight.delete(url);
+      resolve(false);
+    };
+    img.src = url;
+  });
+
+  imagePreloadInflight.set(url, promise);
+  return promise;
+}
+
+function preloadBasesImages(bases, count) {
+  const urls = (bases || []).map(b => b && b.image_url).filter(Boolean).slice(0, count);
+  if (!urls.length) return Promise.resolve();
+  return Promise.allSettled(urls.map(preloadImage)).then(() => undefined);
+}
+
+function markImageReady(img) {
+  img.classList.remove('preload-pending');
+  img.classList.add('loaded');
+  img.closest('.card-thumb')?.classList.remove('skeleton');
+}
+
+function hydrateCardImages(rootEl) {
+  rootEl.querySelectorAll('img[data-src]').forEach(img => {
+    const src = img.dataset.src;
+    if (!src || img.dataset.bound === '1') return;
+    img.dataset.bound = '1';
+
+    if (imagePreloadCache.has(src)) {
+      img.src = src;
+      markImageReady(img);
+      return;
+    }
+
+    img.onload = () => markImageReady(img);
+    img.onerror = () => img.closest('.card-thumb')?.classList.remove('skeleton');
+    img.src = src;
+  });
+}
+
 function cardHtml(base, opts={}) {
   const fav      = isFav(base.id);
   const tl       = thLabel(base);
   const typeL    = getTypeLabel(base.type);
   const showUploader = opts.showUploader && base.uploader_name && base.uploader_name !== 'Anonymous';
-  const eager    = opts.eager === true;
+  const eager = opts.eager === true;
+  const preloaded = !!(base.image_url && imagePreloadCache.has(base.image_url));
   const imgHtml = base.image_url
-    ? `<img data-src="${base.image_url}" alt="${escHtml(base.title)}"
-            loading="${eager ? 'eager' : 'lazy'}"
-            decoding="async"
-            fetchpriority="${eager ? 'high' : 'low'}"
-            width="640" height="360"
-            ${eager ? 'data-eager="1"' : ''}>`
+    ? `<img data-src="${base.image_url}" alt="${base.title}" loading="${eager ? 'eager' : 'lazy'}" decoding="async" fetchpriority="${eager ? 'high' : 'auto'}" width="640" height="360" class="${preloaded ? 'loaded' : 'preload-pending'}">`
     : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.25;">🏰</div>`;
 
   return `
   <div class="base-card" onclick="openDetail(${base.id})">
-    <div class="card-thumb ${base.image_url ? 'skeleton' : ''}" style="position:relative;">
+    <div class="card-thumb ${base.image_url && !preloaded ? 'skeleton' : ''}" style="position:relative;">
       ${imgHtml}
       <div class="card-badge">${tl}</div>
       <div class="card-fav ${fav?'active':''}" onclick="event.stopPropagation();toggleFav(${base.id},this)">${fav?'❤️':'🤍'}</div>
@@ -1645,49 +1703,6 @@ function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 const PAGE_SIZE = 12;
-const imageObserver = new IntersectionObserver((entries, observer) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const img = entry.target;
-    const realSrc = img.dataset.src;
-    if (realSrc && !img.getAttribute('src')) {
-      img.onload = () => {
-        img.classList.add('loaded');
-        img.closest('.card-thumb')?.classList.remove('skeleton');
-      };
-      img.onerror = () => {
-        img.closest('.card-thumb')?.classList.remove('skeleton');
-      };
-      img.src = realSrc;
-    }
-    observer.unobserve(img);
-  });
-}, {
-  root: null,
-  rootMargin: '250px 0px',
-  threshold: 0.01
-});
-
-function observeGridImages(rootEl) {
-  if (!rootEl) return;
-  rootEl.querySelectorAll('img[data-src]').forEach((img, i) => {
-    if (img.dataset.observed === '1') return;
-    img.dataset.observed = '1';
-    if (img.dataset.eager === '1' || i < 2) {
-      img.onload = () => {
-        img.classList.add('loaded');
-        img.closest('.card-thumb')?.classList.remove('skeleton');
-      };
-      img.onerror = () => {
-        img.closest('.card-thumb')?.classList.remove('skeleton');
-      };
-      img.src = img.dataset.src;
-      return;
-    }
-    imageObserver.observe(img);
-  });
-}
-
 
 function renderGrid(bases, gridEl, emptyEl) {
   if (!bases.length) {
@@ -1702,10 +1717,18 @@ function renderGrid(bases, gridEl, emptyEl) {
   if (emptyEl) emptyEl.style.display = 'none';
 
   let page = 0;
+  let initialRenderDone = false;
 
-  function renderPage() {
+  async function renderPage() {
     const slice = bases.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
     if (!slice.length) return;
+
+    if (!initialRenderDone) {
+      await preloadBasesImages(slice, FIRST_SCREEN_PRELOAD_COUNT);
+      initialRenderDone = true;
+    } else {
+      preloadBasesImages(slice, NEXT_PAGE_PRELOAD_COUNT);
+    }
 
     let html = '';
     slice.forEach((b, i) => {
@@ -1713,18 +1736,19 @@ function renderGrid(bases, gridEl, emptyEl) {
       if (globalI > 0 && globalI % 6 === 0) {
         html += `<div style="height:4px;"></div>`;
       }
-      html += cardHtml(b, { eager: page === 0 && i < 2 });
+      html += cardHtml(b, { eager: page === 0 && i < FIRST_SCREEN_PRELOAD_COUNT });
     });
 
     if (page === 0) {
       gridEl.innerHTML = html;
+      hydrateCardImages(gridEl);
     } else {
       // Spinner'ı kaldır, yeni kartları ekle
       const spinner = gridEl.querySelector('#load-more-spinner');
       if (spinner) spinner.remove();
       gridEl.insertAdjacentHTML('beforeend', html);
+      hydrateCardImages(gridEl);
     }
-    requestAnimationFrame(() => observeGridImages(gridEl));
     page++;
 
     // Daha fazla kart varsa spinner ekle
@@ -1734,6 +1758,8 @@ function renderGrid(bases, gridEl, emptyEl) {
           <div class="spinner"></div>
         </div>`
       );
+      const nextSlice = bases.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+      preloadBasesImages(nextSlice, NEXT_PAGE_PRELOAD_COUNT);
     }
   }
 
@@ -1749,13 +1775,19 @@ function renderGrid(bases, gridEl, emptyEl) {
   }
 
   gridEl._scrollEl = scrollEl;
-  gridEl._scrollHandler = function() {
+  let isRenderingMore = false;
+  gridEl._scrollHandler = async function() {
     const spinner = gridEl.querySelector('#load-more-spinner');
-    if (!spinner) return;
+    if (!spinner || isRenderingMore) return;
     const spinnerRect = spinner.getBoundingClientRect();
     const containerRect = scrollEl.getBoundingClientRect();
-    if (spinnerRect.top < containerRect.bottom + 200) {
-      renderPage();
+    if (spinnerRect.top < containerRect.bottom + 320) {
+      isRenderingMore = true;
+      try {
+        await renderPage();
+      } finally {
+        isRenderingMore = false;
+      }
     }
   };
   scrollEl.addEventListener('scroll', gridEl._scrollHandler);
@@ -2049,7 +2081,7 @@ async function openDetail(id) { haptic.light();
   document.getElementById('stat-th').textContent      = tl;
   const preview = document.getElementById('detail-preview');
   if (currentBase.image_url) {
-    preview.innerHTML = `<img src="${currentBase.image_url}" alt="${escHtml(currentBase.title)}" decoding="async" fetchpriority="high">`;
+    preview.innerHTML = `<img src="${currentBase.image_url}" alt="${currentBase.title}">`;
     preview.onclick = () => openLightbox(currentBase.image_url);
     const img = preview.querySelector('img');
     await new Promise(resolve => { if(img.complete){resolve();}else{img.onload=resolve;img.onerror=resolve;} });
