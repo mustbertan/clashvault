@@ -125,10 +125,10 @@ body::before {
 .pill { padding:.33rem .6rem; border-radius:.55rem; border:1.5px solid var(--brown-border); background:var(--brown-card); color:var(--text-muted); font-size:.47rem; font-weight:700; cursor:pointer; transition:all .2s; white-space:nowrap; }
 .pill.active,.pill:hover { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); border-color:var(--gold); color:var(--brown-dark); box-shadow:0 3px 10px rgba(245,166,35,.3); }
 .cards-grid { display:grid; grid-template-columns:1fr; gap:.33rem; padding:0 .45rem; margin-bottom:.55rem; }
-.base-card { background:var(--brown-card); border-radius:var(--radius); border:1.5px solid var(--brown-border); overflow:hidden; cursor:pointer; transition:all .25s; position:relative; }
+.base-card { background:var(--brown-card); border-radius:var(--radius); border:1.5px solid var(--brown-border); overflow:hidden; cursor:pointer; transition:all .25s; position:relative; content-visibility:auto; contain-intrinsic-size:300px; }
 .base-card:hover { transform:translateY(-3px); border-color:var(--gold-dark); box-shadow:0 8px 25px rgba(0,0,0,.4),var(--shadow-gold); }
 .card-thumb { width:100%; aspect-ratio:16/9; background:linear-gradient(135deg,#2D1A00,#1a1040); position:relative; overflow:hidden; }
-.card-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.card-thumb img { width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .25s ease; }
 .card-badge { position:absolute; top:.33rem; left:.33rem; background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:var(--brown-dark); font-size:.42rem; font-weight:900; padding:.17rem .36rem; border-radius:.28rem; z-index:2; }
 .card-fav { position:absolute; top:.33rem; right:.33rem; width:1.17rem; height:1.17rem; background:rgba(26,15,0,.8); border-radius:.28rem; display:flex; align-items:center; justify-content:center; font-size:.6rem; z-index:2; cursor:pointer; border:1px solid rgba(107,63,18,.5); transition:all .2s; }
 .card-fav.active { background:rgba(230,57,70,.2); border-color:rgba(230,57,70,.4); }
@@ -428,7 +428,7 @@ body::before {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
-.card-thumb img.loaded { animation: fadeInImg .3s ease; }
+.card-thumb img.loaded { opacity:1; animation: fadeInImg .3s ease; }
 @keyframes fadeInImg { from{opacity:0} to{opacity:1} }
 </style>
    <script src="android-bridge.js"></script>
@@ -1611,10 +1611,14 @@ function cardHtml(base, opts={}) {
   const tl       = thLabel(base);
   const typeL    = getTypeLabel(base.type);
   const showUploader = opts.showUploader && base.uploader_name && base.uploader_name !== 'Anonymous';
+  const eager    = opts.eager === true;
   const imgHtml = base.image_url
-    ? `<img src="${base.image_url}" alt="${base.title}" loading="lazy"
-            onload="this.classList.add('loaded');this.closest('.card-thumb').classList.remove('skeleton')"
-            onerror="this.closest('.card-thumb').classList.remove('skeleton')">`
+    ? `<img data-src="${base.image_url}" alt="${escHtml(base.title)}"
+            loading="${eager ? 'eager' : 'lazy'}"
+            decoding="async"
+            fetchpriority="${eager ? 'high' : 'low'}"
+            width="640" height="360"
+            ${eager ? 'data-eager="1"' : ''}>`
     : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:0.25;">🏰</div>`;
 
   return `
@@ -1640,7 +1644,50 @@ function cardHtml(base, opts={}) {
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 12;
+const imageObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const img = entry.target;
+    const realSrc = img.dataset.src;
+    if (realSrc && !img.getAttribute('src')) {
+      img.onload = () => {
+        img.classList.add('loaded');
+        img.closest('.card-thumb')?.classList.remove('skeleton');
+      };
+      img.onerror = () => {
+        img.closest('.card-thumb')?.classList.remove('skeleton');
+      };
+      img.src = realSrc;
+    }
+    observer.unobserve(img);
+  });
+}, {
+  root: null,
+  rootMargin: '250px 0px',
+  threshold: 0.01
+});
+
+function observeGridImages(rootEl) {
+  if (!rootEl) return;
+  rootEl.querySelectorAll('img[data-src]').forEach((img, i) => {
+    if (img.dataset.observed === '1') return;
+    img.dataset.observed = '1';
+    if (img.dataset.eager === '1' || i < 2) {
+      img.onload = () => {
+        img.classList.add('loaded');
+        img.closest('.card-thumb')?.classList.remove('skeleton');
+      };
+      img.onerror = () => {
+        img.closest('.card-thumb')?.classList.remove('skeleton');
+      };
+      img.src = img.dataset.src;
+      return;
+    }
+    imageObserver.observe(img);
+  });
+}
+
 
 function renderGrid(bases, gridEl, emptyEl) {
   if (!bases.length) {
@@ -1666,7 +1713,7 @@ function renderGrid(bases, gridEl, emptyEl) {
       if (globalI > 0 && globalI % 6 === 0) {
         html += `<div style="height:4px;"></div>`;
       }
-      html += cardHtml(b);
+      html += cardHtml(b, { eager: page === 0 && i < 2 });
     });
 
     if (page === 0) {
@@ -1677,6 +1724,7 @@ function renderGrid(bases, gridEl, emptyEl) {
       if (spinner) spinner.remove();
       gridEl.insertAdjacentHTML('beforeend', html);
     }
+    requestAnimationFrame(() => observeGridImages(gridEl));
     page++;
 
     // Daha fazla kart varsa spinner ekle
@@ -2001,7 +2049,7 @@ async function openDetail(id) { haptic.light();
   document.getElementById('stat-th').textContent      = tl;
   const preview = document.getElementById('detail-preview');
   if (currentBase.image_url) {
-    preview.innerHTML = `<img src="${currentBase.image_url}" alt="${currentBase.title}">`;
+    preview.innerHTML = `<img src="${currentBase.image_url}" alt="${escHtml(currentBase.title)}" decoding="async" fetchpriority="high">`;
     preview.onclick = () => openLightbox(currentBase.image_url);
     const img = preview.querySelector('img');
     await new Promise(resolve => { if(img.complete){resolve();}else{img.onload=resolve;img.onerror=resolve;} });
