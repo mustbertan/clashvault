@@ -798,90 +798,33 @@ body::before {
   </div>
   <div class="sort-result-count" id="sort-result-count"></div>
 
-  <!-- BROWSE DROPDOWN FILTERS -->
-  <div id="filter-panel" style="padding:.22rem .45rem .33rem;flex-shrink:0;display:block;">
-    <div style="display:flex;gap:.33rem;flex-wrap:wrap;align-items:flex-start;">
-
-      <!-- Village dropdown -->
-      <div style="position:relative;flex:1;min-width:4rem;">
-        <button id="browse-village-btn" onclick="toggleDropdown('browse-village-dd','browse-village-btn')"
-          style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:.22rem;
-                 padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);
-                 background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;
-                 font-size:.42rem;font-weight:700;cursor:pointer;">
-          <span id="browse-village-label">🏰 Ana Köy</span>
-          <span style="color:var(--gold);font-size:.5rem;">▾</span>
-        </button>
-        <div id="browse-village-dd" style="display:none;position:absolute;top:110%;left:0;right:0;z-index:400;
-             background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;
-             overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);">
-          <div class="dd-item" onclick="setBrowseVillage('home','🏰 Ana Köy')">🏰 Ana Köy</div>
-          <div class="dd-item" onclick="setBrowseVillage('builder','🔨 İnşaatçı Köyü')">🔨 İnşaatçı Köyü</div>
-          <div class="dd-item" onclick="setBrowseVillage('all','🏘 Tümü')">🏘 Tümü</div>
-        </div>
-      </div>
-
-      <!-- Level dropdown -->
-      <div style="position:relative;flex:1;min-width:3.5rem;">
-        <button id="browse-level-btn" onclick="toggleDropdown('browse-level-dd','browse-level-btn')"
-          style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:.22rem;
-                 padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);
-                 background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;
-                 font-size:.42rem;font-weight:700;cursor:pointer;">
-          <span id="browse-level-label">🏰 TH 9</span>
-          <span style="color:var(--gold);font-size:.5rem;">▾</span>
-        </button>
-        <div id="browse-level-dd" style="display:none;position:absolute;top:110%;left:0;right:0;z-index:400;
-             background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;
-             overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);max-height:10rem;overflow-y:auto;" id="browse-level-dd">
-          <div class="dd-item" onclick="setBrowseLevel('TH 4','🏰 TH 4')">🏰 TH 4</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 5','🏰 TH 5')">🏰 TH 5</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 6','🏰 TH 6')">🏰 TH 6</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 7','🏰 TH 7')">🏰 TH 7</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 8','🏰 TH 8')">🏰 TH 8</div>
-          <div class="dd-item selected" onclick="setBrowseLevel('TH 9','🏰 TH 9')">🏰 TH 9</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 10','🏰 TH 10')">🏰 TH 10</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 11','🏰 TH 11')">🏰 TH 11</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 12','🏰 TH 12')">🏰 TH 12</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 13','🏰 TH 13')">🏰 TH 13</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 14','🏰 TH 14')">🏰 TH 14</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 15','🏰 TH 15')">🏰 TH 15</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 16','🏰 TH 16')">🏰 TH 16</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 17','🏰 TH 17')">🏰 TH 17</div>
-          <div class="dd-item" onclick="setBrowseLevel('TH 18','🏰 TH 18')">🏰 TH 18</div>
-          <div class="dd-item" onclick="setBrowseLevel('BH 4','🔨 BH 4')">🔨 BH 4</div>
-          <div class="dd-item" onclick="setBrowseLevel('BH 5','🔨 BH 5')">🔨 BH 5</div>
-          <div class="dd-item" onclick="setBrowseLevel('BH 6','🔨 BH 6')">🔨 BH 6</div>
-          <div class="dd-item" onclick="setBrowseLevel('BH 7','🔨 BH 7')">🔨 BH 7</div>
-          <div class="dd-item" onclick="setBrowseLevel('BH 8','🔨 BH 8')">🔨 BH 8</div>
-          <div class="dd-item" onclick="setBrowseLevel('BH 9','🔨 BH 9')">🔨 BH 9</div>
-          <div class="dd-item" onclick="setBrowseLevel('BH 10','🔨 BH 10')">🔨 BH 10</div>
-          <div class="dd-item" onclick="setBrowseLevel('all','🏘 Tümü')">🏘 Tümü</div>
-        </div>
-      </div>
-
-      <!-- Type dropdown -->
-      <div style="position:relative;flex:1;min-width:3.5rem;">
-        <button id="browse-type-btn" onclick="toggleDropdown('browse-type-dd','browse-type-btn')"
-          style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:.22rem;
-                 padding:.33rem .44rem;border-radius:.44rem;border:1.5px solid var(--brown-border);
-                 background:var(--brown-card);color:var(--cream);font-family:'Nunito',sans-serif;
-                 font-size:.42rem;font-weight:700;cursor:pointer;">
-          <span id="browse-type-label">⚔️ War</span>
-          <span style="color:var(--gold);font-size:.5rem;">▾</span>
-        </button>
-        <div id="browse-type-dd" style="display:none;position:absolute;top:110%;left:0;right:0;z-index:400;
-             background:var(--brown-card2);border:1.5px solid var(--gold-dark);border-radius:.44rem;
-             overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);">
-          <div class="dd-item selected" onclick="setBrowseType('war','⚔️ War')">⚔️ War</div>
-          <div class="dd-item" onclick="setBrowseType('farm','🌾 Farm')">🌾 Farm</div>
-          <div class="dd-item" onclick="setBrowseType('trophy','🏆 Trophy')">🏆 Trophy</div>
-          <div class="dd-item" onclick="setBrowseType('hybrid','🔥 Hybrid')">🔥 Hybrid</div>
-          <div class="dd-item" onclick="setBrowseType('progress','⬆️ Progress')">⬆️ Progress</div>
-          <div class="dd-item" onclick="setBrowseType('all','🏷 Tümü')">🏷 Tümü</div>
-        </div>
-      </div>
-
+  <!-- BROWSE FİLTRE ÇIPLERI — pill tabanlı, overflow yok -->
+  <div id="filter-panel" style="padding:.11rem .45rem .33rem;flex-shrink:0;">
+    <div style="display:flex;gap:.22rem;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
+      <button id="browse-village-btn" onclick="openFilterSheet('village')"
+        style="flex-shrink:0;display:flex;align-items:center;gap:.17rem;
+               padding:.22rem .44rem;border-radius:2rem;
+               border:1.5px solid var(--brown-border);background:var(--brown-card);
+               color:var(--text-muted);font-family:'Nunito',sans-serif;
+               font-size:.37rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;">
+        <span id="browse-village-label">🏰 Home</span><span style="color:var(--gold);font-size:.38rem;">▾</span>
+      </button>
+      <button id="browse-level-btn" onclick="openFilterSheet('level')"
+        style="flex-shrink:0;display:flex;align-items:center;gap:.17rem;
+               padding:.22rem .44rem;border-radius:2rem;
+               border:1.5px solid var(--brown-border);background:var(--brown-card);
+               color:var(--text-muted);font-family:'Nunito',sans-serif;
+               font-size:.37rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;">
+        <span id="browse-level-label">🏰 TH 9</span><span style="color:var(--gold);font-size:.38rem;">▾</span>
+      </button>
+      <button id="browse-type-btn" onclick="openFilterSheet('type')"
+        style="flex-shrink:0;display:flex;align-items:center;gap:.17rem;
+               padding:.22rem .44rem;border-radius:2rem;
+               border:1.5px solid var(--brown-border);background:var(--brown-card);
+               color:var(--text-muted);font-family:'Nunito',sans-serif;
+               font-size:.37rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s;">
+        <span id="browse-type-label">⚔️ War</span><span style="color:var(--gold);font-size:.38rem;">▾</span>
+      </button>
     </div>
   </div>
   </div><!-- /#search-collapsible -->
@@ -1173,6 +1116,25 @@ body::before {
   <div class="crop-btn-row">
     <button class="crop-btn crop-btn-cancel"  onclick="cancelCrop()">✕ İptal</button>
     <button class="crop-btn crop-btn-confirm" onclick="confirmCrop()">✓ Kırp & Kullan</button>
+  </div>
+</div>
+
+
+<!-- BROWSE FİLTRE BOTTOM SHEET -->
+<div id="filter-sheet-overlay" onclick="closeFilterSheet()" style="
+  display:none;position:fixed;inset:0;z-index:700;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(3px);
+  align-items:flex-end;justify-content:center;">
+  <div id="filter-sheet" style="
+    width:100%;background:var(--brown-mid);
+    border-top-left-radius:.8rem;border-top-right-radius:.8rem;
+    border-top:2px solid var(--brown-border);
+    padding:.55rem .55rem 1.1rem;
+    transform:translateY(100%);
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1);">
+    <div style="width:1rem;height:4px;background:var(--brown-border);border-radius:2px;margin:0 auto .5rem;"></div>
+    <div id="filter-sheet-title" style="font-family:'Cinzel Decorative',serif;font-size:.44rem;color:var(--gold-light);margin-bottom:.44rem;text-align:center;"></div>
+    <div id="filter-sheet-items" style="display:flex;flex-wrap:wrap;gap:.28rem;justify-content:center;max-height:55vh;overflow-y:auto;padding:.1rem .05rem;"></div>
   </div>
 </div>
 
@@ -2265,11 +2227,13 @@ function openCategory(village) { haptic.medium();
 
 /* ─ Dropdown logic ─ */
 function toggleDropdown(ddId, btnId) {
+  // List screen dropdowns — eski mantık korundu
   const dd = document.getElementById(ddId);
+  if (!dd) return;
   const isOpen = dd.style.display !== 'none';
-  // Close all dropdowns first
   ['level-dropdown','type-dropdown'].forEach(id => {
-    document.getElementById(id).style.display = 'none';
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
   });
   if (!isOpen) dd.style.display = 'block';
 }
@@ -2283,6 +2247,105 @@ document.addEventListener('click', function(e) {
     });
   }
 });
+
+/* ── Browse ekranı — Bottom Sheet Filter ── */
+let _filterSheetActive = null;
+
+function openFilterSheet(type) {
+  haptic.light();
+  _filterSheetActive = type;
+
+  const overlay = document.getElementById('filter-sheet-overlay');
+  const sheet   = document.getElementById('filter-sheet');
+  const title   = document.getElementById('filter-sheet-title');
+  const items   = document.getElementById('filter-sheet-items');
+
+  items.innerHTML = '';
+
+  if (type === 'village') {
+    title.textContent = t('filter_village') || 'Village';
+    const opts = [
+      { val:'home',    label: t('village_home')    || '🏰 Home Village' },
+      { val:'builder', label: t('village_builder') || '🔨 Builder Base' },
+      { val:'all',     label: '🏘 ' + (t('filter_all') || 'All') },
+    ];
+    opts.forEach(o => items.appendChild(makeSheetChip(o.val, o.label, activeFilters.village, function(v,l){
+      setBrowseVillage(v, l); closeFilterSheet();
+    })));
+
+  } else if (type === 'level') {
+    title.textContent = t('filter_level') || 'Level';
+    const isBuilder = activeFilters.village === 'builder';
+    const levels = isBuilder
+      ? ['4','5','6','7','8','9','10']
+      : ['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
+    const prefix = isBuilder ? 'BH' : 'TH';
+    const emoji  = isBuilder ? '🔨' : '🏰';
+    levels.forEach(l => {
+      const val   = prefix + ' ' + l;
+      const label = emoji + ' ' + val;
+      items.appendChild(makeSheetChip(val, label, activeFilters.th, function(v,lb){
+        setBrowseLevel(v, lb); closeFilterSheet();
+      }));
+    });
+    // Tümü seçeneği
+    const allLabel = '🏘 ' + (t('filter_all') || 'All');
+    items.appendChild(makeSheetChip('all', allLabel, activeFilters.th, function(v,lb){
+      setBrowseLevel(v, lb); closeFilterSheet();
+    }));
+
+  } else if (type === 'type') {
+    title.textContent = t('filter_type') || 'Type';
+    const opts = [
+      { val:'war',      label: t('type_war')      || '⚔️ War' },
+      { val:'farm',     label: t('type_farm')     || '🌾 Farm' },
+      { val:'trophy',   label: t('type_trophy')   || '🏆 Trophy' },
+      { val:'hybrid',   label: t('type_hybrid')   || '🔥 Hybrid' },
+      { val:'progress', label: t('type_progress') || '⬆️ Progress' },
+      { val:'all',      label: '🏷 ' + (t('filter_all') || 'All') },
+    ];
+    opts.forEach(o => items.appendChild(makeSheetChip(o.val, o.label, activeFilters.type, function(v,l){
+      setBrowseType(v, l); closeFilterSheet();
+    })));
+  }
+
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    sheet.style.transform = 'translateY(0)';
+  }));
+}
+
+function makeSheetChip(val, label, activeVal, onClick) {
+  const btn = document.createElement('button');
+  const isActive = val === activeVal;
+  btn.textContent = label;
+  btn.style.cssText = [
+    'padding:.33rem .66rem',
+    'border-radius:2rem',
+    'font-family:'Nunito',sans-serif',
+    'font-size:.44rem',
+    'font-weight:700',
+    'cursor:pointer',
+    'border:1.5px solid ' + (isActive ? 'var(--gold)' : 'var(--brown-border)'),
+    'background:' + (isActive ? 'var(--gold-dark)' : 'var(--brown-card)'),
+    'color:' + (isActive ? 'var(--brown-dark)' : 'var(--text-muted)'),
+    'transition:all .15s',
+  ].join(';');
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    haptic.light();
+    onClick(val, label);
+  });
+  return btn;
+}
+
+function closeFilterSheet() {
+  const overlay = document.getElementById('filter-sheet-overlay');
+  const sheet   = document.getElementById('filter-sheet');
+  sheet.style.transform = 'translateY(100%)';
+  setTimeout(() => { overlay.style.display = 'none'; }, 300);
+  _filterSheetActive = null;
+}
 
 function buildLevelDropdown() {
   const levels = listVillage === 'builder'
@@ -2410,55 +2473,61 @@ function setSort(sort) {
 function setBrowseVillage(val, label) {
   haptic.light();
   activeFilters.village = val;
-  document.getElementById('browse-village-label').textContent = label;
-  document.querySelectorAll('#browse-village-dd .dd-item').forEach(i =>
-    i.classList.toggle('selected', i.textContent.trim() === label.trim()));
-  document.getElementById('browse-village-dd').style.display = 'none';
-  // Update level dropdown items based on village
-  updateBrowseLevelItems(val);
+  // Pill butonunu güncelle — aktif renk
+  const btn = document.getElementById('browse-village-btn');
+  const lbl = document.getElementById('browse-village-label');
+  if (lbl) lbl.textContent = label;
+  if (btn) {
+    btn.style.borderColor = 'var(--gold)';
+    btn.style.background  = 'rgba(245,166,35,.15)';
+    btn.style.color       = 'var(--gold-light)';
+  }
+  // Seviye filterini köye göre sıfırla
+  const isBuilder = val === 'builder';
+  const defLvl = (val === 'all') ? 'all' : (isBuilder ? 'BH 7' : 'TH 9');
+  const emoji  = isBuilder ? '🔨' : '🏰';
+  activeFilters.th = defLvl;
+  const lvlLbl = document.getElementById('browse-level-label');
+  if (lvlLbl) lvlLbl.textContent = defLvl === 'all' ? ('🏘 ' + (t('filter_all')||'All')) : emoji + ' ' + defLvl;
   applyFilters();
 }
 
 function setBrowseLevel(val, label) {
   haptic.light();
   activeFilters.th = val;
-  document.getElementById('browse-level-label').textContent = label;
-  document.querySelectorAll('#browse-level-dd .dd-item').forEach(i =>
-    i.classList.toggle('selected', i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + val + "'")));
-  document.getElementById('browse-level-dd').style.display = 'none';
+  const lbl = document.getElementById('browse-level-label');
+  if (lbl) lbl.textContent = label;
+  const btn = document.getElementById('browse-level-btn');
+  if (btn) {
+    btn.style.borderColor = 'var(--gold)';
+    btn.style.background  = 'rgba(245,166,35,.15)';
+    btn.style.color       = 'var(--gold-light)';
+  }
   applyFilters();
 }
 
 function setBrowseType(val, label) {
   haptic.light();
   activeFilters.type = val;
-  document.getElementById('browse-type-label').textContent = label;
-  document.querySelectorAll('#browse-type-dd .dd-item').forEach(i =>
-    i.classList.toggle('selected', i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + val + "'")));
-  document.getElementById('browse-type-dd').style.display = 'none';
+  const lbl = document.getElementById('browse-type-label');
+  if (lbl) lbl.textContent = label;
+  const btn = document.getElementById('browse-type-btn');
+  if (btn) {
+    btn.style.borderColor = 'var(--gold)';
+    btn.style.background  = 'rgba(245,166,35,.15)';
+    btn.style.color       = 'var(--gold-light)';
+  }
   applyFilters();
 }
 
 function updateBrowseLevelItems(village) {
-  const dd = document.getElementById('browse-level-dd');
-  if (!dd) return;
+  // Artık sheet içinde dinamik oluşturuluyor — sadece pill label güncelle
   const isBuilder = village === 'builder';
-  const levels = isBuilder
-    ? ['4','5','6','7','8','9','10']
-    : ['4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
-  const prefix = isBuilder ? 'BH' : 'TH';
   const emoji  = isBuilder ? '🔨' : '🏰';
-  const defaultLvl = isBuilder ? '7' : '9';
-  let html = levels.map(l => {
-    const val = prefix + ' ' + l;
-    return `<div class="dd-item${l===defaultLvl?' selected':''}" onclick="setBrowseLevel('${val}','${emoji} ${val}')">${emoji} ${val}</div>`;
-  }).join('');
-  html += `<div class="dd-item" onclick="setBrowseLevel('all','🏘 ${t('filter_all')||'Tümü'}')">🏘 ${t('filter_all')||'Tümü'}</div>`;
-  dd.innerHTML = html;
-  // Reset level filter to default
-  const defVal = prefix + ' ' + defaultLvl;
-  activeFilters.th = defVal;
-  document.getElementById('browse-level-label').textContent = emoji + ' ' + defVal;
+  const defLvl = isBuilder ? 'BH 7' : 'TH 9';
+  activeFilters.th = defLvl;
+  const lbl = document.getElementById('browse-level-label');
+  if (lbl) lbl.textContent = emoji + ' ' + defLvl;
 }
 
 function toggleChip(el) {
