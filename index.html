@@ -2041,24 +2041,42 @@ function thLabel(base) {
 async function loadAllBases() {
   showLoading(t('loading_bases'));
   try {
-    // Fetch all admin-approved bases (source=admin OR source is null, is_active=true)
-    const data = await sbGet('layouts?select=*&is_active=eq.true&order=created_at.desc');
-    allBases = Array.isArray(data) ? data : [];
+    let allData = [];
+    let from = 0;
+    const pageSize = 1000;
+
+    while (true) {
+      const data = await sbGetRange(
+        'layouts?select=*&is_active=eq.true&order=created_at.desc',
+        from,
+        from + pageSize - 1
+      );
+      if (!Array.isArray(data) || data.length === 0) break;
+      allData = allData.concat(data);
+      if (data.length < pageSize) break; // son sayfa
+      from += pageSize;
+    }
+
+    allBases = allData;
     console.log('Loaded bases:', allBases.length);
   } catch(e) {
     console.error('Supabase load error:', e);
-    // Fallback: try without filter
-    try {
-      const data2 = await sbGet('layouts?select=*&order=created_at.desc&limit=200');
-      allBases = Array.isArray(data2) ? data2 : [];
-      console.log('Fallback loaded:', allBases.length);
-    } catch(e2) {
-      console.error('Fallback also failed:', e2);
-      allBases = [];
-    }
+    allBases = [];
   } finally {
     hideLoading();
   }
+}
+
+   async function sbGetRange(path, from, to) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: {
+      ...SB_HEADERS,
+      'Range-Unit': 'items',
+      'Range': `${from}-${to}`
+    }
+  });
+  if (!r.ok) throw new Error(`Supabase ${r.status}`);
+  return r.json();
 }
 
 /* ═══════════════════════════════════════════
